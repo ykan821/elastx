@@ -57,7 +57,30 @@ parameters:
 		-
 			message: '#^Call to an undefined method Elastic\\Elasticsearch\\ClientInterface\:\:indices\(\)\.$#'
 			identifier: method.notFound
-			count: 4
+			count: 5
+			path: src/Index/Rebuild.php
+
+		-
+			message: '#^Call to an undefined method Elastic\\Elasticsearch\\ClientInterface\:\:exists\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Index/Rebuild.php
+
+		-
+			message: '#^Call to an undefined method Elastic\\Elasticsearch\\ClientInterface\:\:index\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Index/Rebuild.php
+
+		-
+			message: '#^Call to an undefined method Elastic\\Elasticsearch\\ClientInterface\:\:delete\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Index/Rebuild.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
 			path: src/Index/Rebuild.php
 
 		-

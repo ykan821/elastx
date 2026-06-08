@@ -36,6 +36,20 @@ Scope 可选：dsl / index / agg / query / docs。Breaking change 加 `!` 后缀
 
 PSR-5 规范。
 
+## 待办
+
+- [ ] **clone query 后 try-finally 恢复**：first() / paginate() 等方法 clone query 后修改状态，需 try-finally 确保恢复
+- [ ] **ClausesSupport API 统一**：废弃 addXXX() 方法，原 API（如 must()）直接使用追加语义
+- [ ] **hasMore() 判断逻辑修复**：待确认（看代码）
+- [ ] **Rebuild::rollback() 支持多索引别名**：当前只移除 `$currentList[0]`，应遍历全部 remove，参考 `doRun()` 循环写法
+- [ ] **Index::$name 空验证**：子类未设置 `$name` 时抛异常
+- [ ] **锁抽取为独立类**：通用分布式锁（acquire/release/forceUnlock/isLocked + ensureLockIndex），Bulk 等可复用
+- [ ] **$client 抽到 Registry 类**：新建 Registry 持有 client / pageResolver / paginatorResolver / listeners，Index 不再持有静态状态。旧 API 保留作 deprecated 代理，前期统一放 Registry，后续按需拆分
+- [ ] **Node 构造函数重构**：提取 applyValue，消除重复
+- [ ] **Bulk skipErrors() 设计**：参考 Rebuild 的 skipErrors 模式
+- [ ] **补核心路径的边界测试**：scroll、bulk 分批、rebuild 失败回滚
+- [ ] **搭建集成测试基建**：`ELASTICKIT_TEST_HOST` 驱动，随机索引名隔离
+
 ## 测试
 
 测试在 Docker 容器中运行，需要设置以下环境变量：
@@ -45,10 +59,12 @@ PSR-5 规范。
 | `PHP_CONTAINER` | Docker 容器名 |
 | `PROJECT_PATH` | 项目在容器内的路径 |
 | `PROXY_PORT` | HTTP 代理端口（推送用） |
+| `ELASTICKIT_TEST_HOST` | ES 集成测试地址（如 `https://localhost:9200`），不设置则跳过集成测试 |
 
 ```bash
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite unit"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite index"
+docker exec -e ELASTICKIT_TEST_HOST=https://elasticsearch:9200 $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite integration"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpstan analyse"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpmd src text phpmd.xml"

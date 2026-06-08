@@ -2,6 +2,7 @@
 
 namespace ElasticKit\Index;
 
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use RuntimeException;
 use stdClass;
 
@@ -13,6 +14,11 @@ use stdClass;
  */
 class Rebuild
 {
+    /**
+     * Lock index name.
+     */
+    private const LOCK_INDEX = '.ek_locks';
+
     /**
      * @var Index
      */
@@ -108,6 +114,98 @@ class Rebuild
      */
     public function run(array $context = [])
     {
+        $this->acquireLock();
+
+        try {
+            $result = $this->doRun($context);
+        } finally {
+            $this->releaseLock();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Forcibly remove a stale lock left by a crashed rebuild.
+     *
+     * Under normal circumstances the lock is released automatically by run().
+     * Call this only when a previous rebuild crashed and the lock persists.
+     */
+    public function forceUnlock(): void
+    {
+        $this->releaseLock();
+    }
+
+    /**
+     * Check whether a rebuild lock is currently held for this index.
+     *
+     * @return bool
+     */
+    public function isLocked(): bool
+    {
+        try {
+            return $this->index->getClient()->exists([
+                'index' => self::LOCK_INDEX,
+                'id' => $this->index->name(),
+            ])->asBool();
+        } catch (ClientResponseException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Delete a specific backing index by name.
+     *
+     * @param string $indexName the backing index to delete
+     */
+    public function clean(string $indexName): void
+    {
+        $this->index->getClient()->indices()->delete([
+            'index' => $indexName,
+        ]);
+    }
+
+    /**
+     * Rollback alias to a specific previous backing index.
+     *
+     * @param string $targetIndex the backing index to roll back to
+     * @return string the index name that was rolled back from
+     * @throws RuntimeException if alias or target index does not exist
+     */
+    public function rollback(string $targetIndex): string
+    {
+        $name = $this->index->name();
+        $client = $this->index->getClient()->indices();
+
+        $currentList = array_keys($client->getAlias(['name' => $name])->asArray());
+        if (empty($currentList)) {
+            throw new RuntimeException("No index found for alias [{$name}]");
+        }
+
+        if (!$client->exists(['index' => $targetIndex])->asBool()) {
+            throw new RuntimeException("Target index [{$targetIndex}] does not exist");
+        }
+
+        $client->updateAliases([
+            'body' => [
+                'actions' => [
+                    ['remove' => ['index' => $currentList[0], 'alias' => $name]],
+                    ['add' => ['index' => $targetIndex, 'alias' => $name]],
+                ],
+            ],
+        ]);
+
+        return $currentList[0];
+    }
+
+    /**
+     * Execute the rebuild logic (called after lock is acquired).
+     *
+     * @param array<string, mixed> $context
+     * @return array{newIndex: string, oldIndex: string|null}
+     */
+    private function doRun(array $context): array
+    {
         $name = $this->index->name();
         $client = $this->index->getClient()->indices();
 
@@ -155,48 +253,83 @@ class Rebuild
     }
 
     /**
-     * Delete a specific backing index by name.
+     * Acquire the distributed lock using ES document create (op_type=create).
      *
-     * @param string $indexName the backing index to delete
+     * @throws RuntimeException if the lock is already held
      */
-    public function clean(string $indexName): void
+    private function acquireLock(): void
     {
-        $this->index->getClient()->indices()->delete([
-            'index' => $indexName,
-        ]);
+        $this->ensureLockIndex();
+
+        $name = $this->index->name();
+
+        try {
+            $this->index->getClient()->index([
+                'index' => self::LOCK_INDEX,
+                'id' => $name,
+                'body' => ['locked_at' => date(\DateTimeInterface::ATOM)],
+                'op_type' => 'create',
+            ]);
+        } catch (ClientResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 409) {
+                throw new RuntimeException(
+                    "Rebuild for [{$name}] is already running. "
+                    . "Call forceUnlock() if the previous rebuild crashed."
+                );
+            }
+            throw $e;
+        }
     }
 
     /**
-     * Rollback alias to a specific previous backing index.
-     *
-     * @param string $targetIndex the backing index to roll back to
-     * @return string the index name that was rolled back from
-     * @throws RuntimeException if alias or target index does not exist
+     * Release the distributed lock. Idempotent — silently ignores 404.
      */
-    public function rollback(string $targetIndex): string
+    private function releaseLock(): void
     {
-        $name = $this->index->name();
-        $client = $this->index->getClient()->indices();
+        try {
+            $this->index->getClient()->delete([
+                'index' => self::LOCK_INDEX,
+                'id' => $this->index->name(),
+            ]);
+        } catch (ClientResponseException $e) {
+            if ($e->getResponse()->getStatusCode() !== 404) {
+                throw $e;
+            }
+            // Lock already gone — idempotent
+        } catch (\Throwable $e) {
+            // Swallow transport / server errors in finally to avoid masking the original exception
+        }
+    }
 
-        $currentList = array_keys($client->getAlias(['name' => $name])->asArray());
-        if (empty($currentList)) {
-            throw new RuntimeException("No index found for alias [{$name}]");
+    /**
+     * Ensure the lock index exists. Handles concurrent creation races.
+     */
+    private function ensureLockIndex(): void
+    {
+        $indices = $this->index->getClient()->indices();
+
+        if ($indices->exists(['index' => self::LOCK_INDEX])->asBool()) {
+            return;
         }
 
-        if (!$client->exists(['index' => $targetIndex])->asBool()) {
-            throw new RuntimeException("Target index [{$targetIndex}] does not exist");
-        }
-
-        $client->updateAliases([
-            'body' => [
-                'actions' => [
-                    ['remove' => ['index' => $currentList[0], 'alias' => $name]],
-                    ['add' => ['index' => $targetIndex, 'alias' => $name]],
+        try {
+            $indices->create([
+                'index' => self::LOCK_INDEX,
+                'body' => [
+                    'settings' => [
+                        'number_of_shards' => 1,
+                        'number_of_replicas' => 0,
+                        'index.hidden' => true,
+                    ],
                 ],
-            ],
-        ]);
-
-        return $currentList[0];
+            ]);
+        } catch (ClientResponseException $e) {
+            // Race: another process may have created it concurrently
+            if ($indices->exists(['index' => self::LOCK_INDEX])->asBool()) {
+                return;
+            }
+            throw $e;
+        }
     }
 
     /**

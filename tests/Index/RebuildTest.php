@@ -40,13 +40,20 @@ class RebuildTest extends TestCase
         }))->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $indices->method('existsAlias')->willReturn(new BoolResponse(false));
-        $indices->method('exists')->willReturn(new BoolResponse(false));
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(true);
+            }
+            return new BoolResponse(false);
+        });
         $indices->expects($this->once())->method('putAlias')->with($this->callback(function ($params) {
             return strpos($params['index'], 'products_') === 0 && $params['name'] === 'products';
         }))->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->expects($this->once())->method('bulk')->with($this->callback(function ($params) {
             return count($params['body']) === 4
                 && $params['body'][0]['index']['_id'] === 1
@@ -78,6 +85,7 @@ class RebuildTest extends TestCase
     {
         $indices = $this->createMock(TestIndices::class);
         $indices->expects($this->once())->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturn(new BoolResponse(true));
         $indices->method('existsAlias')->willReturn(new BoolResponse(true));
         $indices->method('getAlias')->willReturn(new ArrayResponse(['products_v1' => ['aliases' => ['products' => []]]]));
         $indices->expects($this->once())->method('updateAliases')->with($this->callback(function ($params) {
@@ -90,6 +98,8 @@ class RebuildTest extends TestCase
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
         Index::setClient($client);
 
@@ -119,6 +129,8 @@ class RebuildTest extends TestCase
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
         Index::setClient($client);
 
@@ -144,11 +156,18 @@ class RebuildTest extends TestCase
         $indices = $this->createMock(TestIndices::class);
         $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
         $indices->method('existsAlias')->willReturn(new BoolResponse(false));
-        $indices->method('exists')->willReturn(new BoolResponse(false));
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(true);
+            }
+            return new BoolResponse(false);
+        });
         $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->expects($this->exactly(2))->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
         Index::setClient($client);
 
@@ -174,11 +193,18 @@ class RebuildTest extends TestCase
         $indices = $this->createMock(TestIndices::class);
         $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
         $indices->method('existsAlias')->willReturn(new BoolResponse(false));
-        $indices->method('exists')->willReturn(new BoolResponse(false));
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(true);
+            }
+            return new BoolResponse(false);
+        });
         $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->expects($this->once())->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
         Index::setClient($client);
 
@@ -199,11 +225,18 @@ class RebuildTest extends TestCase
             return strpos($params['index'], 'products_v') === 0;
         }))->willReturn(new ArrayResponse(['acknowledged' => true]));
         $indices->method('existsAlias')->willReturn(new BoolResponse(false));
-        $indices->method('exists')->willReturn(new BoolResponse(false));
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(true);
+            }
+            return new BoolResponse(false);
+        });
         $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
         Index::setClient($client);
 
@@ -305,12 +338,15 @@ class RebuildTest extends TestCase
     {
         $indices = $this->createMock(TestIndices::class);
         $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturn(new BoolResponse(true));
         $indices->method('delete')->with($this->callback(function ($params) {
             return strpos($params['index'], 'products_') === 0;
         }))->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         Index::setClient($client);
 
         $index = new class extends Index {
@@ -335,11 +371,18 @@ class RebuildTest extends TestCase
         $indices = $this->createMock(TestIndices::class);
         $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
         $indices->method('existsAlias')->willReturn(new BoolResponse(false));
-        $indices->method('exists')->willReturn(new BoolResponse(false));
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(true);
+            }
+            return new BoolResponse(false);
+        });
         $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
         Index::setClient($client);
 
@@ -363,12 +406,15 @@ class RebuildTest extends TestCase
     {
         $indices = $this->createMock(TestIndices::class);
         $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturn(new BoolResponse(true));
         $indices->expects($this->once())->method('delete')->with($this->callback(function ($params) {
             return strpos($params['index'], 'products_') === 0;
         }))->willReturn(new ArrayResponse(['acknowledged' => true]));
 
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
         $client->method('bulk')->willReturn(new ArrayResponse(['items' => [], 'errors' => true]));
         Index::setClient($client);
 
@@ -386,5 +432,208 @@ class RebuildTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         (new Rebuild($index))->run();
+    }
+
+    public function testRunAcquiresAndReleasesLock()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(true);
+            }
+            return new BoolResponse(false);
+        });
+        $indices->method('existsAlias')->willReturn(new BoolResponse(false));
+        $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
+        $client->expects($this->once())->method('index')->with($this->callback(function ($params) {
+            return $params['index'] === '.ek_locks'
+                && $params['id'] === 'products'
+                && ($params['op_type'] ?? null) === 'create';
+        }))->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->expects($this->once())->method('delete')->with($this->callback(function ($params) {
+            return $params['index'] === '.ek_locks' && $params['id'] === 'products';
+        }))->willReturn(new ArrayResponse(['result' => 'deleted']));
+        Index::setClient($client);
+
+        $index = new class extends Index {
+            public function __construct()
+            {
+                $this->name = 'products';
+            }
+
+            public function source(array $context = []): iterable
+            {
+                return [];
+            }
+        };
+
+        (new Rebuild($index))->allowEmpty()->run();
+    }
+
+    public function testRunReleasesLockOnFailure()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturn(new BoolResponse(true));
+        $indices->method('delete')->willReturn(new ArrayResponse(['acknowledged' => true]));
+
+        $lockReleased = false;
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturnCallback(function () use (&$lockReleased) {
+            $lockReleased = true;
+            return new ArrayResponse(['result' => 'deleted']);
+        });
+        $client->method('bulk')->willReturn(new ArrayResponse(['items' => [], 'errors' => true]));
+        Index::setClient($client);
+
+        $index = new class extends Index {
+            public function __construct()
+            {
+                $this->name = 'products';
+            }
+
+            public function source(array $context = []): iterable
+            {
+                yield 1 => ['title' => 'A'];
+            }
+        };
+
+        try {
+            (new Rebuild($index))->run();
+        } catch (\RuntimeException $e) {
+            // Expected: bulk import error
+        }
+
+        $this->assertTrue($lockReleased, 'Lock should be released even when run() fails');
+    }
+
+    public function testRunThrowsWhenLocked()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('exists')->willReturn(new BoolResponse(true));
+
+        $response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn(409);
+
+        $exception = new \Elastic\Elasticsearch\Exception\ClientResponseException();
+        $exception->setResponse($response);
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('index')->willThrowException($exception);
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('already running');
+        (new Rebuild($index))->source([1 => ['title' => 'A']])->run();
+    }
+
+    public function testForceUnlock()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->expects($this->once())->method('delete')->with($this->callback(function ($params) {
+            return $params['index'] === '.ek_locks' && $params['id'] === 'products';
+        }))->willReturn(new ArrayResponse(['result' => 'deleted']));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        (new Rebuild($index))->forceUnlock();
+    }
+
+    public function testForceUnlockIsIdempotent()
+    {
+        $response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn(404);
+
+        $exception = new \Elastic\Elasticsearch\Exception\ClientResponseException();
+        $exception->setResponse($response);
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('delete')->willThrowException($exception);
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+
+        // Should not throw despite 404
+        (new Rebuild($index))->forceUnlock();
+        $this->assertTrue(true); // Reached without exception
+    }
+
+    public function testIsLockedReturnsTrue()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('exists')->with($this->callback(function ($params) {
+            return $params['index'] === '.ek_locks' && $params['id'] === 'products';
+        }))->willReturn(new BoolResponse(true));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $this->assertTrue((new Rebuild($index))->isLocked());
+    }
+
+    public function testIsLockedReturnsFalse()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('exists')->willReturn(new BoolResponse(false));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $this->assertFalse((new Rebuild($index))->isLocked());
+    }
+
+    public function testEnsureLockIndexCreatesWhenNotExists()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(false);
+            }
+            return new BoolResponse(false);
+        });
+        $indices->method('create')->willReturnCallback(function ($params) {
+            return new ArrayResponse(['acknowledged' => true]);
+        });
+        $indices->method('existsAlias')->willReturn(new BoolResponse(false));
+        $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
+
+        $lockIndexCreated = false;
+        $indices->expects($this->exactly(2))->method('create')->willReturnCallback(function ($params) use (&$lockIndexCreated) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                $lockIndexCreated = true;
+                $this->assertEquals(1, $params['body']['settings']['number_of_shards'] ?? 0);
+                $this->assertEquals(0, $params['body']['settings']['number_of_replicas'] ?? 1);
+            }
+            return new ArrayResponse(['acknowledged' => true]);
+        });
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
+        $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
+        Index::setClient($client);
+
+        $index = new class extends Index {
+            public function __construct()
+            {
+                $this->name = 'products';
+            }
+
+            public function source(array $context = []): iterable
+            {
+                return [];
+            }
+        };
+
+        (new Rebuild($index))->allowEmpty()->run();
     }
 }
