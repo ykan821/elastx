@@ -128,17 +128,17 @@ class OrderIndex extends Index
 
         // 精确筛选（不需要评分，放 filter）
         if (!empty($filters['status'])) {
-            $bool->addFilter(Term::create('status', $filters['status']));
+            $bool->filter(Term::create('status', $filters['status']));
         }
 
         if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
-            $bool->addFilter(Range::create('created_at', [$filters['start_date'], $filters['end_date']]));
+            $bool->filter(Range::create('created_at', [$filters['start_date'], $filters['end_date']]));
         }
 
         // 关键词搜索（OR，放 should）
         if (!empty($filters['keyword'])) {
-            $bool->addShould(Wildcard::create('order_no', "*{$filters['keyword']}*"));
-            $bool->addShould(Wildcard::create('merchant_name', "*{$filters['keyword']}*"));
+            $bool->should(Wildcard::create('order_no', "*{$filters['keyword']}*"));
+            $bool->should(Wildcard::create('merchant_name', "*{$filters['keyword']}*"));
         }
 
         return static::query(Query::create($bool));
@@ -160,7 +160,7 @@ public function index(Request $request)
 }
 ```
 
-> 条件用 `if` 逐个判断，只有传了值才加查询。`addShould()` 实现 OR 搜索。深分页场景用 `cursor()` 替代 `paginate()`。
+> 条件用 `if` 逐个判断，只有传了值才加查询。`should()` 实现 OR 搜索。深分页场景用 `cursor()` 替代 `paginate()`。
 
 运营还要导出筛选结果到 Excel。ES 默认 `max_result_window = 10000`，`from/size` 翻不到后面的数据，用 `cursor()` 基于 scroll 遍历：
 

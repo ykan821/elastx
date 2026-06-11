@@ -38,8 +38,8 @@ PSR-5 规范。
 
 ## 待办
 
-- [ ] **clone query 后 try-finally 恢复**：first() / paginate() 等方法 clone query 后修改状态，需 try-finally 确保恢复
-- [ ] **ClausesSupport API 统一**：废弃 addXXX() 方法，原 API（如 must()）直接使用追加语义
+- [x] **clone query 后 try-finally 恢复**：first() / paginate() 等方法 clone query 后修改状态，需 try-finally 确保恢复
+- [x] **ClausesSupport API 统一**：must()/should()/filter() 等改为追加语义，移除 addXXX() 方法
 - [ ] **hasMore() 判断逻辑修复**：待确认（看代码）
 - [ ] **Rebuild::rollback() 支持多索引别名**：当前只移除 `$currentList[0]`，应遍历全部 remove，参考 `doRun()` 循环写法
 - [ ] **Index::$name 空验证**：子类未设置 `$name` 时抛异常

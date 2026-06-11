@@ -79,7 +79,7 @@ $bool = Boolean::create()
 
 // 增量构建
 if ($filterByPrice) {
-    $bool->addFilter(Range::create('price', [10, 100]));
+    $bool->filter(Range::create('price', [10, 100]));
 }
 
 $query = Query::create($bool);

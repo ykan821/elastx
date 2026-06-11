@@ -585,8 +585,8 @@ JSON;
     {
         $query = new Query();
         $query->bool(function (Boolean $b) {
-            $b->addMust(new \ElasticKit\DSL\Queries\FullText\Match_('title', 'test'));
-            $b->addFilter(new \ElasticKit\DSL\Queries\TermLevel\Term('status', 'published'));
+            $b->must(new \ElasticKit\DSL\Queries\FullText\Match_('title', 'test'));
+            $b->filter(new \ElasticKit\DSL\Queries\TermLevel\Term('status', 'published'));
         });
         $expectedJson = <<<JSON
 {
@@ -610,11 +610,11 @@ JSON;
         $filters = ['brand' => 'nike', 'color' => 'red'];
         $query = new Query();
         $query->bool(function (Boolean $b) use ($filters) {
-            $b->addMust(function (Query $q) {
+            $b->must(function (Query $q) {
                 $q->match('title', 'shoes');
             });
             foreach ($filters as $field => $value) {
-                $b->addFilter(new \ElasticKit\DSL\Queries\TermLevel\Term($field, $value));
+                $b->filter(new \ElasticKit\DSL\Queries\TermLevel\Term($field, $value));
             }
         });
         $expectedJson = <<<JSON
@@ -639,10 +639,10 @@ JSON;
     {
         $query = new Query();
         $query->disMax(function (DisjunctionMax $dm) {
-            $dm->addQuery(function (Query $q) {
+            $dm->queries(function (Query $q) {
                 $q->term('title', 'Quick pets');
             });
-            $dm->addQuery(function (Query $q) {
+            $dm->queries(function (Query $q) {
                 $q->term('body', 'Quick pets');
             });
             $dm->tieBreaker(0.7);

@@ -312,10 +312,10 @@ JSON;
 JSON;
         $query = new Query();
         $query->spanOr(function (SpanOr $spanOr) {
-            $spanOr->addClause(function (Query $q) {
+            $spanOr->clauses(function (Query $q) {
                 $q->spanTerm('field1', 'bar');
             });
-            $spanOr->addClause(function (Query $q) {
+            $spanOr->clauses(function (Query $q) {
                 $q->spanTerm('field2', 'baz');
             });
         });
@@ -340,10 +340,10 @@ JSON;
 JSON;
         $query = new Query();
         $query->spanNear(function (SpanNear $spanNear) {
-            $spanNear->addClause(function (Query $q) {
+            $spanNear->clauses(function (Query $q) {
                 $q->spanTerm('field1', 'bar');
             });
-            $spanNear->addClause(function (Query $q) {
+            $spanNear->clauses(function (Query $q) {
                 $q->spanTerm('field2', 'baz');
             });
             $spanNear->slop(5)->inOrder(true);

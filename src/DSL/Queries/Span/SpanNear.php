@@ -4,7 +4,6 @@ namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Shared\ClausesSupport;
 use ElasticKit\DSL\Node;
-use ElasticKit\DSL\Query;
 
 /**
  * Matches spans that are near each other, with configurable slop and ordering.
@@ -17,24 +16,14 @@ class SpanNear extends Node
 
     /**
      * The list of span query clauses that must appear near each other.
+     * Supports multiple calls to incrementally build.
      *
      * @param mixed $clauses
      * @return static
      */
     public function clauses($clauses)
     {
-        return $this->addProperty('clauses', Query::create($clauses)->multi(true));
-    }
-
-    /**
-     * Append a span query clause. Supports multiple calls to incrementally build.
-     *
-     * @param mixed $clause
-     * @return static
-     */
-    public function addClause($clause)
-    {
-        return $this->pushClause('clauses', $clause);
+        return $this->addClause('clauses', $clauses);
     }
 
     /**

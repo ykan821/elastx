@@ -4,7 +4,6 @@ namespace ElasticKit\DSL\Queries\Compound;
 
 use ElasticKit\DSL\Shared\ClausesSupport;
 use ElasticKit\DSL\Node;
-use ElasticKit\DSL\Query;
 
 /**
  * Returns documents matching one or more wrapped queries, called query clauses or clauses.
@@ -17,24 +16,14 @@ class DisjunctionMax extends Node
 
     /**
      * Contains one or more query clauses. Returned documents must match one or more of these queries. If a document matches multiple queries, Elasticsearch uses the highest relevance score.
+     * Supports multiple calls to incrementally build.
      *
      * @param mixed $queries
      * @return static
      */
     public function queries($queries)
     {
-        return $this->addProperty('queries', Query::create($queries)->multi(true));
-    }
-
-    /**
-     * Append a query clause. Supports multiple calls to incrementally build.
-     *
-     * @param mixed $query
-     * @return static
-     */
-    public function addQuery($query)
-    {
-        return $this->pushClause('queries', $query);
+        return $this->addClause('queries', $queries);
     }
 
     /**

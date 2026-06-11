@@ -48,7 +48,7 @@ class Query extends Node
      *
      * @var array<int, mixed>
      */
-    protected $_queryClauses = [];
+    protected $_queries = [];
 
     /**
      * Aggregation nodes stored independently from type properties.
@@ -101,16 +101,26 @@ class Query extends Node
         if ($field instanceof Closure) {
             $field($this);
         } elseif ($field instanceof Node) {
-            $this->_queryClauses[] = $field;
+            $this->_queries[] = $field;
         } elseif (is_array($field)) {
             if (array_key_exists('query', $field)) {
                 $this->_properties = $field;
             } else {
-                $this->_queryClauses[] = $field;
+                $this->_queries[] = $field;
             }
         } elseif ($field !== null) {
             $this->_properties = $field;
         }
+    }
+
+    /**
+     * Get all query clauses.
+     *
+     * @return array<int, mixed>
+     */
+    public function getQueries()
+    {
+        return $this->_queries;
     }
 
     /**
@@ -121,7 +131,7 @@ class Query extends Node
      */
     public function addQuery($query)
     {
-        $this->_queryClauses[] = $query;
+        $this->_queries[] = $query;
         return $this;
     }
 
@@ -234,17 +244,25 @@ class Query extends Node
      */
     private function buildQuery()
     {
-        if (empty($this->_queryClauses)) {
+        if (empty($this->_queries)) {
             return $this->_multi ? (object)[] : [];
         }
 
-        $clauses = [];
-        foreach ($this->_queryClauses as $query) {
-            if ($query instanceof Query) {
-                foreach ($query->toArray()['query'] as $field => $item) {
-                    $clauses[] = [$field => $item];
+        // Flatten nested Query instances
+        $flat = [];
+        foreach ($this->_queries as $item) {
+            if ($item instanceof self) {
+                foreach ($item->getQueries() as $clause) {
+                    $flat[] = $clause;
                 }
-            } elseif ($query instanceof Node) {
+            } else {
+                $flat[] = $item;
+            }
+        }
+
+        $clauses = [];
+        foreach ($flat as $query) {
+            if ($query instanceof Node) {
                 $clauses[] = [$query->key() => $query->toArray()];
             } elseif (is_array($query)) {
                 foreach ($query as $field => $item) {
