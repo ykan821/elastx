@@ -64,10 +64,11 @@ trait AggregationShortcut
         $this->query = clone $this->query;
         $this->query->size(0);
         $this->query->aggs('__scalar', [$type => ['field' => $field]]);
-
-        $response = $this->doSearch($type);
-
-        $this->query = $saved;
+        try {
+            $response = $this->doSearch($type);
+        } finally {
+            $this->query = $saved;
+        }
 
         return $response['aggregations']['__scalar']['value'] ?? null;
     }

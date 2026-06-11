@@ -4,6 +4,7 @@ namespace ElasticKit\Index;
 
 use BadMethodCallException;
 use ElasticKit\DSL\Query;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -96,10 +97,11 @@ class Search
         $saved = $this->query;
         $this->query = clone $this->query;
         $this->query->size(1);
-
-        $response = $this->doSearch('first');
-
-        $this->query = $saved;
+        try {
+            $response = $this->doSearch('first');
+        } finally {
+            $this->query = $saved;
+        }
 
         $docs = (new Results($response))->docs();
         return $docs[0] ?? null;
@@ -112,7 +114,13 @@ class Search
      */
     public function count()
     {
-        return $this->doCount()['count'];
+        $response = $this->doCount();
+
+        if (!isset($response['count'])) {
+            throw new RuntimeException('Missing "count" in Elasticsearch response.');
+        }
+
+        return $response['count'];
     }
 
     /**
@@ -135,9 +143,11 @@ class Search
             $this->query->size(1000);
         }
 
-        $response = $this->doSearch('scroll', ['scroll' => $duration]);
-
-        $this->query = $saved;
+        try {
+            $response = $this->doSearch('scroll', ['scroll' => $duration]);
+        } finally {
+            $this->query = $saved;
+        }
 
         return new Results($response);
     }
@@ -252,10 +262,11 @@ class Search
         $this->query = clone $this->query;
         $this->query->from(($page - 1) * $perPage);
         $this->query->size($perPage);
-
-        $response = $this->doSearch('paginate');
-
-        $this->query = $saved;
+        try {
+            $response = $this->doSearch('paginate');
+        } finally {
+            $this->query = $saved;
+        }
 
         return (new Results($response))->paginate($page, $perPage);
     }
