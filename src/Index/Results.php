@@ -104,13 +104,13 @@ class Results
     }
 
     /**
-     * Return the aggregations from the response.
+     * Return the aggregations from the response, or null if none were requested.
      *
-     * @return array<string, mixed>
+     * @return array<string, mixed>|null
      */
     public function aggregations()
     {
-        return $this->response['aggregations'] ?? [];
+        return $this->response['aggregations'] ?? null;
     }
 
     /**
@@ -124,7 +124,19 @@ class Results
     }
 
     /**
-     * Return whether there are more hits available.
+     * Return the hits.total.relation value from the Elasticsearch response.
+     *
+     * "eq" = total is exact, "gte" = total is a lower bound.
+     *
+     * @return string "eq" or "gte"
+     */
+    public function totalRelation()
+    {
+        return $this->response['hits']['total']['relation'];
+    }
+
+    /**
+     * Return whether the current batch contains hits.
      *
      * @return bool
      */

@@ -40,7 +40,7 @@ PSR-5 规范。
 
 - [x] **clone query 后 try-finally 恢复**：first() / paginate() 等方法 clone query 后修改状态，需 try-finally 确保恢复
 - [x] **ClausesSupport API 统一**：must()/should()/filter() 等改为追加语义，移除 addXXX() 方法
-- [ ] **hasMore() 判断逻辑修复**：待确认（看代码）
+- [x] **hasMore() 确认无 bug**：scroll 场景 !empty(hits) 正确，分页应用 page()<lastPage()
 - [ ] **Rebuild::rollback() 支持多索引别名**：当前只移除 `$currentList[0]`，应遍历全部 remove，参考 `doRun()` 循环写法
 - [ ] **Index::$name 空验证**：子类未设置 `$name` 时抛异常
 - [ ] **锁抽取为独立类**：通用分布式锁（acquire/release/forceUnlock/isLocked + ensureLockIndex），Bulk 等可复用

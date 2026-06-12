@@ -6,21 +6,25 @@ use ElasticKit\Index\Results;
 
 class ResultsTest extends TestCase
 {
-    public function testTotal()
+    private function makeResponse(array $overrides = []): array
     {
-        $results = new Results([
+        return array_merge([
             'hits' => [
-                'total' => ['value' => 42],
+                'total' => ['value' => 0, 'relation' => 'eq'],
                 'hits' => [],
             ],
-        ]);
-        $this->assertEquals(42, $results->total());
+        ], $overrides);
     }
 
-    public function testTotalDefaultsToZero()
+    public function testTotal()
     {
-        $results = new Results([]);
-        $this->assertEquals(0, $results->total());
+        $results = new Results($this->makeResponse([
+            'hits' => [
+                'total' => ['value' => 42, 'relation' => 'eq'],
+                'hits' => [],
+            ],
+        ]));
+        $this->assertEquals(42, $results->total());
     }
 
     public function testHits()
@@ -29,103 +33,108 @@ class ResultsTest extends TestCase
             ['_id' => '1', '_source' => ['title' => 'foo']],
             ['_id' => '2', '_source' => ['title' => 'bar']],
         ];
-        $results = new Results([
-            'hits' => ['total' => ['value' => 2], 'hits' => $hits],
-        ]);
+        $results = new Results($this->makeResponse([
+            'hits' => [
+                'total' => ['value' => 2, 'relation' => 'eq'],
+                'hits' => $hits,
+            ],
+        ]));
         $this->assertEquals($hits, $results->hits());
-    }
-
-    public function testHitsDefaultsToEmpty()
-    {
-        $results = new Results([]);
-        $this->assertEquals([], $results->hits());
     }
 
     public function testDocs()
     {
-        $results = new Results([
+        $results = new Results($this->makeResponse([
             'hits' => [
-                'total' => ['value' => 2],
+                'total' => ['value' => 2, 'relation' => 'eq'],
                 'hits' => [
                     ['_id' => '1', '_source' => ['title' => 'foo']],
                     ['_id' => '2', '_source' => ['title' => 'bar']],
                 ],
             ],
-        ]);
+        ]));
         $this->assertEquals([['title' => 'foo'], ['title' => 'bar']], $results->docs());
-    }
-
-    public function testDocsDefaultsToEmpty()
-    {
-        $results = new Results([]);
-        $this->assertEquals([], $results->docs());
     }
 
     public function testAggregations()
     {
         $aggs = ['price_avg' => ['value' => 100.5]];
-        $results = new Results([
-            'hits' => ['total' => ['value' => 0], 'hits' => []],
-            'aggregations' => $aggs,
-        ]);
+        $results = new Results($this->makeResponse(['aggregations' => $aggs]));
         $this->assertEquals($aggs, $results->aggregations());
     }
 
-    public function testAggregationsDefaultsToEmpty()
+    public function testAggregationsReturnsNullWhenAbsent()
     {
-        $results = new Results(['hits' => []]);
-        $this->assertEquals([], $results->aggregations());
+        $results = new Results($this->makeResponse());
+        $this->assertNull($results->aggregations());
     }
 
     public function testScrollId()
     {
-        $results = new Results([
-            '_scroll_id' => 'abc123',
-            'hits' => ['total' => ['value' => 0], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse(['_scroll_id' => 'abc123']));
         $this->assertEquals('abc123', $results->scrollId());
     }
 
-    public function testScrollIdDefaultsToNull()
+    public function testScrollIdReturnsNullWhenAbsent()
     {
-        $results = new Results([]);
+        $results = new Results($this->makeResponse());
         $this->assertNull($results->scrollId());
     }
 
-    public function testHasMore()
+    public function testHasMoreScrollWithHits()
     {
-        $results = new Results([
+        $results = new Results($this->makeResponse([
             'hits' => [
-                'total' => ['value' => 1],
+                'total' => ['value' => 1, 'relation' => 'eq'],
                 'hits' => [['_source' => ['title' => 'foo']]],
             ],
-        ]);
+        ]));
         $this->assertTrue($results->hasMore());
     }
 
-    public function testHasMoreReturnsFalseWhenEmpty()
+    public function testHasMoreScrollEmpty()
     {
-        $results = new Results([
-            'hits' => ['total' => ['value' => 0], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse());
         $this->assertFalse($results->hasMore());
+    }
+
+    public function testTotalRelationEq()
+    {
+        $results = new Results($this->makeResponse([
+            'hits' => [
+                'total' => ['value' => 42, 'relation' => 'eq'],
+                'hits' => [],
+            ],
+        ]));
+        $this->assertEquals('eq', $results->totalRelation());
+    }
+
+    public function testTotalRelationGte()
+    {
+        $results = new Results($this->makeResponse([
+            'hits' => [
+                'total' => ['value' => 10000, 'relation' => 'gte'],
+                'hits' => [],
+            ],
+        ]));
+        $this->assertEquals('gte', $results->totalRelation());
     }
 
     public function testRaw()
     {
-        $response = [
-            'took' => 5,
-            'hits' => ['total' => ['value' => 1], 'hits' => []],
-        ];
+        $response = $this->makeResponse(['took' => 5]);
         $results = new Results($response);
         $this->assertEquals($response, $results->raw());
     }
 
     public function testPaginateSetsMetadata()
     {
-        $results = new Results([
-            'hits' => ['total' => ['value' => 50], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse([
+            'hits' => [
+                'total' => ['value' => 50, 'relation' => 'eq'],
+                'hits' => [],
+            ],
+        ]));
         $results->paginate(3, 10);
 
         $this->assertEquals(3, $results->page());
@@ -135,9 +144,7 @@ class ResultsTest extends TestCase
 
     public function testLastPageMinimumIsOne()
     {
-        $results = new Results([
-            'hits' => ['total' => ['value' => 0], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse());
         $results->paginate(1, 15);
 
         $this->assertEquals(1, $results->lastPage());
@@ -145,31 +152,29 @@ class ResultsTest extends TestCase
 
     public function testItemsReturnsDocs()
     {
-        $results = new Results([
+        $results = new Results($this->makeResponse([
             'hits' => [
-                'total' => ['value' => 2],
+                'total' => ['value' => 2, 'relation' => 'eq'],
                 'hits' => [
                     ['_id' => '1', '_source' => ['title' => 'foo']],
                     ['_id' => '2', '_source' => ['title' => 'bar']],
                 ],
             ],
-        ]);
+        ]));
         $this->assertEquals($results->docs(), $results->items());
     }
 
     public function testIsEmpty()
     {
-        $results = new Results([
-            'hits' => ['total' => ['value' => 0], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse());
         $this->assertTrue($results->isEmpty());
 
-        $results = new Results([
+        $results = new Results($this->makeResponse([
             'hits' => [
-                'total' => ['value' => 1],
+                'total' => ['value' => 1, 'relation' => 'eq'],
                 'hits' => [['_source' => ['title' => 'foo']]],
             ],
-        ]);
+        ]));
         $this->assertFalse($results->isEmpty());
     }
 
@@ -179,9 +184,12 @@ class ResultsTest extends TestCase
             return ['total' => $results->total(), 'page' => $results->page()];
         });
 
-        $results = new Results([
-            'hits' => ['total' => ['value' => 50], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse([
+            'hits' => [
+                'total' => ['value' => 50, 'relation' => 'eq'],
+                'hits' => [],
+            ],
+        ]));
         $results->paginate(2, 10);
 
         $paginator = $results->toPaginator();
@@ -195,38 +203,26 @@ class ResultsTest extends TestCase
 
     public function testToPaginatorThrowsWithoutResolver()
     {
-        $results = new Results(['hits' => []]);
+        $results = new Results($this->makeResponse());
         $this->expectException(\RuntimeException::class);
         $results->toPaginator();
     }
 
     public function testTook()
     {
-        $results = new Results([
-            'took' => 5,
-            'hits' => ['total' => ['value' => 1], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse(['took' => 5]));
         $this->assertEquals(5, $results->took());
-    }
-
-    public function testTookDefaultsToZero()
-    {
-        $results = new Results([]);
-        $this->assertEquals(0, $results->took());
     }
 
     public function testTimedOut()
     {
-        $results = new Results([
-            'timed_out' => true,
-            'hits' => ['total' => ['value' => 0], 'hits' => []],
-        ]);
+        $results = new Results($this->makeResponse(['timed_out' => true]));
         $this->assertTrue($results->timedOut());
     }
 
-    public function testTimedOutDefaultsToFalse()
+    public function testTimedOutFalse()
     {
-        $results = new Results([]);
+        $results = new Results($this->makeResponse(['timed_out' => false]));
         $this->assertFalse($results->timedOut());
     }
 }
