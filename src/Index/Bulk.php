@@ -3,6 +3,7 @@
 namespace ElasticKit\Index;
 
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Batch document operations using the ES _bulk API.
@@ -40,6 +41,11 @@ class Bulk
     private $docCount = 0;
 
     /**
+     * @var callable|null
+     */
+    private $errorHandler = null;
+
+    /**
      * @param Index $index
      */
     public function __construct(Index $index)
@@ -75,6 +81,22 @@ class Bulk
     {
         $this->batchSize = $size;
 
+        return $this;
+    }
+
+    /**
+     * Set a callback to handle bulk errors.
+     *
+     * The callback receives the raw ES response. To continue execution, simply
+     * return without throwing. To abort, throw an exception from the callback.
+     * Without an error handler, execute() throws RuntimeException on errors.
+     *
+     * @param callable $handler function (array $response): void
+     * @return $this
+     */
+    public function onError($handler)
+    {
+        $this->errorHandler = $handler;
         return $this;
     }
 
@@ -212,6 +234,18 @@ class Bulk
         $e->response = $response;
         $e->duration = $duration;
         Index::dispatch($e);
+
+        if (!empty($response['errors'])) {
+            if ($this->errorHandler) {
+                ($this->errorHandler)($response);
+            } else {
+                $json = json_encode($response, JSON_UNESCAPED_UNICODE);
+                if (strlen($json) > 4096) {
+                    $json = substr($json, 0, 4096) . '... [truncated]';
+                }
+                throw new RuntimeException("Bulk request has errors: {$json}");
+            }
+        }
 
         return $response;
     }

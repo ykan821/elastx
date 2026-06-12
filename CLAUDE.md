@@ -46,7 +46,7 @@ PSR-5 规范。
 - [ ] **锁抽取为独立类**：通用分布式锁（acquire/release/forceUnlock/isLocked + ensureLockIndex），Bulk 等可复用
 - [ ] **$client 抽到 Registry 类**：新建 Registry 持有 client / pageResolver / paginatorResolver / listeners，Index 不再持有静态状态。旧 API 保留作 deprecated 代理，前期统一放 Registry，后续按需拆分
 - [x] **Node 构造函数重构**：拆分为 fromKeyValue/fromClosure/fromArrayField/fromScalar
-- [ ] **Bulk skipErrors() 设计**：参考 Rebuild 的 skipErrors 模式
+- [x] **Bulk/Rebuild onError 设计**：Bulk 加 onError(callback) 默认 throw，Rebuild 删 skipErrors 加 onError，删 rebuild.import.failed 事件
 - [ ] **补核心路径的边界测试**：scroll、bulk 分批、rebuild 失败回滚
 - [ ] **搭建集成测试基建**：`ELASTICKIT_TEST_HOST` 驱动，随机索引名隔离
 
@@ -60,6 +60,8 @@ PSR-5 规范。
 | `PROJECT_PATH` | 项目在容器内的路径 |
 | `PROXY_PORT` | HTTP 代理端口（推送用） |
 | `ELASTICKIT_TEST_HOST` | ES 集成测试地址（如 `https://localhost:9200`），不设置则跳过集成测试 |
+
+## 推送代码前需要执行4件套
 
 ```bash
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite unit"

@@ -636,4 +636,85 @@ class RebuildTest extends TestCase
 
         (new Rebuild($index))->allowEmpty()->run();
     }
+
+    public function testOnErrorReceivesResponse()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturn(new BoolResponse(false));
+        $indices->method('existsAlias')->willReturn(new BoolResponse(false));
+        $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
+
+        $errorResponse = [
+            'errors' => true,
+            'items' => [
+                ['index' => ['_id' => '1', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+            ],
+        ];
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
+        $client->method('bulk')->willReturn(new ArrayResponse($errorResponse));
+        Index::setClient($client);
+
+        $index = new class extends Index {
+            public function __construct()
+            {
+                $this->name = 'products';
+            }
+
+            public function source(array $context = []): iterable
+            {
+                yield 1 => ['title' => 'A'];
+            }
+        };
+
+        $received = null;
+        (new Rebuild($index))
+            ->onError(function ($response) use (&$received) {
+                $received = $response;
+            })
+            ->run();
+
+        $this->assertEquals($errorResponse, $received);
+    }
+
+    public function testOnErrorPreventsException()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturn(new BoolResponse(false));
+        $indices->method('existsAlias')->willReturn(new BoolResponse(false));
+        $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        $client->method('delete')->willReturn(new ArrayResponse(['result' => 'deleted']));
+        $client->method('bulk')->willReturn(new ArrayResponse([
+            'errors' => true,
+            'items' => [],
+        ]));
+        Index::setClient($client);
+
+        $index = new class extends Index {
+            public function __construct()
+            {
+                $this->name = 'products';
+            }
+
+            public function source(array $context = []): iterable
+            {
+                yield 1 => ['title' => 'A'];
+            }
+        };
+
+        // Without onError, would throw. With onError (empty callback), completes successfully.
+        $result = (new Rebuild($index))
+            ->onError(function () {})
+            ->run();
+
+        $this->assertStringStartsWith('products_', $result['newIndex']);
+    }
 }

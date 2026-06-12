@@ -164,6 +164,28 @@ $bulk->delete(3);
 $bulk->execute(); // 执行所有操作，执行后清空状态
 ```
 
+### 错误处理
+
+`execute()` 默认在响应包含错误时抛出 `RuntimeException`。使用 `onError()` 自定义处理。回调接收 ES 原始响应，不抛出则继续，抛出则中断：
+
+```php
+$bulk = new Bulk(new ProductIndex());
+
+// 不设 onError → 有错误就抛异常
+$bulk->execute();
+
+// 设 onError → 回调内不抛则继续，抛则中断
+$bulk->onError(function (array $response) {
+    $failures = count(array_filter($response['items'], fn($i) => isset($i['index']['error'])));
+    if ($failures > 100) {
+        throw new RuntimeException("失败超过阈值: {$failures}");
+    }
+    Log::warning("部分失败: {$failures} 条");
+})->execute();
+```
+
+> `batchSize` 自动 flush 时的错误同样走 `onError`，不会丢失。
+
 ## 零停机重建
 
 创建新索引 → 导入数据 → 切换别名。
@@ -242,14 +264,12 @@ $rebuild->run(['after' => '2024-01-01']);
 
 ### 错误处理
 
-导入错误会触发 `rebuild.import.failed` 事件（始终），并抛出异常（默认）。使用 `skipErrors()` 抑制异常但保留事件通知：
+Rebuild 内部使用 Bulk 执行导入，`onError()` 用法与 [批量操作 > 错误处理](#错误处理) 一致：
 
 ```php
-Index::listen('rebuild.import.failed', function (Event $e) {
-    Log::warning("重建导入错误", $e->response);
-});
-
-$rebuild->skipErrors()->run();  // 通过事件记录错误，不中断
+$rebuild->onError(function (array $response) {
+    Log::warning("重建导入错误", $response);
+})->run();
 ```
 
 > rebuild 期间 DB 仍在变更，新索引是开始时刻的快照，建议 rebuild 后通过 `updated_at` 增量同步补齐。
@@ -351,4 +371,3 @@ Index::setClient($client);
 | `manager.swap_alias.after` | `$response` |
 | `rebuild.run.before` | |
 | `rebuild.run.after` | `$newIndex`, `$oldIndex` |
-| `rebuild.import.failed` | `$response` |

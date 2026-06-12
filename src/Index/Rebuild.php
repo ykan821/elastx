@@ -30,9 +30,9 @@ class Rebuild
     private $batchSize = 1000;
 
     /**
-     * @var bool
+     * @var callable|null
      */
-    private $skipErrors = false;
+    private $errorHandler = null;
 
     /**
      * @var bool
@@ -65,14 +65,18 @@ class Rebuild
     }
 
     /**
-     * Skip bulk import errors instead of throwing. Defaults to false.
+     * Set a callback to handle bulk import errors.
      *
-     * @param bool $skip
+     * The callback receives the raw ES response. To continue the rebuild, simply
+     * return without throwing. To abort, throw an exception from the callback.
+     * Without an error handler, import errors cause the rebuild to abort.
+     *
+     * @param callable $handler function (array $response): void
      * @return $this
      */
-    public function skipErrors($skip = true)
+    public function onError($handler)
     {
-        $this->skipErrors = $skip;
+        $this->errorHandler = $handler;
         return $this;
     }
 
@@ -372,6 +376,10 @@ class Rebuild
         }
 
         $bulk = (new Bulk($this->index))->target($newName)->batchSize($this->batchSize);
+        if ($this->errorHandler) {
+            $bulk->onError($this->errorHandler);
+        }
+
         $count = 0;
         foreach ($items as $id => $doc) {
             if (!is_array($doc)) {
@@ -391,20 +399,6 @@ class Rebuild
             );
         }
 
-        $response = $bulk->execute();
-
-        if (!empty($response['errors'])) {
-            $e = new Event('rebuild.import.failed', $this->index->name());
-            $e->response = $response;
-            Index::dispatch($e);
-
-            if (!$this->skipErrors) {
-                $json = json_encode($response, JSON_UNESCAPED_UNICODE);
-                if (strlen($json) > 4096) {
-                    $json = substr($json, 0, 4096) . '... [truncated]';
-                }
-                throw new RuntimeException("Bulk import failed for index [{$newName}]: {$json}");
-            }
-        }
+        $bulk->execute();
     }
 }

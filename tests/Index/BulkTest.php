@@ -269,4 +269,85 @@ class BulkTest extends TestCase
 
         $this->assertEquals([], $result);
     }
+
+    public function testExecuteThrowsOnErrors()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturn(new ArrayResponse([
+            'errors' => true,
+            'items' => [
+                ['index' => ['_id' => '1', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+            ],
+        ]));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $this->expectException(\RuntimeException::class);
+        (new Bulk($index))->index('1', ['title' => 'foo'])->execute();
+    }
+
+    public function testExecuteCallsOnError()
+    {
+        $client = $this->createMock(TestClient::class);
+        $errorResponse = [
+            'errors' => true,
+            'items' => [
+                ['index' => ['_id' => '1', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+            ],
+        ];
+        $client->method('bulk')->willReturn(new ArrayResponse($errorResponse));
+        Index::setClient($client);
+
+        $received = null;
+        $index = $this->createIndex('products');
+        (new Bulk($index))
+            ->onError(function ($response) use (&$received) {
+                $received = $response;
+            })
+            ->index('1', ['title' => 'foo'])
+            ->execute();
+
+        $this->assertEquals($errorResponse, $received);
+    }
+
+    public function testAutoFlushCallsOnError()
+    {
+        $errorResponse = [
+            'errors' => true,
+            'items' => [
+                ['index' => ['_id' => '1', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+            ],
+        ];
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturn(new ArrayResponse($errorResponse));
+        Index::setClient($client);
+
+        $received = null;
+        $index = $this->createIndex('products');
+        $bulk = (new Bulk($index))
+            ->batchSize(1)
+            ->onError(function ($response) use (&$received) {
+                $received = $response;
+            });
+
+        $bulk->index('1', ['title' => 'foo']); // triggers auto-flush
+
+        $this->assertEquals($errorResponse, $received);
+    }
+
+    public function testAutoFlushThrowsOnErrorsWithoutHandler()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturn(new ArrayResponse([
+            'errors' => true,
+            'items' => [],
+        ]));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $bulk = (new Bulk($index))->batchSize(1);
+
+        $this->expectException(\RuntimeException::class);
+        $bulk->index('1', ['title' => 'foo']); // auto-flush throws
+    }
 }
