@@ -19,30 +19,25 @@ class ClientManager
      * Register an Elasticsearch client. Optionally name the connection.
      *
      * @param ClientInterface $client
-     * @param string|null $name connection name, null for default
+     * @param string $name connection name, defaults to 'default'
      * @return void
      */
-    public static function set(ClientInterface $client, $name = null)
+    public static function set(ClientInterface $client, string $name = 'default'): void
     {
-        self::$clients[$name ?? 'default'] = $client;
+        self::$clients[$name] = $client;
     }
 
     /**
      * Return the Elasticsearch client for the given connection name.
      *
-     * Falls back to 'default' if the named connection is not registered.
-     *
      * @param string $connection
      * @return ClientInterface
-     * @throws RuntimeException if no client is registered
+     * @throws RuntimeException if the connection is not registered
      */
-    public static function get($connection = 'default')
+    public static function get(string $connection = 'default'): ClientInterface
     {
         if (isset(self::$clients[$connection])) {
             return self::$clients[$connection];
-        }
-        if (isset(self::$clients['default'])) {
-            return self::$clients['default'];
         }
         throw new RuntimeException(
             "Elasticsearch client not registered for connection '{$connection}'. "
@@ -55,7 +50,7 @@ class ClientManager
      *
      * @return void
      */
-    public static function reset()
+    public static function reset(): void
     {
         self::$clients = [];
     }

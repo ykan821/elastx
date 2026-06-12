@@ -1,12 +1,19 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use ElasticKit\Index\ClientManager;
 use ElasticKit\Index\Index;
 use ElasticKit\Index\Pagination;
 use ElasticKit\Index\Results;
 
 class ResultsTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        ClientManager::reset();
+        Pagination::reset();
+    }
+
     private function makeResponse(array $overrides = []): array
     {
         return array_merge([
@@ -181,7 +188,7 @@ class ResultsTest extends TestCase
 
     public function testToPaginatorCallsResolver()
     {
-        Index::setPaginatorResolver(function (Results $results) {
+        Pagination::setPaginatorResolver(function (Results $results) {
             return ['total' => $results->total(), 'page' => $results->page()];
         });
 
@@ -195,9 +202,6 @@ class ResultsTest extends TestCase
 
         $paginator = $results->toPaginator();
         $this->assertEquals(['total' => 50, 'page' => 2], $paginator);
-
-        // Clean up
-        Pagination::reset();
     }
 
     public function testToPaginatorThrowsWithoutResolver()

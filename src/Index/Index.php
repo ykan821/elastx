@@ -48,11 +48,10 @@ abstract class Index
      * Register an Elasticsearch client. Optionally name the connection.
      *
      * @param ClientInterface $client
-     * @param string|null $name connection name, null for default
+     * @param string $name connection name, defaults to 'default'
      * @return void
-     * @deprecated Use ClientManager::set() instead
      */
-    public static function setClient(ClientInterface $client, $name = null)
+    public static function setClient(ClientInterface $client, string $name = 'default'): void
     {
         ClientManager::set($client, $name);
     }
@@ -62,9 +61,43 @@ abstract class Index
      *
      * @return ClientInterface
      */
-    public function getClient()
+    public function getClient(): ClientInterface
     {
         return ClientManager::get($this->connection);
+    }
+
+    /**
+     * Set the connection name for this index instance.
+     *
+     * @param string $connection
+     * @return $this
+     */
+    public function setConnection(string $connection)
+    {
+        $this->connection = $connection;
+
+        return $this;
+    }
+
+    /**
+     * Return the connection name for this index.
+     *
+     * @return string
+     */
+    public function getConnection(): string
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Create a new index instance with the given connection.
+     *
+     * @param string $connection
+     * @return static
+     */
+    public static function on(string $connection)
+    {
+        return (new static())->setConnection($connection);
     }
 
     /**
@@ -84,43 +117,47 @@ abstract class Index
     }
 
     /**
-     * Create a new Search instance. Supports both static and instance call.
+     * Create a new Search instance from this index instance.
      *
+     * @param Query|null $query
+     * @return Search
+     */
+    public function newQuery(Query $query = null)
+    {
+        return new Search($this, $query);
+    }
+
+    /**
+     * Create a Search instance. Delegates to newQuery() with a fresh instance.
+     *
+     * @param Query|null $query
      * @return Search
      */
     public static function query(Query $query = null)
     {
-        return new Search(new static(), $query);
+        return (new static())->newQuery($query);
     }
 
     /**
-     * Create a DocReference for a single document. Supports both static and instance call.
+     * Create a Doc reference from this index instance.
+     *
+     * @param string|int $id
+     * @return Doc
+     */
+    public function newDoc($id)
+    {
+        return new Doc($this, $id);
+    }
+
+    /**
+     * Create a Doc reference. Delegates to newDoc() with a fresh instance.
      *
      * @param string|int $id
      * @return Doc
      */
     public static function doc($id)
     {
-        return new Doc(new static(), $id);
-    }
-
-    /**
-     * Insert (create or overwrite) a single document.
-     *
-     * @param string|int|null $id document ID, null or empty string to let ES auto-generate
-     * @param array<string, mixed> $document document body
-     * @return array<string, mixed>
-     */
-    public static function insert($id, array $document)
-    {
-        $index = new static();
-        $params = ['index' => $index->name(), 'body' => $document];
-
-        if ($id !== null && $id !== '') {
-            $params['id'] = $id;
-        }
-
-        return $index->getClient()->index($params)->asArray();
+        return (new static())->newDoc($id);
     }
 
     /**
@@ -174,52 +211,6 @@ abstract class Index
     }
 
     /**
-     * Register a resolver that extracts page and perPage from the request.
-     *
-     * @param callable $resolver returns [$page, $perPage]
-     * @return void
-     * @deprecated Use Pagination::setPageResolver() instead
-     */
-    public static function setPageResolver(callable $resolver)
-    {
-        Pagination::setPageResolver($resolver);
-    }
-
-    /**
-     * Register a resolver that converts Results into a framework paginator.
-     *
-     * @param callable $resolver receives (Results $results, int $page, int $perPage)
-     * @return void
-     * @deprecated Use Pagination::setPaginatorResolver() instead
-     */
-    public static function setPaginatorResolver(callable $resolver)
-    {
-        Pagination::setPaginatorResolver($resolver);
-    }
-
-    /**
-     * Return the registered page resolver, or null.
-     *
-     * @return callable|null
-     * @deprecated Use Pagination::getPageResolver() instead
-     */
-    public static function getPageResolver()
-    {
-        return Pagination::getPageResolver();
-    }
-
-    /**
-     * Return the registered paginator resolver, or null.
-     *
-     * @return callable|null
-     * @deprecated Use Pagination::getPaginatorResolver() instead
-     */
-    public static function getPaginatorResolver()
-    {
-        return Pagination::getPaginatorResolver();
-    }
-
-    /**
      * Yield documents as [id => doc] pairs. Override to provide a default data source for rebuild.
      *
      * @param array<string, mixed> $context user-defined context passed from rebuild
@@ -233,28 +224,4 @@ abstract class Index
         );
     }
 
-    /**
-     * Register an event listener. Supports exact event name, category wildcard (e.g. 'search.*'), or global '*'.
-     *
-     * @param string $event
-     * @param callable $listener receives (Event $event)
-     * @return void
-     * @deprecated Use EventDispatcher::listen() instead
-     */
-    public static function listen($event, callable $listener)
-    {
-        EventDispatcher::listen($event, $listener);
-    }
-
-    /**
-     * Dispatch an event to all matching listeners.
-     *
-     * @param Event $event
-     * @return void
-     * @deprecated Use EventDispatcher::dispatch() instead
-     */
-    public static function dispatch(Event $event)
-    {
-        EventDispatcher::dispatch($event);
-    }
 }

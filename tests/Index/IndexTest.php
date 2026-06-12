@@ -467,7 +467,7 @@ class IndexTest extends TestCase
 
     public function testPaginateWithPageResolver()
     {
-        Index::setPageResolver(function () {
+        Pagination::setPageResolver(function () {
             return [2, 20];
         });
 
@@ -597,7 +597,7 @@ class IndexTest extends TestCase
 
     public function testToPaginatorReturnsFrameworkPaginator()
     {
-        Index::setPaginatorResolver(function (Results $results) {
+        Pagination::setPaginatorResolver(function (Results $results) {
             return [
                 'data' => $results->items(),
                 'total' => $results->total(),
@@ -676,10 +676,13 @@ class IndexTest extends TestCase
         $this->assertSame($logClient, $logs->getClient());
     }
 
-    public function testGetClientFallsBackToDefault()
+    public function testGetClientThrowsForUnknownConnection()
     {
         $defaultClient = $this->createMock(TestClient::class);
         Index::setClient($defaultClient);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('nonexistent');
 
         $index = new class('unknown') extends Index {
             public function __construct($name)
@@ -689,7 +692,7 @@ class IndexTest extends TestCase
             }
         };
 
-        $this->assertSame($defaultClient, $index->getClient());
+        $index->getClient();
     }
 
     public function testGetClientThrowsWhenNotRegistered()
@@ -697,16 +700,127 @@ class IndexTest extends TestCase
         ClientManager::reset();
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('nonexistent');
 
-        $index = new class('test') extends Index {
-            public function __construct($name)
-            {
-                $this->name = $name;
-                $this->connection = 'nonexistent';
-            }
-        };
-
+        $index = $this->createIndex('test');
         $index->getClient();
     }
+
+    public function testSetConnectionAndGetConnection()
+    {
+        $index = $this->createIndex('products');
+
+        $this->assertEquals('default', $index->getConnection());
+
+        $result = $index->setConnection('secondary');
+        $this->assertSame($index, $result);
+        $this->assertEquals('secondary', $index->getConnection());
+    }
+
+    public function testOnCreatesInstanceWithConnection()
+    {
+        $defaultClient = $this->createMock(TestClient::class);
+        $secondaryClient = $this->createMock(TestClient::class);
+        Index::setClient($defaultClient);
+        Index::setClient($secondaryClient, 'secondary');
+
+        $index = TestConcreteIndex::on('secondary');
+
+        $this->assertInstanceOf(TestConcreteIndex::class, $index);
+        $this->assertEquals('secondary', $index->getConnection());
+        $this->assertEquals('test', $index->name());
+        $this->assertSame($secondaryClient, $index->getClient());
+    }
+
+    public function testNewQueryReturnsSearch()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('search')->willReturn(new ArrayResponse([
+            'hits' => ['total' => ['value' => 1], 'hits' => [['_source' => ['title' => 'test']]]],
+        ]));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $this->assertInstanceOf(Search::class, $index->newQuery());
+
+        $query = Query::create()->match('title', 'test');
+        $results = $index->newQuery($query)->get();
+        $this->assertEquals(1, $results->total());
+    }
+
+    public function testNewQueryUsesInstanceConnection()
+    {
+        $secondaryClient = $this->createMock(TestClient::class);
+        $secondaryClient->method('search')->willReturn(new ArrayResponse([
+            'hits' => ['total' => ['value' => 0], 'hits' => []],
+        ]));
+        Index::setClient($secondaryClient, 'secondary');
+
+        $index = $this->createIndex('products');
+        $index->setConnection('secondary');
+        $results = $index->newQuery()->matchAll()->get();
+
+        $this->assertEquals(0, $results->total());
+    }
+
+    public function testNewDocUsesInstanceConnection()
+    {
+        $secondaryClient = $this->createMock(TestClient::class);
+        $secondaryClient->method('getSource')->willReturn(new ArrayResponse([
+            'found' => true,
+            '_source' => ['title' => 'test'],
+        ]));
+        Index::setClient($secondaryClient, 'secondary');
+
+        $index = $this->createIndex('products');
+        $index->setConnection('secondary');
+        $doc = $index->newDoc(1);
+
+        $this->assertInstanceOf(\ElasticKit\Index\Doc::class, $doc);
+        $this->assertEquals([
+            'found' => true,
+            '_source' => ['title' => 'test'],
+        ], $doc->source());
+    }
+
+    public function testQueryDocDelegateToNew()
+    {
+        $this->assertInstanceOf(Search::class, TestConcreteIndex::query());
+        $this->assertInstanceOf(\ElasticKit\Index\Doc::class, TestConcreteIndex::doc(1));
+    }
+
+    public function testOnNewQueryChain()
+    {
+        $secondaryClient = $this->createMock(TestClient::class);
+        $secondaryClient->method('search')->willReturn(new ArrayResponse([
+            'hits' => ['total' => ['value' => 1], 'hits' => [['_source' => ['title' => 'from_secondary']]]],
+        ]));
+        Index::setClient($secondaryClient, 'secondary');
+
+        $results = TestConcreteIndex::on('secondary')->newQuery()->matchAll()->get();
+
+        $this->assertEquals(1, $results->total());
+        $this->assertEquals([['title' => 'from_secondary']], $results->docs());
+    }
+
+    public function testOnNewDocChain()
+    {
+        $secondaryClient = $this->createMock(TestClient::class);
+        $secondaryClient->method('getSource')->willReturn(new ArrayResponse([
+            'found' => true,
+            '_source' => ['title' => 'secondary_doc'],
+        ]));
+        Index::setClient($secondaryClient, 'secondary');
+
+        $doc = TestConcreteIndex::on('secondary')->newDoc(42);
+
+        $this->assertEquals([
+            'found' => true,
+            '_source' => ['title' => 'secondary_doc'],
+        ], $doc->source());
+    }
+}
+
+class TestConcreteIndex extends Index
+{
+    protected $name = 'test';
 }

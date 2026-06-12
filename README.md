@@ -189,7 +189,7 @@ foreach (ProductIndex::query()->cursor() as $batch) {
 ### 文档 CRUD
 
 ```php
-ProductIndex::insert(1, ['title' => 'Hello', 'price' => 99.9]);
+ProductIndex::doc(1)->save(['title' => 'Hello', 'price' => 99.9]);
 
 $doc = ProductIndex::doc(1);
 $doc->source();  // ['title' => 'Hello', 'price' => 99.9]

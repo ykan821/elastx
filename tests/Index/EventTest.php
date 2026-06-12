@@ -37,7 +37,7 @@ class EventTest extends TestCase
     public function testListenAndDispatch()
     {
         $received = null;
-        Index::listen('search.query.before', function (Event $e) use (&$received) {
+        EventDispatcher::listen('search.query.before', function (Event $e) use (&$received) {
             $received = $e;
         });
 
@@ -53,7 +53,7 @@ class EventTest extends TestCase
     public function testSearchBeforePassesDsl()
     {
         $dsl = null;
-        Index::listen('search.query.before', function (Event $e) use (&$dsl) {
+        EventDispatcher::listen('search.query.before', function (Event $e) use (&$dsl) {
             $dsl = $e->dsl;
         });
 
@@ -68,7 +68,7 @@ class EventTest extends TestCase
     public function testSearchAfterPassesResponse()
     {
         $response = null;
-        Index::listen('search.query.after', function (Event $e) use (&$response) {
+        EventDispatcher::listen('search.query.after', function (Event $e) use (&$response) {
             $response = $e->response;
         });
 
@@ -83,7 +83,7 @@ class EventTest extends TestCase
     public function testSearchAfterContainsDuration()
     {
         $duration = null;
-        Index::listen('search.query.after', function (Event $e) use (&$duration) {
+        EventDispatcher::listen('search.query.after', function (Event $e) use (&$duration) {
             $duration = $e->duration;
         });
 
@@ -98,7 +98,7 @@ class EventTest extends TestCase
     public function testSearchEventPassesAction()
     {
         $action = null;
-        Index::listen('search.query.before', function (Event $e) use (&$action) {
+        EventDispatcher::listen('search.query.before', function (Event $e) use (&$action) {
             $action = $e->action;
         });
 
@@ -112,7 +112,7 @@ class EventTest extends TestCase
     public function testFirstTriggersSearchWithAction()
     {
         $action = null;
-        Index::listen('search.query.before', function (Event $e) use (&$action) {
+        EventDispatcher::listen('search.query.before', function (Event $e) use (&$action) {
             $action = $e->action;
         });
 
@@ -126,7 +126,7 @@ class EventTest extends TestCase
     public function testWildcardListener()
     {
         $events = [];
-        Index::listen('*', function (Event $e) use (&$events) {
+        EventDispatcher::listen('*', function (Event $e) use (&$events) {
             $events[] = $e->name;
         });
 
@@ -141,7 +141,7 @@ class EventTest extends TestCase
     public function testCategoryWildcardListener()
     {
         $events = [];
-        Index::listen('search.*', function (Event $e) use (&$events) {
+        EventDispatcher::listen('search.*', function (Event $e) use (&$events) {
             $events[] = $e->name;
         });
 
@@ -156,7 +156,7 @@ class EventTest extends TestCase
     public function testCategoryWildcardMatchesSearchQueryEvents()
     {
         $events = [];
-        Index::listen('search.*', function (Event $e) use (&$events) {
+        EventDispatcher::listen('search.*', function (Event $e) use (&$events) {
             $events[] = $e->name;
         });
 
@@ -178,10 +178,10 @@ class EventTest extends TestCase
     public function testMultipleListeners()
     {
         $count = 0;
-        Index::listen('search.query.before', function (Event $e) use (&$count) {
+        EventDispatcher::listen('search.query.before', function (Event $e) use (&$count) {
             $count++;
         });
-        Index::listen('search.query.before', function (Event $e) use (&$count) {
+        EventDispatcher::listen('search.query.before', function (Event $e) use (&$count) {
             $count++;
         });
 
@@ -204,7 +204,7 @@ class EventTest extends TestCase
     public function testBulkExecutePassesActions()
     {
         $actions = null;
-        Index::listen('bulk.execute.before', function (Event $e) use (&$actions) {
+        EventDispatcher::listen('bulk.execute.before', function (Event $e) use (&$actions) {
             $actions = $e->actions;
         });
 
@@ -224,7 +224,7 @@ class EventTest extends TestCase
     public function testManagerCreateEvents()
     {
         $events = [];
-        Index::listen('manager.create.*', function (Event $e) use (&$events) {
+        EventDispatcher::listen('manager.create.*', function (Event $e) use (&$events) {
             $events[] = $e->name;
         });
 
@@ -245,7 +245,7 @@ class EventTest extends TestCase
     public function testManagerDeleteEvents()
     {
         $events = [];
-        Index::listen('manager.delete.*', function (Event $e) use (&$events) {
+        EventDispatcher::listen('manager.delete.*', function (Event $e) use (&$events) {
             $events[] = $e->name;
         });
 
@@ -267,7 +267,7 @@ class EventTest extends TestCase
     public function testManagerReadOperationsHaveNoEvents()
     {
         $events = [];
-        Index::listen('*', function (Event $e) use (&$events) {
+        EventDispatcher::listen('*', function (Event $e) use (&$events) {
             $events[] = $e->name;
         });
 
@@ -294,7 +294,7 @@ class EventTest extends TestCase
     public function testRebuildRunBeforeAndAfterEvents()
     {
         $events = [];
-        Index::listen('rebuild.*', function (Event $e) use (&$events) {
+        EventDispatcher::listen('rebuild.*', function (Event $e) use (&$events) {
             $events[] = $e->name;
         });
 
