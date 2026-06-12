@@ -186,12 +186,15 @@ class Rebuild
             throw new RuntimeException("Target index [{$targetIndex}] does not exist");
         }
 
+        $actions = [];
+        foreach ($currentList as $idx) {
+            $actions[] = ['remove' => ['index' => $idx, 'alias' => $name]];
+        }
+        $actions[] = ['add' => ['index' => $targetIndex, 'alias' => $name]];
+
         $client->updateAliases([
             'body' => [
-                'actions' => [
-                    ['remove' => ['index' => $currentList[0], 'alias' => $name]],
-                    ['add' => ['index' => $targetIndex, 'alias' => $name]],
-                ],
+                'actions' => $actions,
             ],
         ]);
 
