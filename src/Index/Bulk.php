@@ -217,7 +217,7 @@ class Bulk
 
         $e = new Event('bulk.execute.before', $indexName);
         $e->actions = $actions;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $start = microtime(true);
         $response = $this->index->getClient()->bulk(
@@ -233,7 +233,7 @@ class Bulk
         $e->actions = $actions;
         $e->response = $response;
         $e->duration = $duration;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         if (!empty($response['errors'])) {
             if ($this->errorHandler) {

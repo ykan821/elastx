@@ -216,7 +216,7 @@ class Rebuild
         $name = $this->index->name();
         $client = $this->index->getClient()->indices();
 
-        Index::dispatch(new Event('rebuild.run.before', $name));
+        EventDispatcher::dispatch(new Event('rebuild.run.before', $name));
 
         $newName = $this->createIndex();
 
@@ -254,7 +254,7 @@ class Rebuild
         $e = new Event('rebuild.run.after', $name);
         $e->newIndex = $newName;
         $e->oldIndex = $oldIndex;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return ['newIndex' => $newName, 'oldIndex' => $oldIndex];
     }

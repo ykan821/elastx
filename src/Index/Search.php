@@ -194,7 +194,7 @@ class Search
         $e = new Event('search.scroll.before', $indexName);
         $e->action = 'scroll';
         $e->scrollId = $scrollId;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $start = microtime(true);
         $response = $this->index->getClient()->scroll([
@@ -209,7 +209,7 @@ class Search
         $e->scrollId = $scrollId;
         $e->response = $response;
         $e->duration = $durationTime;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return new Results($response);
     }
@@ -244,7 +244,7 @@ class Search
     public function paginate($page = null, $perPage = null)
     {
         if ($page === null && $perPage === null) {
-            $resolver = Index::getPageResolver();
+            $resolver = Pagination::getPageResolver();
             if ($resolver !== null) {
                 [$page, $perPage] = $resolver();
             }
@@ -284,7 +284,7 @@ class Search
         $e = new Event('search.query.before', $indexName);
         $e->dsl = $body;
         $e->action = 'count';
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $start = microtime(true);
         $response = $this->index->getClient()->count([
@@ -299,7 +299,7 @@ class Search
         $e->response = $response;
         $e->duration = $duration;
         $e->action = 'count';
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return $response;
     }
@@ -319,7 +319,7 @@ class Search
         $e = new Event('search.query.before', $indexName);
         $e->dsl = $body;
         $e->action = $action;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $params = array_merge(['index' => $indexName, 'body' => $body], $this->urlParams, $extra);
 
@@ -333,7 +333,7 @@ class Search
         $e->response = $response;
         $e->duration = $duration;
         $e->action = $action;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return $response;
     }

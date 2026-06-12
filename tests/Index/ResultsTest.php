@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use ElasticKit\Index\Index;
+use ElasticKit\Index\Pagination;
 use ElasticKit\Index\Results;
 
 class ResultsTest extends TestCase
@@ -196,9 +197,7 @@ class ResultsTest extends TestCase
         $this->assertEquals(['total' => 50, 'page' => 2], $paginator);
 
         // Clean up
-        $ref = new ReflectionProperty(Index::class, 'paginatorResolver');
-        $ref->setAccessible(true);
-        $ref->setValue(null, null);
+        Pagination::reset();
     }
 
     public function testToPaginatorThrowsWithoutResolver()

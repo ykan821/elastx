@@ -1,20 +1,17 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use ElasticKit\Index\ClientManager;
 use ElasticKit\Index\Event;
+use ElasticKit\Index\EventDispatcher;
 use ElasticKit\Index\Index;
 
 class EventTest extends TestCase
 {
     protected function tearDown(): void
     {
-        $ref = new ReflectionProperty(Index::class, 'listeners');
-        $ref->setAccessible(true);
-        $ref->setValue(null, []);
-
-        $clientRef = new ReflectionProperty(Index::class, 'clients');
-        $clientRef->setAccessible(true);
-        $clientRef->setValue(null, []);
+        EventDispatcher::reset();
+        ClientManager::reset();
     }
 
     protected function createIndex($name = 'products')

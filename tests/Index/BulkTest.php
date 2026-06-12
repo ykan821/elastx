@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use ElasticKit\Index\Bulk;
+use ElasticKit\Index\ClientManager;
 use ElasticKit\Index\Index;
 
 class BulkTest extends TestCase
@@ -13,9 +14,7 @@ class BulkTest extends TestCase
 
     protected function tearDown(): void
     {
-        $ref = new ReflectionProperty(Index::class, 'clients');
-        $ref->setAccessible(true);
-        $ref->setValue(null, []);
+        ClientManager::reset();
     }
 
     protected function createIndex($name = 'products')

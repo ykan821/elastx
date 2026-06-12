@@ -15,11 +15,6 @@ use RuntimeException;
 abstract class Index
 {
     /**
-     * @var array<string, ClientInterface>
-     */
-    protected static $clients = [];
-
-    /**
      * @var string
      */
     protected $connection = 'default';
@@ -50,30 +45,16 @@ abstract class Index
     protected $maxPerPage = 100;
 
     /**
-     * @var callable|null
-     */
-    protected static $pageResolver;
-
-    /**
-     * @var callable|null
-     */
-    protected static $paginatorResolver;
-
-    /**
-     * @var array<string, array<int, callable>>
-     */
-    protected static $listeners = [];
-
-    /**
      * Register an Elasticsearch client. Optionally name the connection.
      *
      * @param ClientInterface $client
      * @param string|null $name connection name, null for default
      * @return void
+     * @deprecated Use ClientManager::set() instead
      */
     public static function setClient(ClientInterface $client, $name = null)
     {
-        self::$clients[$name ?? 'default'] = $client;
+        ClientManager::set($client, $name);
     }
 
     /**
@@ -83,16 +64,7 @@ abstract class Index
      */
     public function getClient()
     {
-        if (isset(self::$clients[$this->connection])) {
-            return self::$clients[$this->connection];
-        }
-        if (isset(self::$clients['default'])) {
-            return self::$clients['default'];
-        }
-        throw new RuntimeException(
-            'Elasticsearch client not registered for connection \'' . $this->connection . '\'. '
-            . 'Call ' . static::class . '::setClient($client) first.'
-        );
+        return ClientManager::get($this->connection);
     }
 
     /**
@@ -206,10 +178,11 @@ abstract class Index
      *
      * @param callable $resolver returns [$page, $perPage]
      * @return void
+     * @deprecated Use Pagination::setPageResolver() instead
      */
     public static function setPageResolver(callable $resolver)
     {
-        self::$pageResolver = $resolver;
+        Pagination::setPageResolver($resolver);
     }
 
     /**
@@ -217,30 +190,33 @@ abstract class Index
      *
      * @param callable $resolver receives (Results $results, int $page, int $perPage)
      * @return void
+     * @deprecated Use Pagination::setPaginatorResolver() instead
      */
     public static function setPaginatorResolver(callable $resolver)
     {
-        self::$paginatorResolver = $resolver;
+        Pagination::setPaginatorResolver($resolver);
     }
 
     /**
      * Return the registered page resolver, or null.
      *
      * @return callable|null
+     * @deprecated Use Pagination::getPageResolver() instead
      */
     public static function getPageResolver()
     {
-        return self::$pageResolver;
+        return Pagination::getPageResolver();
     }
 
     /**
      * Return the registered paginator resolver, or null.
      *
      * @return callable|null
+     * @deprecated Use Pagination::getPaginatorResolver() instead
      */
     public static function getPaginatorResolver()
     {
-        return self::$paginatorResolver;
+        return Pagination::getPaginatorResolver();
     }
 
     /**
@@ -263,10 +239,11 @@ abstract class Index
      * @param string $event
      * @param callable $listener receives (Event $event)
      * @return void
+     * @deprecated Use EventDispatcher::listen() instead
      */
     public static function listen($event, callable $listener)
     {
-        self::$listeners[$event][] = $listener;
+        EventDispatcher::listen($event, $listener);
     }
 
     /**
@@ -274,32 +251,10 @@ abstract class Index
      *
      * @param Event $event
      * @return void
+     * @deprecated Use EventDispatcher::dispatch() instead
      */
     public static function dispatch(Event $event)
     {
-        foreach (self::$listeners as $pattern => $listeners) {
-            if ($pattern === $event->name || $pattern === '*' || static::matchesCategory($pattern, $event->name)) {
-                foreach ($listeners as $listener) {
-                    $listener($event);
-                }
-            }
-        }
-    }
-
-    /**
-     * Check if a wildcard pattern matches an event by category.
-     *
-     * @param string $pattern
-     * @param string $event
-     * @return bool
-     */
-    protected static function matchesCategory($pattern, $event)
-    {
-        if (substr($pattern, -2) !== '.*') {
-            return false;
-        }
-
-        $prefix = substr($pattern, 0, -1);
-        return strpos($event, $prefix) === 0;
+        EventDispatcher::dispatch($event);
     }
 }

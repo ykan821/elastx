@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use ElasticKit\Index\ClientManager;
 use ElasticKit\Index\Index;
 use ElasticKit\Index\Manager;
 
@@ -13,9 +14,7 @@ class ManagerTest extends TestCase
 
     protected function tearDown(): void
     {
-        $ref = new ReflectionProperty(Index::class, 'clients');
-        $ref->setAccessible(true);
-        $ref->setValue(null, []);
+        ClientManager::reset();
     }
 
     protected function createIndex($name = 'products', $mappings = [], $settings = [])

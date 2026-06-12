@@ -36,7 +36,7 @@ class Manager
         $indexName = $this->index->name();
 
         $e = new Event('manager.create.before', $indexName);
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $mappings = $this->index->mappings();
         $settings = $this->index->settings();
@@ -51,7 +51,7 @@ class Manager
 
         $e = new Event('manager.create.after', $indexName);
         $e->response = $response;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return $response;
     }
@@ -66,7 +66,7 @@ class Manager
         $indexName = $this->resolveIndexName();
 
         $e = new Event('manager.delete.before', $indexName);
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $response = $this->index->getClient()->indices()->delete([
             'index' => $indexName,
@@ -74,7 +74,7 @@ class Manager
 
         $e = new Event('manager.delete.after', $indexName);
         $e->response = $response;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return $response;
     }
@@ -256,7 +256,7 @@ class Manager
         $indexName = $this->index->name();
 
         $e = new Event('manager.swap_alias.before', $indexName);
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $response = $this->index->getClient()->indices()->updateAliases([
             'body' => [
@@ -269,7 +269,7 @@ class Manager
 
         $e = new Event('manager.swap_alias.after', $indexName);
         $e->response = $response;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return $response;
     }

@@ -2,7 +2,9 @@
 
 use PHPUnit\Framework\TestCase;
 use ElasticKit\DSL\Query;
+use ElasticKit\Index\ClientManager;
 use ElasticKit\Index\Index;
+use ElasticKit\Index\Pagination;
 use ElasticKit\Index\Results;
 use ElasticKit\Index\Search;
 
@@ -15,19 +17,8 @@ class IndexTest extends TestCase
 
     protected function tearDown(): void
     {
-        // Reset static clients between tests
-        $ref = new ReflectionProperty(Index::class, 'clients');
-        $ref->setAccessible(true);
-        $ref->setValue(null, []);
-
-        // Reset static resolvers between tests
-        $pageRef = new ReflectionProperty(Index::class, 'pageResolver');
-        $pageRef->setAccessible(true);
-        $pageRef->setValue(null, null);
-
-        $paginatorRef = new ReflectionProperty(Index::class, 'paginatorResolver');
-        $paginatorRef->setAccessible(true);
-        $paginatorRef->setValue(null, null);
+        ClientManager::reset();
+        Pagination::reset();
     }
 
     protected function createIndex($name = 'products')
@@ -703,10 +694,7 @@ class IndexTest extends TestCase
 
     public function testGetClientThrowsWhenNotRegistered()
     {
-        // Ensure no clients are registered
-        $ref = new ReflectionProperty(Index::class, 'clients');
-        $ref->setAccessible(true);
-        $ref->setValue(null, []);
+        ClientManager::reset();
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('nonexistent');
