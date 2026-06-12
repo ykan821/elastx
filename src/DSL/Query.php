@@ -19,6 +19,7 @@ use stdClass;
  * Query container that combines multiple query conditions into an Elasticsearch DSL query.
  *
  * @phpstan-consistent-constructor
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Query extends Node
 {
@@ -99,17 +100,30 @@ class Query extends Node
             return;
         }
         if ($field instanceof Closure) {
-            $field($this);
+            $this->fromClosure($field);
         } elseif ($field instanceof Node) {
             $this->_queries[] = $field;
         } elseif (is_array($field)) {
-            if (array_key_exists('query', $field)) {
-                $this->_properties = $field;
-            } else {
-                $this->_queries[] = $field;
-            }
+            $this->fromArray($field);
         } elseif ($field !== null) {
             $this->_properties = $field;
+        }
+    }
+
+    /**
+     * Initialize from a raw ES body array.
+     *
+     * Arrays with a 'query' key are stored as-is (raw DSL).
+     * Other arrays are added as query clauses.
+     *
+     * @param array<string, mixed> $field
+     */
+    protected function fromArray(array $field): void
+    {
+        if (array_key_exists('query', $field)) {
+            $this->_properties = $field;
+        } else {
+            $this->_queries[] = $field;
         }
     }
 

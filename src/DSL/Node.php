@@ -80,39 +80,77 @@ abstract class Node
     public function __construct($field = null, $value = null)
     {
         if ($value !== null) {
-            // Two-arg mode: field + value
-            if ($value instanceof Closure) {
-                $value($this);
-            } elseif (is_scalar($value)) {
-                $this->_rawValue = $value;
-                $this->_properties = [];
-            } else {
-                $this->_properties = $value;
-            }
-            if ($this->_isPropertyField) {
-                $this->field($field);
-            }
+            $this->fromKeyValue($field, $value);
         } elseif ($field instanceof Closure) {
-            // Single-arg closure
-            $field($this);
+            $this->fromClosure($field);
         } elseif ($this->_isPropertyField && is_array($field)) {
-            // Array shorthand: ['field_name' => value]
-            foreach ($field as $key => $val) {
-                $this->field($key);
-                if (is_scalar($val)) {
-                    $this->_rawValue = $val;
-                    $this->_properties = [];
-                } else {
-                    $this->_properties = $val;
-                }
-                break;
-            }
+            $this->fromArrayField($field);
         } elseif ($this->_isPropertyField && is_scalar($field)) {
-            $this->_rawValue = $field;
-            $this->_properties = [];
+            $this->fromScalar($field);
         } else {
             $this->_properties = $field;
         }
+    }
+
+    /**
+     * Initialize from a field-value pair.
+     *
+     * @param mixed $field
+     * @param mixed $value
+     */
+    protected function fromKeyValue($field, $value): void
+    {
+        if ($value instanceof Closure) {
+            $value($this);
+        } elseif (is_scalar($value)) {
+            $this->_rawValue = $value;
+            $this->_properties = [];
+        } else {
+            $this->_properties = $value;
+        }
+        if ($this->_isPropertyField) {
+            $this->field($field);
+        }
+    }
+
+    /**
+     * Initialize from a closure.
+     *
+     * @param Closure $closure
+     */
+    protected function fromClosure(Closure $closure): void
+    {
+        $closure($this);
+    }
+
+    /**
+     * Initialize from a single-element array where key is field name.
+     *
+     * @param array<string, mixed> $field
+     */
+    protected function fromArrayField(array $field): void
+    {
+        foreach ($field as $key => $val) {
+            $this->field($key);
+            if (is_scalar($val)) {
+                $this->_rawValue = $val;
+                $this->_properties = [];
+            } else {
+                $this->_properties = $val;
+            }
+            break;
+        }
+    }
+
+    /**
+     * Initialize from a scalar value.
+     *
+     * @param mixed $value
+     */
+    protected function fromScalar($value): void
+    {
+        $this->_rawValue = $value;
+        $this->_properties = [];
     }
 
     /**

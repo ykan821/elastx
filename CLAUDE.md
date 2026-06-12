@@ -41,11 +41,11 @@ PSR-5 规范。
 - [x] **clone query 后 try-finally 恢复**：first() / paginate() 等方法 clone query 后修改状态，需 try-finally 确保恢复
 - [x] **ClausesSupport API 统一**：must()/should()/filter() 等改为追加语义，移除 addXXX() 方法
 - [x] **hasMore() 确认无 bug**：scroll 场景 !empty(hits) 正确，分页应用 page()<lastPage()
-- [ ] **Rebuild::rollback() 支持多索引别名**：当前只移除 `$currentList[0]`，应遍历全部 remove，参考 `doRun()` 循环写法
-- [ ] **Index::$name 空验证**：子类未设置 `$name` 时抛异常
+- [x] **Rebuild::rollback() 支持多索引别名**：遍历全部 backing index 移除别名，对齐 doRun() 写法
+- [x] **Index::$name 空验证**：name() 未设置时抛异常
 - [ ] **锁抽取为独立类**：通用分布式锁（acquire/release/forceUnlock/isLocked + ensureLockIndex），Bulk 等可复用
 - [ ] **$client 抽到 Registry 类**：新建 Registry 持有 client / pageResolver / paginatorResolver / listeners，Index 不再持有静态状态。旧 API 保留作 deprecated 代理，前期统一放 Registry，后续按需拆分
-- [ ] **Node 构造函数重构**：提取 applyValue，消除重复
+- [x] **Node 构造函数重构**：拆分为 fromKeyValue/fromClosure/fromArrayField/fromScalar
 - [ ] **Bulk skipErrors() 设计**：参考 Rebuild 的 skipErrors 模式
 - [ ] **补核心路径的边界测试**：scroll、bulk 分批、rebuild 失败回滚
 - [ ] **搭建集成测试基建**：`ELASTICKIT_TEST_HOST` 驱动，随机索引名隔离
