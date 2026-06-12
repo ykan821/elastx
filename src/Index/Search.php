@@ -14,7 +14,7 @@ use stdClass;
  */
 class Search
 {
-    use AggregationShortcut;
+    use StatsSupport;
 
     /**
      * @var Query

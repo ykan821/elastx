@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use ElasticKit\Index\Index;
 use ElasticKit\Index\Search;
 
-class AggregationShortcutTest extends TestCase
+class StatsSupportTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -78,7 +78,70 @@ class AggregationShortcutTest extends TestCase
         $this->assertEquals(1500.0, $result);
     }
 
-    public function testAggregationShortcutSendsCorrectBody()
+    public function testStatsReturnsAllMetrics()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('search')->willReturn(new ArrayResponse([
+            'hits' => ['total' => ['value' => 0], 'hits' => []],
+            'aggregations' => [
+                '__stats' => [
+                    'count' => 100,
+                    'min'   => 9.99,
+                    'max'   => 199.99,
+                    'avg'   => 49.5,
+                    'sum'   => 4950.0,
+                ],
+            ],
+        ]));
+        Index::setClient($client);
+
+        $index = $this->createIndex();
+        $result = $index->query()->stats('price');
+
+        $this->assertEquals([
+            'count' => 100,
+            'min'   => 9.99,
+            'max'   => 199.99,
+            'avg'   => 49.5,
+            'sum'   => 4950.0,
+        ], $result);
+    }
+
+    public function testStatsReturnsNullWhenNoAggregation()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('search')->willReturn(new ArrayResponse([
+            'hits' => ['total' => ['value' => 0], 'hits' => []],
+        ]));
+        Index::setClient($client);
+
+        $index = $this->createIndex();
+        $result = $index->query()->stats('nonexistent');
+
+        $this->assertNull($result);
+    }
+
+    public function testStatsSendsCorrectBody()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->expects($this->once())->method('search')->with($this->callback(function ($params) {
+            $body = $params['body'];
+            return $body['size'] === 0
+                && isset($body['aggs']['__stats']['stats']['field'])
+                && $body['aggs']['__stats']['stats']['field'] === 'price';
+        }))->willReturn(new ArrayResponse([
+            'hits' => ['total' => ['value' => 0], 'hits' => []],
+            'aggregations' => [
+                '__stats' => ['count' => 0, 'min' => null, 'max' => null, 'avg' => null, 'sum' => 0],
+            ],
+        ]));
+        Index::setClient($client);
+
+        $index = $this->createIndex();
+        $index->query()->stats('price');
+    }
+
+    public function testScalarSendsCorrectBody()
     {
         $client = $this->createMock(TestClient::class);
         $client->expects($this->once())->method('search')->with($this->callback(function ($params) {
@@ -96,7 +159,7 @@ class AggregationShortcutTest extends TestCase
         $index->query()->max('price');
     }
 
-    public function testAggregationShortcutDoesNotMutateQuery()
+    public function testScalarDoesNotMutateQuery()
     {
         $lastBody = null;
         $client = $this->createMock(TestClient::class);
@@ -118,7 +181,7 @@ class AggregationShortcutTest extends TestCase
         $this->assertEquals(0, $lastBody['size']);
     }
 
-    public function testAggregationShortcutReturnsNullWhenNoValue()
+    public function testScalarReturnsNullWhenNoValue()
     {
         $client = $this->createMock(TestClient::class);
         $client->method('search')->willReturn(new ArrayResponse([
