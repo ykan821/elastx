@@ -43,8 +43,14 @@ PSR-5 规范。
 - [x] **hasMore() 确认无 bug**：scroll 场景 !empty(hits) 正确，分页应用 page()<lastPage()
 - [x] **Rebuild::rollback() 支持多索引别名**：遍历全部 backing index 移除别名，对齐 doRun() 写法
 - [x] **Index::$name 空验证**：name() 未设置时抛异常
-- [ ] **锁抽取为独立类**：通用分布式锁（acquire/release/forceUnlock/isLocked + ensureLockIndex），Bulk 等可复用
-- [ ] **$client 抽到 Registry 类**：新建 Registry 持有 client / pageResolver / paginatorResolver / listeners，Index 不再持有静态状态。旧 API 保留作 deprecated 代理，前期统一放 Registry，后续按需拆分
+- [x] **拆分静态状态**：ClientManager / EventDispatcher / Pagination 从 Index 拆出，删 deprecated 代理
+- [x] **移除 Index::insert()**：等价功能由 Doc::save() 覆盖
+- [x] **实例入口**：新增 on()/newQuery()/newDoc()/setConnection()/getConnection()，query()/doc() 委托实例方法
+- [x] **测试 mock 污染修复**：所有测试文件补 tearDown 清理静态状态
+- [ ] **命名参数一致性**：公开方法参数名是 API 的一部分，全库审查确保命名统一（如 connection/name/client 不混用）
+- [ ] **PHP 8 现代化**：构造器属性提升、属性/返回/参数类型声明、readonly、联合类型
+- [ ] **Rebuild 异常处理**：run() 改为 try-catch + releaseLock 分离，releaseLock 不吞任何异常，forceUnlock 单独处理 404（文档不存在 vs 索引不存在的 404 需区分）；isLocked() 只吞 404 不吞其他 ClientResponseException；rebuild 失败优先抛原始异常；ensureLockIndex() replicas=0 在多节点集群有风险需注释说明
+- [x] **$client 抽到 Registry 类**：拆为 ClientManager / EventDispatcher / Pagination，Index 不再持有静态状态
 - [x] **Node 构造函数重构**：拆分为 fromKeyValue/fromClosure/fromArrayField/fromScalar
 - [x] **Bulk/Rebuild onError 设计**：Bulk 加 onError(callback) 默认 throw，Rebuild 删 skipErrors 加 onError，删 rebuild.import.failed 事件
 - [ ] **补核心路径的边界测试**：scroll、bulk 分批、rebuild 失败回滚
