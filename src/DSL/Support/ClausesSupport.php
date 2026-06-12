@@ -1,6 +1,6 @@
 <?php
 
-namespace ElasticKit\DSL\Shared;
+namespace ElasticKit\DSL\Support;
 
 use Closure;
 use ElasticKit\DSL\Query;

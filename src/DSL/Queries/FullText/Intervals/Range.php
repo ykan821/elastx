@@ -3,7 +3,7 @@
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
-use ElasticKit\DSL\Shared\RangeSupport;
+use ElasticKit\DSL\Support\RangeSupport;
 
 /**
  * The range rule matches terms that fall within a specified range of values.

@@ -2,7 +2,7 @@
 
 namespace ElasticKit\DSL\Queries\Compound;
 
-use ElasticKit\DSL\Shared\ClausesSupport;
+use ElasticKit\DSL\Support\ClausesSupport;
 use ElasticKit\DSL\Node;
 
 /**

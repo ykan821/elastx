@@ -766,8 +766,7 @@ class IndexTest extends TestCase
     {
         $secondaryClient = $this->createMock(TestClient::class);
         $secondaryClient->method('getSource')->willReturn(new ArrayResponse([
-            'found' => true,
-            '_source' => ['title' => 'test'],
+            'title' => 'test',
         ]));
         Index::setClient($secondaryClient, 'secondary');
 
@@ -776,10 +775,7 @@ class IndexTest extends TestCase
         $doc = $index->newDoc(1);
 
         $this->assertInstanceOf(\ElasticKit\Index\Doc::class, $doc);
-        $this->assertEquals([
-            'found' => true,
-            '_source' => ['title' => 'test'],
-        ], $doc->source());
+        $this->assertEquals(['title' => 'test'], $doc->source());
     }
 
     public function testQueryDocDelegateToNew()
@@ -806,17 +802,13 @@ class IndexTest extends TestCase
     {
         $secondaryClient = $this->createMock(TestClient::class);
         $secondaryClient->method('getSource')->willReturn(new ArrayResponse([
-            'found' => true,
-            '_source' => ['title' => 'secondary_doc'],
+            'title' => 'secondary_doc',
         ]));
         Index::setClient($secondaryClient, 'secondary');
 
         $doc = TestConcreteIndex::on('secondary')->newDoc(42);
 
-        $this->assertEquals([
-            'found' => true,
-            '_source' => ['title' => 'secondary_doc'],
-        ], $doc->source());
+        $this->assertEquals(['title' => 'secondary_doc'], $doc->source());
     }
 }
 

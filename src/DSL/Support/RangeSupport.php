@@ -1,6 +1,6 @@
 <?php
 
-namespace ElasticKit\DSL\Shared;
+namespace ElasticKit\DSL\Support;
 
 /**
  * Maps operator shorthands (>=, >, <=, <) and [start, end] to ES range keys.

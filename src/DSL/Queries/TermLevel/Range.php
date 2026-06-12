@@ -3,7 +3,7 @@
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
-use ElasticKit\DSL\Shared\RangeSupport;
+use ElasticKit\DSL\Support\RangeSupport;
 
 class Range extends Node
 {
