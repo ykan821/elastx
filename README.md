@@ -12,7 +12,7 @@ PHP Elasticsearch DSL 查询构建库，覆盖查询、聚合、CRUD、批量写
 composer require ykan/elastickit:^8
 ```
 
-> 需要 PHP 8.1+、Elasticsearch 8.x。依赖 `elasticsearch-php` 自动安装。ES 7.x 用户见 [7.x 分支](https://github.com/ykan821/ElasticKit/tree/7.x)。
+> 需要 PHP 8.1+、Elasticsearch 8.x。依赖 `elasticsearch-php` 自动安装。
 
 ## 快速开始
 
@@ -277,7 +277,6 @@ ProductIndex::listen('search.*', function (Event $e) {
 
 - [实践指南](docs/guide.md)——电商订单场景，从安装到上线的完整流程
 - [Index 文档](docs/index.md)——搜索、CRUD、批量操作、零停机重建、事件
-- [升级指南](docs/upgrade.md)——v7.x → v8.x 迁移说明
 - [更新日志](CHANGELOG.md)
 - [Elasticsearch 官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html)——查询类型和参数参考
 
