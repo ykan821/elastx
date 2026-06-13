@@ -40,9 +40,9 @@ use Illuminate\Support\Facades\Db;
 
 class OrderIndex extends Index
 {
-    protected $name = 'orders';
+    protected string $name = 'orders';
 
-    protected $mappings = [
+    protected array $mappings = [
         'properties' => [
             'order_no'      => ['type' => 'keyword'],       // 精确匹配
             'status'        => ['type' => 'keyword'],       // pending/paid/shipped/completed

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 use stdClass;
@@ -9,17 +11,9 @@ use stdClass;
  */
 class Manager
 {
-    /**
-     * @var Index
-     */
-    private $index;
-
-    /**
-     * @param Index $index
-     */
-    public function __construct(Index $index)
-    {
-        $this->index = $index;
+    public function __construct(
+        private readonly Index $index
+    ) {
     }
 
     /**
@@ -31,7 +25,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function create()
+    public function create(): array
     {
         $indexName = $this->index->name();
 
@@ -61,7 +55,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function delete()
+    public function delete(): array
     {
         $indexName = $this->resolveIndexName();
 
@@ -84,7 +78,7 @@ class Manager
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         return $this->index->getClient()->indices()->exists([
             'index' => $this->index->name(),
@@ -96,7 +90,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function get()
+    public function get(): array
     {
         return $this->index->getClient()->indices()->get([
             'index' => $this->index->name(),
@@ -108,7 +102,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function putMapping()
+    public function putMapping(): array
     {
         return $this->index->getClient()->indices()->putMapping([
             'index' => $this->index->name(),
@@ -121,7 +115,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function getMapping()
+    public function getMapping(): array
     {
         return $this->index->getClient()->indices()->getMapping([
             'index' => $this->index->name(),
@@ -134,7 +128,7 @@ class Manager
      * @param array<string, mixed> $settings
      * @return array<string, mixed>
      */
-    public function putSettings(array $settings)
+    public function putSettings(array $settings): array
     {
         return $this->index->getClient()->indices()->putSettings([
             'index' => $this->index->name(),
@@ -147,7 +141,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         return $this->index->getClient()->indices()->getSettings([
             'index' => $this->index->name(),
@@ -159,7 +153,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function refresh()
+    public function refresh(): array
     {
         return $this->index->getClient()->indices()->refresh([
             'index' => $this->index->name(),
@@ -172,7 +166,7 @@ class Manager
      * @param array<string, mixed> $options ES params: max_num_segments, only_expunge_deletes, flush.
      * @return array<string, mixed>
      */
-    public function forceMerge(array $options = [])
+    public function forceMerge(array $options = []): array
     {
         return $this->index->getClient()->indices()->forcemerge(
             array_merge(['index' => $this->index->name()], $options)
@@ -184,7 +178,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function close()
+    public function close(): array
     {
         return $this->index->getClient()->indices()->close([
             'index' => $this->index->name(),
@@ -196,7 +190,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function open()
+    public function open(): array
     {
         return $this->index->getClient()->indices()->open([
             'index' => $this->index->name(),
@@ -211,7 +205,7 @@ class Manager
      * @param array<string, mixed> $options additional alias options: routing, filter, is_write_index.
      * @return array<string, mixed>
      */
-    public function addAlias($alias, array $options = [])
+    public function addAlias(string $alias, array $options = []): array
     {
         $indexName = $this->resolveIndexName();
 
@@ -234,7 +228,7 @@ class Manager
      * @param string $alias
      * @return array<string, mixed>
      */
-    public function removeAlias($alias)
+    public function removeAlias(string $alias): array
     {
         $indexName = $this->resolveIndexName();
 
@@ -251,7 +245,7 @@ class Manager
      * @param string $fromIndex
      * @return array<string, mixed>
      */
-    public function swapAlias($alias, $fromIndex)
+    public function swapAlias(string $alias, string $fromIndex): array
     {
         $indexName = $this->index->name();
 
@@ -280,7 +274,7 @@ class Manager
      *
      * @return array<string, mixed>
      */
-    public function getAliases()
+    public function getAliases(): array
     {
         $indexName = $this->resolveIndexName();
 
@@ -294,14 +288,14 @@ class Manager
      *
      * @return string
      */
-    private function resolveIndexName()
+    private function resolveIndexName(): string
     {
         $name = $this->index->name();
         $client = $this->index->getClient()->indices();
 
         if ($client->existsAlias(['name' => $name])->asBool()) {
             $aliases = $client->getAlias(['name' => $name])->asArray();
-            return array_key_first($aliases);
+            return array_key_first($aliases) ?? $name;
         }
 
         return $name;

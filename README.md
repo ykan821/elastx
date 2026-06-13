@@ -27,8 +27,8 @@ Index::setClient($client);
 // 2. 定义索引
 class ProductIndex extends Index
 {
-    protected $name = 'products';
-    protected $mappings = [
+    protected string $name = 'products';
+    protected array $mappings = [
         'properties' => [
             'title'  => ['type' => 'text'],
             'price'  => ['type' => 'float'],

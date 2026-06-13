@@ -331,4 +331,27 @@ class DocTest extends TestCase
         $index = $this->createIndex('products');
         $index->doc('1')->refresh('wait_for')->delete();
     }
+
+    public function testIndexAutoGeneratesIdWhenEmpty()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->expects($this->once())
+            ->method('index')
+            ->with(['index' => 'products', 'body' => ['title' => 'foo']])
+            ->willReturn(new ArrayResponse(['result' => 'created', '_id' => 'auto']));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $result = $index->newDoc(null)->index(['title' => 'foo']);
+
+        $this->assertEquals('created', $result['result']);
+    }
+
+    public function testUpdateRequiresExplicitId()
+    {
+        $index = $this->createIndex('products');
+
+        $this->expectException(\RuntimeException::class);
+        $index->newDoc(null)->update(['title' => 'foo']);
+    }
 }

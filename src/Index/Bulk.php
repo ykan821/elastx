@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 use InvalidArgumentException;
@@ -11,46 +13,38 @@ use RuntimeException;
 class Bulk
 {
     /**
-     * @var Index
-     */
-    private $index;
-
-    /**
      * @var array<int, mixed>
      */
-    private $body = [];
+    private array $body = [];
 
     /**
      * @var int
      */
-    private $retryOnConflict = 0;
+    private int $retryOnConflict = 0;
 
     /**
      * @var string|null
      */
-    private $targetIndex = null;
+    private ?string $targetIndex = null;
 
     /**
      * @var int
      */
-    private $batchSize = 0;
+    private int $batchSize = 0;
 
     /**
      * @var int
      */
-    private $docCount = 0;
+    private int $docCount = 0;
 
     /**
      * @var callable|null
      */
     private $errorHandler = null;
 
-    /**
-     * @param Index $index
-     */
-    public function __construct(Index $index)
-    {
-        $this->index = $index;
+    public function __construct(
+        private readonly Index $index
+    ) {
     }
 
     /**
@@ -60,7 +54,7 @@ class Bulk
      * @return $this
      * @throws \InvalidArgumentException if indexName starts with a dot (system index)
      */
-    public function target($indexName)
+    public function target(string $indexName): static
     {
         if (strpos($indexName, '.') === 0) {
             throw new InvalidArgumentException("System index names (starting with '.') are not allowed: {$indexName}");
@@ -77,7 +71,7 @@ class Bulk
      * @param int $size
      * @return $this
      */
-    public function batchSize($size)
+    public function batchSize(int $size): static
     {
         $this->batchSize = $size;
 
@@ -94,7 +88,7 @@ class Bulk
      * @param callable $handler function (array $response): void
      * @return $this
      */
-    public function onError($handler)
+    public function onError(callable $handler): static
     {
         $this->errorHandler = $handler;
         return $this;
@@ -106,7 +100,7 @@ class Bulk
      * @param int $count
      * @return $this
      */
-    public function retryOnConflict($count)
+    public function retryOnConflict(int $count): static
     {
         $this->retryOnConflict = $count;
 
@@ -120,7 +114,7 @@ class Bulk
      * @param array<string, mixed> $document
      * @return $this
      */
-    public function index($id, $document)
+    public function index(string|int|null $id, array $document): static
     {
         $action = ['index' => ['_index' => $this->resolveIndex()]];
         if ($id !== null && $id !== '') {
@@ -140,7 +134,7 @@ class Bulk
      * @param array<string, mixed> $document
      * @return $this
      */
-    public function save($id, $document)
+    public function save(string|int|null $id, array $document): static
     {
         return $this->index($id, $document);
     }
@@ -152,7 +146,7 @@ class Bulk
      * @param array<string, mixed> $document
      * @return $this
      */
-    public function create($id, $document)
+    public function create(string|int $id, array $document): static
     {
         $this->body[] = ['create' => ['_index' => $this->resolveIndex(), '_id' => $id]];
         $this->body[] = $document;
@@ -171,7 +165,7 @@ class Bulk
      * @param bool $upsert
      * @return $this
      */
-    public function update($id, $data, $upsert = false)
+    public function update(string|int $id, array $data, bool $upsert = false): static
     {
         $action = ['update' => ['_index' => $this->resolveIndex(), '_id' => $id]];
 
@@ -192,7 +186,7 @@ class Bulk
      * @param string|int $id
      * @return $this
      */
-    public function delete($id)
+    public function delete(string|int $id): static
     {
         $this->body[] = ['delete' => ['_index' => $this->resolveIndex(), '_id' => $id]];
         $this->afterPush();
@@ -206,7 +200,7 @@ class Bulk
      * @param array<string, mixed> $options top-level bulk API params (refresh, timeout, etc)
      * @return array<string, mixed>
      */
-    public function execute(array $options = [])
+    public function execute(array $options = []): array
     {
         if (empty($this->body)) {
             return [];
@@ -240,6 +234,11 @@ class Bulk
                 ($this->errorHandler)($response);
             } else {
                 $json = json_encode($response, JSON_UNESCAPED_UNICODE);
+                // json_encode() can return false on malformed payloads; guard required
+                // under strict_types to avoid passing false to strlen().
+                if ($json === false) {
+                    $json = '(unable to encode bulk response)';
+                }
                 if (strlen($json) > 4096) {
                     $json = substr($json, 0, 4096) . '... [truncated]';
                 }
@@ -255,7 +254,7 @@ class Bulk
      *
      * @return string
      */
-    private function resolveIndex()
+    private function resolveIndex(): string
     {
         return $this->targetIndex ?? $this->index->name();
     }

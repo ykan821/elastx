@@ -1,48 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
+
+use RuntimeException;
 
 /**
  * Lightweight reference to a single document for CRUD operations.
+ *
+ * $id may be null/empty for index()/create() — Elasticsearch auto-generates an
+ * id. get()/source()/exists()/update()/delete() require an explicit id.
  */
 class Doc
 {
     /**
-     * @var Index
-     */
-    private $index;
-
-    /**
-     * @var string|int
-     */
-    private $id;
-
-    /**
      * @var int
      */
-    private $retryOnConflict = 0;
+    private int $retryOnConflict = 0;
 
     /**
      * @var string|null
      */
-    private $refresh;
+    private ?string $refresh = null;
 
     /**
-     * @param Index $index
-     * @param string|int $id
+     * @param string|int|null $id document id, or null/'' to let ES auto-generate
      */
-    public function __construct(Index $index, $id)
-    {
-        $this->index = $index;
-        $this->id = $id;
+    public function __construct(
+        private readonly Index $index,
+        private readonly string|int|null $id
+    ) {
     }
 
     /**
      * Return the document ID.
      *
-     * @return string|int
+     * @return string|int|null
      */
-    public function id()
+    public function id(): string|int|null
     {
         return $this->id;
     }
@@ -53,7 +49,7 @@ class Doc
      * @param int $count
      * @return $this
      */
-    public function retryOnConflict($count)
+    public function retryOnConflict(int $count): static
     {
         $this->retryOnConflict = $count;
 
@@ -66,7 +62,7 @@ class Doc
      * @param string $value
      * @return $this
      */
-    public function refresh($value)
+    public function refresh(string $value): static
     {
         $this->refresh = $value;
 
@@ -78,11 +74,13 @@ class Doc
      *
      * @return array<string, mixed>
      */
-    public function get()
+    public function get(): array
     {
+        $id = $this->requireId('get');
+
         return $this->index->getClient()->get([
             'index' => $this->index->name(),
-            'id' => $this->id,
+            'id' => $id,
         ])->asArray();
     }
 
@@ -91,11 +89,13 @@ class Doc
      *
      * @return array<string, mixed>
      */
-    public function source()
+    public function source(): array
     {
+        $id = $this->requireId('source');
+
         return $this->index->getClient()->getSource([
             'index' => $this->index->name(),
-            'id' => $this->id,
+            'id' => $id,
         ])->asArray();
     }
 
@@ -104,11 +104,13 @@ class Doc
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
+        $id = $this->requireId('exists');
+
         return $this->index->getClient()->exists([
             'index' => $this->index->name(),
-            'id' => $this->id,
+            'id' => $id,
         ])->asBool();
     }
 
@@ -121,11 +123,13 @@ class Doc
      * @param bool $upsert
      * @return array<string, mixed>
      */
-    public function update($data, $upsert = false)
+    public function update(array $data, bool $upsert = false): array
     {
+        $id = $this->requireId('update');
+
         $params = [
             'index' => $this->index->name(),
-            'id' => $this->id,
+            'id' => $id,
             'body' => [
                 'doc' => $data,
                 'doc_as_upsert' => $upsert,
@@ -148,16 +152,22 @@ class Doc
     /**
      * Index (create or overwrite) the document.
      *
+     * If $id is null or empty, ES auto-generates an id.
+     *
      * @param array<string, mixed> $document
      * @return array<string, mixed>
      */
-    public function index($document)
+    public function index(array $document): array
     {
         $params = [
             'index' => $this->index->name(),
-            'id' => $this->id,
-            'body' => $document,
         ];
+
+        if ($this->id !== null && $this->id !== '') {
+            $params['id'] = $this->id;
+        }
+
+        $params['body'] = $document;
 
         if ($this->refresh !== null) {
             $params['refresh'] = $this->refresh;
@@ -174,7 +184,7 @@ class Doc
      * @param array<string, mixed> $document
      * @return array<string, mixed>
      */
-    public function save($document)
+    public function save(array $document): array
     {
         return $this->index($document);
     }
@@ -182,17 +192,24 @@ class Doc
     /**
      * Create the document (fail if already exists).
      *
+     * If $id is null or empty, ES auto-generates an id (always a create, since
+     * auto-generated ids are unique).
+     *
      * @param array<string, mixed> $document
      * @return array<string, mixed>
      */
-    public function create($document)
+    public function create(array $document): array
     {
         $params = [
             'index' => $this->index->name(),
-            'id' => $this->id,
-            'body' => $document,
-            'op_type' => 'create',
         ];
+
+        if ($this->id !== null && $this->id !== '') {
+            $params['id'] = $this->id;
+        }
+
+        $params['body'] = $document;
+        $params['op_type'] = 'create';
 
         if ($this->refresh !== null) {
             $params['refresh'] = $this->refresh;
@@ -208,11 +225,13 @@ class Doc
      *
      * @return array<string, mixed>
      */
-    public function delete()
+    public function delete(): array
     {
+        $id = $this->requireId('delete');
+
         $params = [
             'index' => $this->index->name(),
-            'id' => $this->id,
+            'id' => $id,
         ];
 
         if ($this->refresh !== null) {
@@ -222,6 +241,28 @@ class Doc
         $this->resetOptions();
 
         return $this->index->getClient()->delete($params)->asArray();
+    }
+
+    /**
+     * Resolve the document id, throwing for operations that cannot auto-generate.
+     *
+     * get/source/exists/update/delete address an existing document and require
+     * an explicit id; only index/create let ES auto-generate.
+     *
+     * @return string|int
+     * @throws RuntimeException if the id is null or empty
+     */
+    private function requireId(string $operation): string|int
+    {
+        if ($this->id === null || $this->id === '') {
+            throw new RuntimeException(sprintf(
+                '%s() requires an explicit document id; got null/empty. '
+                . 'Use index() or create() to let Elasticsearch auto-generate one.',
+                $operation
+            ));
+        }
+
+        return $this->id;
     }
 
     /**

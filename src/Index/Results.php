@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 use RuntimeException;
@@ -12,22 +14,22 @@ class Results
     /**
      * @var array<string, mixed>
      */
-    protected $response;
+    protected array $response;
 
     /**
      * @var int
      */
-    protected $page = 1;
+    protected int $page = 1;
 
     /**
      * @var int
      */
-    protected $perPage = 15;
+    protected int $perPage = 15;
 
     /**
      * @var bool
      */
-    protected $paginated = false;
+    protected bool $paginated = false;
 
     /**
      * @param array<string, mixed> $response
@@ -44,7 +46,7 @@ class Results
      * @param int $perPage
      * @return $this
      */
-    public function paginate($page, $perPage)
+    public function paginate(int $page, int $perPage): static
     {
         $this->page = $page;
         $this->perPage = $perPage;
@@ -57,7 +59,7 @@ class Results
      *
      * @return int
      */
-    public function total()
+    public function total(): int
     {
         return $this->response['hits']['total']['value'] ?? 0;
     }
@@ -67,7 +69,7 @@ class Results
      *
      * @return array<int, array<string, mixed>>
      */
-    public function hits()
+    public function hits(): array
     {
         return $this->response['hits']['hits'] ?? [];
     }
@@ -77,7 +79,7 @@ class Results
      *
      * @return array<int, array<string, mixed>|null>
      */
-    public function docs()
+    public function docs(): array
     {
         return array_column($this->hits(), '_source');
     }
@@ -87,7 +89,7 @@ class Results
      *
      * @return array<int, string>
      */
-    public function ids()
+    public function ids(): array
     {
         return array_column($this->hits(), '_id');
     }
@@ -97,7 +99,7 @@ class Results
      *
      * @return array<string, mixed>|null
      */
-    public function first()
+    public function first(): ?array
     {
         $docs = $this->docs();
         return $docs[0] ?? null;
@@ -108,7 +110,7 @@ class Results
      *
      * @return array<string, mixed>|null
      */
-    public function aggregations()
+    public function aggregations(): ?array
     {
         return $this->response['aggregations'] ?? null;
     }
@@ -118,7 +120,7 @@ class Results
      *
      * @return string|null
      */
-    public function scrollId()
+    public function scrollId(): ?string
     {
         return $this->response['_scroll_id'] ?? null;
     }
@@ -128,11 +130,11 @@ class Results
      *
      * "eq" = total is exact, "gte" = total is a lower bound.
      *
-     * @return string "eq" or "gte"
+     * @return string|null "eq" or "gte"
      */
-    public function totalRelation()
+    public function totalRelation(): ?string
     {
-        return $this->response['hits']['total']['relation'];
+        return $this->response['hits']['total']['relation'] ?? null;
     }
 
     /**
@@ -140,7 +142,7 @@ class Results
      *
      * @return bool
      */
-    public function hasMore()
+    public function hasMore(): bool
     {
         return !empty($this->response['hits']['hits']);
     }
@@ -150,7 +152,7 @@ class Results
      *
      * @return int
      */
-    public function took()
+    public function took(): int
     {
         return $this->response['took'] ?? 0;
     }
@@ -160,7 +162,7 @@ class Results
      *
      * @return bool
      */
-    public function timedOut()
+    public function timedOut(): bool
     {
         return $this->response['timed_out'] ?? false;
     }
@@ -170,7 +172,7 @@ class Results
      *
      * @return array<string, mixed>
      */
-    public function raw()
+    public function raw(): array
     {
         return $this->response;
     }
@@ -180,7 +182,7 @@ class Results
      *
      * @return int
      */
-    public function page()
+    public function page(): int
     {
         return $this->page;
     }
@@ -190,7 +192,7 @@ class Results
      *
      * @return int
      */
-    public function perPage()
+    public function perPage(): int
     {
         return $this->perPage;
     }
@@ -200,7 +202,7 @@ class Results
      *
      * @return int
      */
-    public function lastPage()
+    public function lastPage(): int
     {
         return (int) ceil($this->total() / $this->perPage) ?: 1;
     }
@@ -210,7 +212,7 @@ class Results
      *
      * @return array<int, array<string, mixed>|null>
      */
-    public function items()
+    public function items(): array
     {
         return $this->docs();
     }
@@ -220,7 +222,7 @@ class Results
      *
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->response['hits']['hits']);
     }

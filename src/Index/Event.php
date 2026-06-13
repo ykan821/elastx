@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 /**
@@ -21,23 +23,23 @@ class Event
     /**
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * @var string
      */
-    public $index;
+    public string $index;
 
     /**
      * @var array<string, mixed>
      */
-    private $data = [];
+    private array $data = [];
 
     /**
      * @param string $name
      * @param string $index
      */
-    public function __construct($name, $index)
+    public function __construct(string $name, string $index)
     {
         $this->name = $name;
         $this->index = $index;
@@ -47,7 +49,7 @@ class Event
      * @param string $key
      * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->data[$key] ?? null;
     }
@@ -56,7 +58,7 @@ class Event
      * @param string $key
      * @param mixed $value
      */
-    public function __set($key, $value)
+    public function __set(string $key, mixed $value): void
     {
         $this->data[$key] = $value;
     }
@@ -65,7 +67,7 @@ class Event
      * @param string $key
      * @return bool
      */
-    public function __isset($key)
+    public function __isset(string $key): bool
     {
         return isset($this->data[$key]);
     }

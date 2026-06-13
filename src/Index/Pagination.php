@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 /**
@@ -10,12 +12,12 @@ class Pagination
     /**
      * @var callable|null
      */
-    private static $pageResolver;
+    private static $pageResolver = null;
 
     /**
      * @var callable|null
      */
-    private static $paginatorResolver;
+    private static $paginatorResolver = null;
 
     /**
      * Register a resolver that extracts page and perPage from the request.
@@ -23,7 +25,7 @@ class Pagination
      * @param callable $resolver returns [$page, $perPage]
      * @return void
      */
-    public static function setPageResolver(callable $resolver)
+    public static function setPageResolver(callable $resolver): void
     {
         self::$pageResolver = $resolver;
     }
@@ -33,7 +35,7 @@ class Pagination
      *
      * @return callable|null
      */
-    public static function getPageResolver()
+    public static function getPageResolver(): ?callable
     {
         return self::$pageResolver;
     }
@@ -44,7 +46,7 @@ class Pagination
      * @param callable $resolver receives (Results $results, int $page, int $perPage)
      * @return void
      */
-    public static function setPaginatorResolver(callable $resolver)
+    public static function setPaginatorResolver(callable $resolver): void
     {
         self::$paginatorResolver = $resolver;
     }
@@ -54,7 +56,7 @@ class Pagination
      *
      * @return callable|null
      */
-    public static function getPaginatorResolver()
+    public static function getPaginatorResolver(): ?callable
     {
         return self::$paginatorResolver;
     }
@@ -64,7 +66,7 @@ class Pagination
      *
      * @return void
      */
-    public static function reset()
+    public static function reset(): void
     {
         self::$pageResolver = null;
         self::$paginatorResolver = null;

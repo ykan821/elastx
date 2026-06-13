@@ -25,18 +25,18 @@ Index::setClient($logClient, 'logs');
 ```php
 class ProductIndex extends Index
 {
-    protected $name = 'products';       // 索引名（必填）
-    protected $mappings = [             // 索引 mappings
+    protected string $name = 'products';       // 索引名（必填）
+    protected array $mappings = [             // 索引 mappings
         'properties' => [
             'title'  => ['type' => 'text'],
             'price'  => ['type' => 'float'],
             'status' => ['type' => 'keyword'],
         ],
     ];
-    protected $settings = [             // 索引 settings
+    protected array $settings = [             // 索引 settings
         'number_of_shards' => 1,
     ];
-    protected $connection = 'main';     // 连接名（默认 'default'）
+    protected string $connection = 'main';     // 连接名（默认 'default'）
 
     public function rebuildName(): string // 重建后的真实索引名（可重写自定义）
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 use BadMethodCallException;
@@ -19,25 +21,18 @@ class Search
     /**
      * @var Query
      */
-    private $query;
-
-    /**
-     * @var Index
-     */
-    private $index;
+    private Query $query;
 
     /**
      * @var array<string, mixed>
      */
-    private $urlParams = [];
+    private array $urlParams = [];
 
-    /**
-     * @param Index $index
-     */
-    public function __construct(Index $index, Query $query = null)
-    {
+    public function __construct(
+        private readonly Index $index,
+        ?Query $query = null
+    ) {
         $this->query = $query ?? new Query();
-        $this->index = $index;
     }
 
     /**
@@ -46,7 +41,7 @@ class Search
      * @param string $routing
      * @return $this
      */
-    public function routing($routing)
+    public function routing(string $routing): static
     {
         $this->urlParams['routing'] = $routing;
         return $this;
@@ -57,10 +52,10 @@ class Search
      *
      * @param string $method
      * @param array<int, mixed> $args
-     * @return $this|mixed
+     * @return mixed
      * @throws BadMethodCallException
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         if (!method_exists($this->query, $method)) {
             throw new BadMethodCallException(
@@ -82,7 +77,7 @@ class Search
      *
      * @return Results
      */
-    public function get()
+    public function get(): Results
     {
         return new Results($this->doSearch('get'));
     }
@@ -92,7 +87,7 @@ class Search
      *
      * @return array<string, mixed>|null
      */
-    public function first()
+    public function first(): ?array
     {
         $saved = $this->query;
         $this->query = clone $this->query;
@@ -112,7 +107,7 @@ class Search
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $response = $this->doCount();
 
@@ -130,7 +125,7 @@ class Search
      * @param string $duration
      * @return Results
      */
-    public function scroll($scrollId = null, $duration = '5m')
+    public function scroll(?string $scrollId = null, string $duration = '5m'): Results
     {
         if ($scrollId !== null) {
             return $this->doScroll($scrollId, $duration);
@@ -159,7 +154,7 @@ class Search
      * @param string $duration
      * @return Results
      */
-    public function next(Results $results, $duration = '5m')
+    public function next(Results $results, string $duration = '5m'): Results
     {
         return $this->doScroll($results->scrollId(), $duration);
     }
@@ -170,7 +165,7 @@ class Search
      * @param Results $results
      * @return void
      */
-    public function clear(Results $results)
+    public function clear(Results $results): void
     {
         $scrollId = $results->scrollId();
         if ($scrollId !== null) {
@@ -187,7 +182,7 @@ class Search
      * @param string $duration
      * @return Results
      */
-    protected function doScroll($scrollId, $duration)
+    protected function doScroll(string $scrollId, string $duration): Results
     {
         $indexName = $this->index->name();
 
@@ -220,7 +215,7 @@ class Search
      * @param string $duration
      * @return \Generator
      */
-    public function cursor($duration = '5m')
+    public function cursor(string $duration = '5m'): \Generator
     {
         $results = $this->scroll(null, $duration);
 
@@ -241,7 +236,7 @@ class Search
      * @param int|null $perPage
      * @return Results
      */
-    public function paginate($page = null, $perPage = null)
+    public function paginate(?int $page = null, ?int $perPage = null): Results
     {
         if ($page === null && $perPage === null) {
             $resolver = Pagination::getPageResolver();
@@ -276,7 +271,7 @@ class Search
      *
      * @return array<string, mixed>
      */
-    protected function doCount()
+    protected function doCount(): array
     {
         $indexName = $this->index->name();
         $body = $this->query->toArray() ?: new stdClass();
@@ -311,7 +306,7 @@ class Search
      * @param array<string, mixed> $extra extra request params (e.g. scroll)
      * @return array<string, mixed>
      */
-    protected function doSearch($action, array $extra = [])
+    protected function doSearch(string $action, array $extra = []): array
     {
         $indexName = $this->index->name();
         $body = $this->query->toArray() ?: new stdClass();

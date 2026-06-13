@@ -814,5 +814,5 @@ class IndexTest extends TestCase
 
 class TestConcreteIndex extends Index
 {
-    protected $name = 'test';
+    protected string $name = 'test';
 }

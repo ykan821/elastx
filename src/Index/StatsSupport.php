@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 /**
@@ -13,7 +15,7 @@ trait StatsSupport
      * @param string $field
      * @return float|null
      */
-    public function max($field)
+    public function max(string $field): ?float
     {
         return $this->aggregateScalar('max', $field);
     }
@@ -24,7 +26,7 @@ trait StatsSupport
      * @param string $field
      * @return float|null
      */
-    public function min($field)
+    public function min(string $field): ?float
     {
         return $this->aggregateScalar('min', $field);
     }
@@ -35,7 +37,7 @@ trait StatsSupport
      * @param string $field
      * @return float|null
      */
-    public function avg($field)
+    public function avg(string $field): ?float
     {
         return $this->aggregateScalar('avg', $field);
     }
@@ -46,7 +48,7 @@ trait StatsSupport
      * @param string $field
      * @return float|null
      */
-    public function sum($field)
+    public function sum(string $field): ?float
     {
         return $this->aggregateScalar('sum', $field);
     }
@@ -57,7 +59,7 @@ trait StatsSupport
      * @param string $field
      * @return array{count: int, min: float|null, max: float|null, avg: float|null, sum: float|null}|null
      */
-    public function stats($field)
+    public function stats(string $field): ?array
     {
         $saved = $this->query;
         $this->query = clone $this->query;
@@ -90,7 +92,7 @@ trait StatsSupport
      * @param string $field
      * @return float|null
      */
-    private function aggregateScalar($type, $field)
+    private function aggregateScalar(string $type, string $field): ?float
     {
         $saved = $this->query;
         $this->query = clone $this->query;

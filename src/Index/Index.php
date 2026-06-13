@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 use BadMethodCallException;
@@ -17,32 +19,32 @@ abstract class Index
     /**
      * @var string
      */
-    protected $connection = 'default';
+    protected string $connection = 'default';
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var array<string, mixed>
      */
-    protected $mappings = [];
+    protected array $mappings = [];
 
     /**
      * @var array<string, mixed>
      */
-    protected $settings = [];
+    protected array $settings = [];
 
     /**
      * @var int
      */
-    protected $perPage = 15;
+    protected int $perPage = 15;
 
     /**
      * @var int
      */
-    protected $maxPerPage = 100;
+    protected int $maxPerPage = 100;
 
     /**
      * Register an Elasticsearch client. Optionally name the connection.
@@ -72,7 +74,7 @@ abstract class Index
      * @param string $connection
      * @return $this
      */
-    public function setConnection(string $connection)
+    public function setConnection(string $connection): static
     {
         $this->connection = $connection;
 
@@ -95,7 +97,7 @@ abstract class Index
      * @param string $connection
      * @return static
      */
-    public static function on(string $connection)
+    public static function on(string $connection): static
     {
         return (new static())->setConnection($connection);
     }
@@ -105,7 +107,7 @@ abstract class Index
      *
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         if (empty($this->name)) {
             throw new RuntimeException(
@@ -122,7 +124,7 @@ abstract class Index
      * @param Query|null $query
      * @return Search
      */
-    public function newQuery(Query $query = null)
+    public function newQuery(?Query $query = null): Search
     {
         return new Search($this, $query);
     }
@@ -133,7 +135,7 @@ abstract class Index
      * @param Query|null $query
      * @return Search
      */
-    public static function query(Query $query = null)
+    public static function query(?Query $query = null): Search
     {
         return (new static())->newQuery($query);
     }
@@ -141,10 +143,10 @@ abstract class Index
     /**
      * Create a Doc reference from this index instance.
      *
-     * @param string|int $id
+     * @param string|int|null $id document id, or null/'' to let ES auto-generate
      * @return Doc
      */
-    public function newDoc($id)
+    public function newDoc(string|int|null $id): Doc
     {
         return new Doc($this, $id);
     }
@@ -152,10 +154,10 @@ abstract class Index
     /**
      * Create a Doc reference. Delegates to newDoc() with a fresh instance.
      *
-     * @param string|int $id
+     * @param string|int|null $id document id, or null/'' to let ES auto-generate
      * @return Doc
      */
-    public static function doc($id)
+    public static function doc(string|int|null $id): Doc
     {
         return (new static())->newDoc($id);
     }
@@ -165,7 +167,7 @@ abstract class Index
      *
      * @return array<string, mixed>
      */
-    public function mappings()
+    public function mappings(): array
     {
         return $this->mappings;
     }
@@ -175,7 +177,7 @@ abstract class Index
      *
      * @return array<string, mixed>
      */
-    public function settings()
+    public function settings(): array
     {
         return $this->settings;
     }
@@ -195,7 +197,7 @@ abstract class Index
      *
      * @return int
      */
-    public function perPage()
+    public function perPage(): int
     {
         return $this->perPage;
     }
@@ -205,7 +207,7 @@ abstract class Index
      *
      * @return int
      */
-    public function maxPerPage()
+    public function maxPerPage(): int
     {
         return $this->maxPerPage;
     }

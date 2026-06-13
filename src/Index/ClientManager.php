@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 use Elastic\Elasticsearch\ClientInterface;
@@ -13,7 +15,7 @@ class ClientManager
     /**
      * @var array<string, ClientInterface>
      */
-    private static $clients = [];
+    private static array $clients = [];
 
     /**
      * Register an Elasticsearch client. Optionally name the connection.

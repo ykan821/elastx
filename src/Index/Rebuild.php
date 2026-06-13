@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
 use Elastic\Elasticsearch\Exception\ClientResponseException;
@@ -20,14 +22,9 @@ class Rebuild
     private const LOCK_INDEX = '.ek_locks';
 
     /**
-     * @var Index
-     */
-    private $index;
-
-    /**
      * @var int
      */
-    private $batchSize = 1000;
+    private int $batchSize = 1000;
 
     /**
      * @var callable|null
@@ -37,19 +34,16 @@ class Rebuild
     /**
      * @var bool
      */
-    private $allowEmpty = false;
+    private bool $allowEmpty = false;
 
     /**
      * @var callable|\Iterator<int, array<string, mixed>>|null
      */
     private $dataSource;
 
-    /**
-     * @param Index $index
-     */
-    public function __construct(Index $index)
-    {
-        $this->index = $index;
+    public function __construct(
+        private readonly Index $index
+    ) {
     }
 
     /**
@@ -58,7 +52,7 @@ class Rebuild
      * @param int $size
      * @return $this
      */
-    public function batchSize($size)
+    public function batchSize(int $size): static
     {
         $this->batchSize = $size;
         return $this;
@@ -74,7 +68,7 @@ class Rebuild
      * @param callable $handler function (array $response): void
      * @return $this
      */
-    public function onError($handler)
+    public function onError(callable $handler): static
     {
         $this->errorHandler = $handler;
         return $this;
@@ -86,7 +80,7 @@ class Rebuild
      * @param bool $allow
      * @return $this
      */
-    public function allowEmpty($allow = true)
+    public function allowEmpty(bool $allow = true): static
     {
         $this->allowEmpty = $allow;
         return $this;
@@ -99,7 +93,7 @@ class Rebuild
      * @param callable|\Iterator<int, array<string, mixed>> $source
      * @return $this
      */
-    public function source($source)
+    public function source($source): static
     {
         $this->dataSource = $source;
         return $this;
@@ -116,7 +110,7 @@ class Rebuild
      * @param array<string, mixed> $context user-defined context passed to source()
      * @return array{newIndex: string, oldIndex: string|null}
      */
-    public function run(array $context = [])
+    public function run(array $context = []): array
     {
         $this->acquireLock();
 
@@ -344,7 +338,7 @@ class Rebuild
      *
      * @return string the new backing index name
      */
-    protected function createIndex()
+    protected function createIndex(): string
     {
         $newName = $this->index->rebuildName();
         $mappings = $this->index->mappings();
@@ -367,7 +361,7 @@ class Rebuild
      * @param string $newName
      * @param array<string, mixed> $context
      */
-    protected function import($newName, array $context): void
+    protected function import(string $newName, array $context): void
     {
         if ($this->dataSource !== null) {
             $items = is_callable($this->dataSource) ? ($this->dataSource)($context) : $this->dataSource;
