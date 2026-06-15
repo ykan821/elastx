@@ -11,9 +11,9 @@ use ElasticKit\DSL\Aggs\Bucket\Composite;
 use ElasticKit\DSL\Aggs\Bucket\DateHistogram;
 use ElasticKit\DSL\Aggs\Bucket\DateRange;
 use ElasticKit\DSL\Aggs\Bucket\DiversifiedSampler;
-use ElasticKit\DSL\Aggs\Bucket\FilterAgg;
+use ElasticKit\DSL\Aggs\Bucket\Filter;
 use ElasticKit\DSL\Aggs\Bucket\Filters;
-use ElasticKit\DSL\Aggs\Bucket\GlobalAgg;
+use ElasticKit\DSL\Aggs\Bucket\Global_;
 use ElasticKit\DSL\Aggs\Bucket\FrequentItemSets;
 use ElasticKit\DSL\Aggs\Bucket\GeoDistance;
 use ElasticKit\DSL\Aggs\Bucket\GeoHashGrid;
@@ -25,7 +25,7 @@ use ElasticKit\DSL\Aggs\Bucket\IpRange;
 use ElasticKit\DSL\Aggs\Bucket\Missing;
 use ElasticKit\DSL\Aggs\Bucket\MultiTerms;
 use ElasticKit\DSL\Aggs\Bucket\Nested;
-use ElasticKit\DSL\Aggs\Bucket\ParentAgg;
+use ElasticKit\DSL\Aggs\Bucket\Parent_;
 use ElasticKit\DSL\Aggs\Bucket\RandomSampler;
 use ElasticKit\DSL\Aggs\Bucket\Range;
 use ElasticKit\DSL\Aggs\Bucket\RareTerms;
@@ -57,8 +57,8 @@ trait Bucket
      */
     public function filter($filter)
     {
-        $instance = new FilterAgg();
-        $instance->setFilter($filter);
+        $instance = new Filter();
+        $instance->filter($filter);
         return $this->node($instance);
     }
 
@@ -210,9 +210,9 @@ trait Bucket
      *
      * @return static
      */
-    public function globalAggregation()
+    public function global()
     {
-        return $this->node(new GlobalAgg());
+        return $this->node(new Global_());
     }
 
     /**
@@ -289,7 +289,7 @@ trait Bucket
      */
     public function parent($params)
     {
-        return $this->node(ParentAgg::create($params));
+        return $this->node(Parent_::create($params));
     }
 
     /**

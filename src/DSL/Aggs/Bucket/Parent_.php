@@ -9,7 +9,7 @@ use ElasticKit\DSL\Node;
 /**
  * A bucket aggregation that aggregates on parent documents from a join field.
  */
-class ParentAgg extends Node
+class Parent_ extends Node
 {
     protected string $_key = 'parent';
 

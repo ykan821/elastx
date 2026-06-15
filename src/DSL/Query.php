@@ -95,8 +95,6 @@ class Query extends Node
             $this->_queries[] = $field;
         } elseif (is_array($field)) {
             $this->fromArray($field);
-        } elseif ($field !== null) {
-            $this->_raw = $field;
         }
     }
 
