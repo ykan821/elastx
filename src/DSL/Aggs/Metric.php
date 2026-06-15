@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs;
 
 use ElasticKit\DSL\Aggs\Metric\Avg;

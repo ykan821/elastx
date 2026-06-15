@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Filters extends Node
 {
-    protected $_key = 'filters';
+    protected string $_key = 'filters';
 
     /**
      * Filter queries used to create buckets.
@@ -17,7 +19,7 @@ class Filters extends Node
      * @param mixed $filters
      * @return static
      */
-    public function filters($filters)
+    public function filters($filters): static
     {
         return $this->addProperty('filters', $filters);
     }
@@ -28,7 +30,7 @@ class Filters extends Node
      * @param string $otherBucketKey
      * @return static
      */
-    public function otherBucketKey($otherBucketKey)
+    public function otherBucketKey(string $otherBucketKey): static
     {
         return $this->addProperty('other_bucket_key', $otherBucketKey);
     }
@@ -39,7 +41,7 @@ class Filters extends Node
      * @param bool $keyed
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $keyed): static
     {
         return $this->addProperty('keyed', $keyed);
     }

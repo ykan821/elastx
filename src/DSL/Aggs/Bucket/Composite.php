@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,11 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Composite extends Node
 {
-    /** @var string */
-    protected $_key = 'composite';
-
-    /** @var mixed */
-    protected $sources;
+    protected string $_key = 'composite';
 
     /**
      * List of source definitions used to build composite buckets.
@@ -21,7 +19,7 @@ class Composite extends Node
      * @param mixed $sources
      * @return static
      */
-    public function sources($sources)
+    public function sources($sources): static
     {
         return $this->addProperty('sources', $sources);
     }
@@ -32,7 +30,7 @@ class Composite extends Node
      * @param mixed $after
      * @return static
      */
-    public function after($after)
+    public function after($after): static
     {
         return $this->addProperty('after', $after);
     }
@@ -43,7 +41,7 @@ class Composite extends Node
      * @param mixed $order
      * @return static
      */
-    public function order($order)
+    public function order($order): static
     {
         return $this->addProperty('order', $order);
     }
@@ -54,32 +52,8 @@ class Composite extends Node
      * @param int $size
      * @return static
      */
-    public function size($size)
+    public function size(int $size): static
     {
         return $this->addProperty('size', $size);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @SuppressWarnings(PHPMD.IfStatementAssignment)
-     */
-    public function toArray()
-    {
-        $properties = $this->_properties;
-
-        if (isset($properties['sources'])) {
-            foreach ($properties['sources'] as $key => $source) {
-                if (($item = current($source)) instanceof Node) {
-                    $properties['sources'][$key] = $item->toArray();
-                }
-            }
-        }
-
-        $properties = $this->resolveProperties($properties);
-
-        if ($this->_isPropertyField) {
-            return [$this->_field => $properties];
-        }
-        return $properties;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,18 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Missing extends Node
 {
-    protected $_key = 'missing';
-
-    /**
-     * The field to check for missing values.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'missing';
 
     /**
      * Value to treat as missing for the field.
@@ -28,7 +19,7 @@ class Missing extends Node
      * @param mixed $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing($missing): static
     {
         return $this->addProperty('missing', $missing);
     }

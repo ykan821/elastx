@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -11,7 +13,7 @@ use ElasticKit\DSL\Node;
  */
 class Fuzzy extends Node
 {
-    protected $_key = 'fuzzy';
+    protected string $_key = 'fuzzy';
 
     /**
      * The term to match.
@@ -19,7 +21,7 @@ class Fuzzy extends Node
      * @param string $term
      * @return static
      */
-    public function term($term)
+    public function term(string $term): static
     {
         return $this->addProperty('term', $term);
     }
@@ -31,7 +33,7 @@ class Fuzzy extends Node
      * @param int $prefixLength
      * @return static
      */
-    public function prefixLength($prefixLength)
+    public function prefixLength(int $prefixLength): static
     {
         return $this->addProperty('prefix_length', $prefixLength);
     }
@@ -43,7 +45,7 @@ class Fuzzy extends Node
      * @param bool $transpositions
      * @return static
      */
-    public function transpositions($transpositions)
+    public function transpositions(bool $transpositions): static
     {
         return $this->addProperty('transpositions', $transpositions);
     }
@@ -52,10 +54,10 @@ class Fuzzy extends Node
      * Maximum edit distance allowed for matching.
      * Defaults to auto.
      *
-     * @param string $fuzziness
+     * @param int|string $fuzziness
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $fuzziness): static
     {
         return $this->addProperty('fuzziness', $fuzziness);
     }
@@ -67,7 +69,7 @@ class Fuzzy extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -80,7 +82,7 @@ class Fuzzy extends Node
      * @param string $useField
      * @return static
      */
-    public function useField($useField)
+    public function useField(string $useField): static
     {
         return $this->addProperty('use_field', $useField);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Query;
@@ -10,25 +12,20 @@ use ElasticKit\DSL\Node;
  */
 class AdjacencyMatrix extends Node
 {
-    protected $_key = 'adjacency_matrix';
-
-    /** @var bool */
-    protected $_isPropertyField;
-
-    /** @var array<string, Query> */
-    protected $_filters;
+    protected string $_key = 'adjacency_matrix';
 
     /**
-     * Filters used to create buckets.
+     * Add a named filter used to create buckets.
      *
      * @param string $key
      * @param mixed $query
      * @return static
      */
-    public function filters($key, $query)
+    public function filters($key, $query): static
     {
-        $this->_filters[$key] = Query::create($query);
-        return $this->addProperty('filters', $this->_filters);
+        $this->_properties ??= [];
+        $this->_properties['filters'][$key] = Query::create($query);
+        return $this;
     }
 
     /**
@@ -37,31 +34,8 @@ class AdjacencyMatrix extends Node
      * @param string $separator
      * @return static
      */
-    public function separator($separator)
+    public function separator(string $separator): static
     {
         return $this->addProperty('separator', $separator);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        $properties = $this->_properties;
-
-        if (isset($properties['filters'])) {
-            foreach ($properties['filters'] as $key => $filter) {
-                if ($filter instanceof Query) {
-                    $properties['filters'][$key] = $filter->toArray()['query'];
-                }
-            }
-        }
-
-        $properties = $this->resolveProperties($properties);
-
-        if ($this->_isPropertyField) {
-            return [$this->_field => $properties];
-        }
-        return $properties;
     }
 }

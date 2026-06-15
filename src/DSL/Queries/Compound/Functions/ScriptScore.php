@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound\Functions;
 
 use ElasticKit\DSL\Node;
@@ -10,15 +12,15 @@ use ElasticKit\DSL\Queries\Script;
  */
 class ScriptScore extends Node
 {
-    protected $_key = 'script_score';
+    protected string $_key = 'script_score';
 
     /**
-     * (Required) The script used to compute the custom score.
+     * The script used to compute the custom score.
      *
      * @param mixed $script
      * @return static
      */
-    public function script($script)
+    public function script($script): static
     {
         return $this->addProperty('script', Script::create($script));
     }

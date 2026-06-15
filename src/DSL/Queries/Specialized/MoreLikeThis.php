@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class MoreLikeThis extends Node
 {
-    protected $_key = 'more_like_this';
+    protected string $_key = 'more_like_this';
 
     /**
      * List of fields to use for similarity comparison.
@@ -17,7 +19,7 @@ class MoreLikeThis extends Node
      * @param array<int, string> $array
      * @return static
      */
-    public function fields($array)
+    public function fields(array $array): static
     {
         return $this->addProperty('fields', $array);
     }
@@ -28,7 +30,7 @@ class MoreLikeThis extends Node
      * @param mixed $string
      * @return static
      */
-    public function like($string)
+    public function like($string): static
     {
         return $this->addProperty('like', $string);
     }
@@ -39,7 +41,7 @@ class MoreLikeThis extends Node
      * @param int $int
      * @return static
      */
-    public function minTermFreq($int)
+    public function minTermFreq(int $int): static
     {
         return $this->addProperty('min_term_freq', $int);
     }
@@ -50,7 +52,7 @@ class MoreLikeThis extends Node
      * @param int $int
      * @return static
      */
-    public function maxQueryTerms($int)
+    public function maxQueryTerms(int $int): static
     {
         return $this->addProperty('max_query_terms', $int);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Query;
@@ -10,17 +12,17 @@ use ElasticKit\DSL\Node;
  */
 class FilterAgg extends Node
 {
-    protected $_key = 'filter';
+    protected string $_key = 'filter';
 
     /**
-     * (Required) The filter query to apply.
+     * The filter query to apply.
      *
      * @param mixed $filter
      * @return static
      */
-    public function setFilter($filter)
+    public function setFilter($filter): static
     {
-        $this->_properties = $filter;
+        $this->_raw = $filter;
         return $this;
     }
 
@@ -31,6 +33,6 @@ class FilterAgg extends Node
      */
     public function toArray()
     {
-        return Query::create($this->_properties)->toArray()['query'];
+        return Query::create($this->_raw)->toArray()['query'];
     }
 }

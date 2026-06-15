@@ -40,7 +40,7 @@ abstract class DslTestCase extends TestCase
     }
 
     /**
-     * (Required, string) Assert Query produces expected JSON, and optionally validate against ES.
+     * Assert Query produces expected JSON, and optionally validate against ES.
      *
      * @param $expectedJson
      * @param $query

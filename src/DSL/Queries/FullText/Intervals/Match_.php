@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -11,7 +13,7 @@ use ElasticKit\DSL\Node;
  */
 class Match_ extends Node
 {
-    protected $_key = 'match';
+    protected string $_key = 'match';
 
     /**
      * Text you wish to find in the provided field.
@@ -19,7 +21,7 @@ class Match_ extends Node
      * @param string $query
      * @return static
      */
-    public function query($query)
+    public function query(string $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -33,7 +35,7 @@ class Match_ extends Node
      * @param int $maxGaps
      * @return static
      */
-    public function maxGaps($maxGaps)
+    public function maxGaps(int $maxGaps): static
     {
         return $this->addProperty('max_gaps', $maxGaps);
     }
@@ -45,7 +47,7 @@ class Match_ extends Node
      * @param bool $ordered
      * @return static
      */
-    public function ordered($ordered = false)
+    public function ordered(bool $ordered = false): static
     {
         return $this->addProperty('ordered', $ordered);
     }
@@ -57,7 +59,7 @@ class Match_ extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -68,7 +70,7 @@ class Match_ extends Node
      * @param mixed $filter
      * @return static
      */
-    public function filter($filter)
+    public function filter($filter): static
     {
         return $this->addProperty('filter', Filter::create($filter));
     }
@@ -81,7 +83,7 @@ class Match_ extends Node
      * @param string $useField
      * @return static
      */
-    public function useField($useField)
+    public function useField(string $useField): static
     {
         return $this->addProperty('use_field', $useField);
     }

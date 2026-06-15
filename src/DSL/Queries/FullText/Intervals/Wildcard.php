@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -11,7 +13,7 @@ use ElasticKit\DSL\Node;
  */
 class Wildcard extends Node
 {
-    protected $_key = 'wildcard';
+    protected string $_key = 'wildcard';
 
     /**
      * Wildcard pattern used to find matching terms.
@@ -20,7 +22,7 @@ class Wildcard extends Node
      * @param string $pattern
      * @return static
      */
-    public function pattern($pattern)
+    public function pattern(string $pattern): static
     {
         return $this->addProperty('pattern', $pattern);
     }
@@ -32,7 +34,7 @@ class Wildcard extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -45,7 +47,7 @@ class Wildcard extends Node
      * @param string $useField
      * @return static
      */
-    public function useField($useField)
+    public function useField(string $useField): static
     {
         return $this->addProperty('use_field', $useField);
     }

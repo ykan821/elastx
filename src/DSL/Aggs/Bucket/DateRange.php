@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,18 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class DateRange extends Node
 {
-    protected $_key = 'date_range';
-
-    /**
-     * The date field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'date_range';
 
     /**
      * Array of range definitions for bucketing.
@@ -28,7 +19,7 @@ class DateRange extends Node
      * @param array<string, mixed> $ranges
      * @return static
      */
-    public function ranges($ranges)
+    public function ranges(array $ranges): static
     {
         return $this->addProperty('ranges', $ranges);
     }
@@ -39,7 +30,7 @@ class DateRange extends Node
      * @param bool $keyed
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $keyed): static
     {
         return $this->addProperty('keyed', $keyed);
     }
@@ -50,7 +41,7 @@ class DateRange extends Node
      * @param string $format
      * @return static
      */
-    public function format($format)
+    public function format(string $format): static
     {
         return $this->addProperty('format', $format);
     }
@@ -61,7 +52,7 @@ class DateRange extends Node
      * @param mixed $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing($missing): static
     {
         return $this->addProperty('missing', $missing);
     }
@@ -72,7 +63,7 @@ class DateRange extends Node
      * @param string $timeZone
      * @return static
      */
-    public function timeZone($timeZone)
+    public function timeZone(string $timeZone): static
     {
         return $this->addProperty('time_zone', $timeZone);
     }

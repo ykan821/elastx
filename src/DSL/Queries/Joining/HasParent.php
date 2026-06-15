@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Joining;
 
 use ElasticKit\DSL\Query;
@@ -12,7 +14,7 @@ use ElasticKit\DSL\Node;
  */
 class HasParent extends Node
 {
-    protected $_key = 'has_parent';
+    protected string $_key = 'has_parent';
 
     /**
      * Name of the parent relationship mapped for the join field.
@@ -20,7 +22,7 @@ class HasParent extends Node
      * @param string $parentType
      * @return static
      */
-    public function parentType($parentType)
+    public function parentType(string $parentType): static
     {
         return $this->addProperty('parent_type', $parentType);
     }
@@ -32,7 +34,7 @@ class HasParent extends Node
      * @param mixed $query
      * @return static
      */
-    public function query($query)
+    public function query($query): static
     {
         return $this->addProperty('query', Query::create($query));
     }
@@ -44,7 +46,7 @@ class HasParent extends Node
      * @param bool $score
      * @return static
      */
-    public function score($score)
+    public function score(bool $score): static
     {
         return $this->addProperty('score', $score);
     }
@@ -56,7 +58,7 @@ class HasParent extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }

@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
 
 class Fuzzy extends Node
 {
-    protected $_key = 'fuzzy';
+    protected string $_key = 'fuzzy';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Term you wish to find in the provided <field>.
@@ -16,7 +18,7 @@ class Fuzzy extends Node
      * @param string $value
      * @return static
      */
-    public function value($value)
+    public function value(string $value): static
     {
         return $this->addProperty('value', $value);
     }
@@ -24,10 +26,10 @@ class Fuzzy extends Node
     /**
      * Maximum edit distance allowed for matching. See Fuzziness for valid values and more information.
      *
-     * @param string $fuzziness
+     * @param int|string $fuzziness
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $fuzziness): static
     {
         return $this->addProperty('fuzziness', $fuzziness);
     }
@@ -38,7 +40,7 @@ class Fuzzy extends Node
      * @param int $maxExpansions
      * @return static
      */
-    public function maxExpansions($maxExpansions)
+    public function maxExpansions(int $maxExpansions): static
     {
         return $this->addProperty('max_expansions', $maxExpansions);
     }
@@ -49,7 +51,7 @@ class Fuzzy extends Node
      * @param int $prefixLength
      * @return static
      */
-    public function prefixLength($prefixLength)
+    public function prefixLength(int $prefixLength): static
     {
         return $this->addProperty('prefix_length', $prefixLength);
     }
@@ -60,7 +62,7 @@ class Fuzzy extends Node
      * @param bool $transpositions
      * @return static
      */
-    public function transpositions($transpositions)
+    public function transpositions(bool $transpositions): static
     {
         return $this->addProperty('transpositions', $transpositions);
     }
@@ -71,7 +73,7 @@ class Fuzzy extends Node
      * @param string $rewrite
      * @return static
      */
-    public function rewrite($rewrite)
+    public function rewrite(string $rewrite): static
     {
         return $this->addProperty('rewrite', $rewrite);
     }

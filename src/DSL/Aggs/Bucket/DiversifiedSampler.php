@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class DiversifiedSampler extends Node
 {
-    protected $_key = 'diversified_sampler';
+    protected string $_key = 'diversified_sampler';
 
     /**
      * Number of documents to sample per shard.
@@ -17,7 +19,7 @@ class DiversifiedSampler extends Node
      * @param int $shardSize
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $shardSize): static
     {
         return $this->addProperty('shard_size', $shardSize);
     }
@@ -28,7 +30,7 @@ class DiversifiedSampler extends Node
      * @param int $maxDocsPerValue
      * @return static
      */
-    public function maxDocsPerValue($maxDocsPerValue)
+    public function maxDocsPerValue(int $maxDocsPerValue): static
     {
         return $this->addProperty('max_docs_per_value', $maxDocsPerValue);
     }
@@ -39,7 +41,7 @@ class DiversifiedSampler extends Node
      * @param string $executionHint
      * @return static
      */
-    public function executionHint($executionHint)
+    public function executionHint(string $executionHint): static
     {
         return $this->addProperty('execution_hint', $executionHint);
     }

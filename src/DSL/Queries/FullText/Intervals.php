@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -11,9 +13,9 @@ use ElasticKit\DSL\Node;
  */
 class Intervals extends Node
 {
-    protected $_key = 'intervals';
+    protected string $_key = 'intervals';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /** @var array<int, mixed> */
     protected $_intervals = [];
@@ -24,7 +26,7 @@ class Intervals extends Node
      * @param mixed $match
      * @return static
      */
-    public function match($match)
+    public function match($match): static
     {
         $this->_intervals[] = Intervals\Match_::create($match);
         return $this;
@@ -37,7 +39,7 @@ class Intervals extends Node
      * @param mixed $prefix
      * @return static
      */
-    public function prefix($prefix)
+    public function prefix($prefix): static
     {
         $this->_intervals[] = Intervals\Prefix::create($prefix);
         return $this;
@@ -49,7 +51,7 @@ class Intervals extends Node
      * @param mixed $wildcard
      * @return static
      */
-    public function wildcard($wildcard)
+    public function wildcard($wildcard): static
     {
         $this->_intervals[] = Intervals\Wildcard::create($wildcard);
         return $this;
@@ -62,7 +64,7 @@ class Intervals extends Node
      * @param mixed $fuzzy
      * @return static
      */
-    public function fuzzy($fuzzy)
+    public function fuzzy($fuzzy): static
     {
         $this->_intervals[] = Intervals\Fuzzy::create($fuzzy);
         return $this;
@@ -74,7 +76,7 @@ class Intervals extends Node
      * @param mixed $range
      * @return static
      */
-    public function range($range)
+    public function range($range): static
     {
         $this->_intervals[] = Intervals\Range::create($range);
         return $this;
@@ -87,7 +89,7 @@ class Intervals extends Node
      * @param mixed $allOf
      * @return static
      */
-    public function allOf($allOf)
+    public function allOf($allOf): static
     {
         $this->_intervals[] = Intervals\AllOf::create($allOf);
         return $this;
@@ -100,7 +102,7 @@ class Intervals extends Node
      * @param mixed $anyOf
      * @return static
      */
-    public function anyOf($anyOf)
+    public function anyOf($anyOf): static
     {
         $this->_intervals[] = Intervals\AnyOf::create($anyOf);
         return $this;
@@ -127,7 +129,7 @@ class Intervals extends Node
             $properties = $resolved;
         }
 
-        if ($this->_isPropertyField) {
+        if ($this->_fieldKeyed) {
             return [$this->_field => $properties];
         }
         return $properties;

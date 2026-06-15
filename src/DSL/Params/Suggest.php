@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Node;
@@ -11,7 +13,7 @@ use ElasticKit\DSL\Node;
  */
 class Suggest extends Node
 {
-    protected $_key = 'suggest';
+    protected string $_key = 'suggest';
 
     /**
      * Add a term suggester.
@@ -21,7 +23,7 @@ class Suggest extends Node
      * @param string|null $text
      * @return static
      */
-    public function term($alias, $field, $text = null)
+    public function term(string $alias, string $field, ?string $text = null): static
     {
         $suggest = ['term' => ['field' => $field]];
         if ($text !== null) {
@@ -38,7 +40,7 @@ class Suggest extends Node
      * @param string|null $prefix
      * @return static
      */
-    public function completion($alias, $field, $prefix = null)
+    public function completion(string $alias, string $field, ?string $prefix = null): static
     {
         $suggest = ['completion' => ['field' => $field]];
         if ($prefix !== null) {
@@ -55,7 +57,7 @@ class Suggest extends Node
      * @param string|null $text
      * @return static
      */
-    public function phrase($alias, $field, $text = null)
+    public function phrase(string $alias, string $field, ?string $text = null): static
     {
         $suggest = ['phrase' => ['field' => $field]];
         if ($text !== null) {

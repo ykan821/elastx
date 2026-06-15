@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class RandomSampler extends Node
 {
-    protected $_key = 'random_sampler';
+    protected string $_key = 'random_sampler';
 
     /**
      * Probability that a document is included in the sample (between 0 and 1).
@@ -17,7 +19,7 @@ class RandomSampler extends Node
      * @param float $probability
      * @return static
      */
-    public function probability($probability)
+    public function probability(float $probability): static
     {
         return $this->addProperty('probability', $probability);
     }
@@ -28,19 +30,8 @@ class RandomSampler extends Node
      * @param int $seed
      * @return static
      */
-    public function seed($seed)
+    public function seed(int $seed): static
     {
         return $this->addProperty('seed', $seed);
-    }
-
-    /**
-     * Field used to maintain consistent random ordering across shards.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
     }
 }

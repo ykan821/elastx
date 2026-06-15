@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,18 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class GeoDistance extends Node
 {
-    protected $_key = 'geo_distance';
-
-    /**
-     * The geo point field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'geo_distance';
 
     /**
      * The central geo point from which distances are measured.
@@ -28,7 +19,7 @@ class GeoDistance extends Node
      * @param mixed $origin
      * @return static
      */
-    public function origin($origin)
+    public function origin($origin): static
     {
         return $this->addProperty('origin', $origin);
     }
@@ -39,7 +30,7 @@ class GeoDistance extends Node
      * @param string $unit
      * @return static
      */
-    public function unit($unit)
+    public function unit(string $unit): static
     {
         return $this->addProperty('unit', $unit);
     }
@@ -50,7 +41,7 @@ class GeoDistance extends Node
      * @param string $distanceType
      * @return static
      */
-    public function distanceType($distanceType)
+    public function distanceType(string $distanceType): static
     {
         return $this->addProperty('distance_type', $distanceType);
     }
@@ -61,7 +52,7 @@ class GeoDistance extends Node
      * @param array<string, mixed> $ranges
      * @return static
      */
-    public function ranges($ranges)
+    public function ranges(array $ranges): static
     {
         return $this->addProperty('ranges', $ranges);
     }
@@ -72,7 +63,7 @@ class GeoDistance extends Node
      * @param bool $keyed
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $keyed): static
     {
         return $this->addProperty('keyed', $keyed);
     }

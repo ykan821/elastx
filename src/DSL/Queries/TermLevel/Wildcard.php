@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
 
 class Wildcard extends Node
 {
-    protected $_key = 'wildcard';
+    protected string $_key = 'wildcard';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Allows case insensitive matching of the pattern with the indexed field values when set to true. Default is false which means the case sensitivity of matching depends on the underlying field’s mapping.
@@ -17,7 +19,7 @@ class Wildcard extends Node
      * @return static
      * @version 7.10.0
      */
-    public function caseInsensitive($caseInsensitive)
+    public function caseInsensitive(bool $caseInsensitive): static
     {
         return $this->addProperty('case_insensitive', $caseInsensitive);
     }
@@ -28,7 +30,7 @@ class Wildcard extends Node
      * @param string $rewrite
      * @return static
      */
-    public function rewrite($rewrite)
+    public function rewrite(string $rewrite): static
     {
         return $this->addProperty('rewrite', $rewrite);
     }
@@ -45,7 +47,7 @@ class Wildcard extends Node
      * @param string $value
      * @return static
      */
-    public function value($value)
+    public function value(string $value): static
     {
         return $this->addProperty('value', $value);
     }
@@ -56,7 +58,7 @@ class Wildcard extends Node
      * @param string $wildcard
      * @return static
      */
-    public function wildcard($wildcard)
+    public function wildcard(string $wildcard): static
     {
         return $this->addProperty('wildcard', $wildcard);
     }

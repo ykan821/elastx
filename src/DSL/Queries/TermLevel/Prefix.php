@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
 
 class Prefix extends Node
 {
-    protected $_key = 'prefix';
+    protected string $_key = 'prefix';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Beginning characters of terms you wish to find in the provided <field>.
@@ -16,7 +18,7 @@ class Prefix extends Node
      * @param string $value
      * @return static
      */
-    public function value($value)
+    public function value(string $value): static
     {
         return $this->addProperty('value', $value);
     }
@@ -27,7 +29,7 @@ class Prefix extends Node
      * @param string $rewrite
      * @return static
      */
-    public function rewrite($rewrite)
+    public function rewrite(string $rewrite): static
     {
         return $this->addProperty('rewrite', $rewrite);
     }
@@ -38,7 +40,7 @@ class Prefix extends Node
      * @param bool $caseInsensitive
      * @return static
      */
-    public function caseInsensitive($caseInsensitive)
+    public function caseInsensitive(bool $caseInsensitive): static
     {
         return $this->addProperty('case_insensitive', $caseInsensitive);
     }

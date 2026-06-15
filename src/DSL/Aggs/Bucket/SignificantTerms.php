@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,18 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class SignificantTerms extends Node
 {
-    protected $_key = 'significant_terms';
-
-    /**
-     * The field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'significant_terms';
 
     /**
      * Maximum number of significant terms to return.
@@ -28,7 +19,7 @@ class SignificantTerms extends Node
      * @param int $size
      * @return static
      */
-    public function size($size)
+    public function size(int $size): static
     {
         return $this->addProperty('size', $size);
     }
@@ -39,7 +30,7 @@ class SignificantTerms extends Node
      * @param int $shardSize
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $shardSize): static
     {
         return $this->addProperty('shard_size', $shardSize);
     }
@@ -50,7 +41,7 @@ class SignificantTerms extends Node
      * @param int $minDocCount
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $minDocCount): static
     {
         return $this->addProperty('min_doc_count', $minDocCount);
     }
@@ -61,7 +52,7 @@ class SignificantTerms extends Node
      * @param int $shardMinDocCount
      * @return static
      */
-    public function shardMinDocCount($shardMinDocCount)
+    public function shardMinDocCount(int $shardMinDocCount): static
     {
         return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
     }
@@ -72,7 +63,7 @@ class SignificantTerms extends Node
      * @param mixed $include
      * @return static
      */
-    public function include($include)
+    public function include($include): static
     {
         return $this->addProperty('include', $include);
     }
@@ -83,7 +74,7 @@ class SignificantTerms extends Node
      * @param mixed $exclude
      * @return static
      */
-    public function exclude($exclude)
+    public function exclude($exclude): static
     {
         return $this->addProperty('exclude', $exclude);
     }
@@ -94,7 +85,7 @@ class SignificantTerms extends Node
      * @param mixed $backgroundFilter
      * @return static
      */
-    public function backgroundFilter($backgroundFilter)
+    public function backgroundFilter($backgroundFilter): static
     {
         return $this->addProperty('background_filter', $backgroundFilter);
     }
@@ -105,7 +96,7 @@ class SignificantTerms extends Node
      * @param string $executionHint
      * @return static
      */
-    public function executionHint($executionHint)
+    public function executionHint(string $executionHint): static
     {
         return $this->addProperty('execution_hint', $executionHint);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Joining;
 
 use ElasticKit\DSL\Query;
@@ -12,7 +14,7 @@ use ElasticKit\DSL\Node;
  */
 class HasChild extends Node
 {
-    protected $_key = 'has_child';
+    protected string $_key = 'has_child';
 
     /**
      * Name of the child relationship mapped for the join field.
@@ -20,7 +22,7 @@ class HasChild extends Node
      * @param string $type
      * @return static
      */
-    public function type($type)
+    public function type(string $type): static
     {
         return $this->addProperty('type', $type);
     }
@@ -32,7 +34,7 @@ class HasChild extends Node
      * @param mixed $query
      * @return static
      */
-    public function query($query)
+    public function query($query): static
     {
         return $this->addProperty('query', Query::create($query));
     }
@@ -44,7 +46,7 @@ class HasChild extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }
@@ -56,7 +58,7 @@ class HasChild extends Node
      * @param int $maxChildren
      * @return static
      */
-    public function maxChildren($maxChildren)
+    public function maxChildren(int $maxChildren): static
     {
         return $this->addProperty('max_children', $maxChildren);
     }
@@ -69,7 +71,7 @@ class HasChild extends Node
      * @param int $minChildren
      * @return static
      */
-    public function minChildren($minChildren)
+    public function minChildren(int $minChildren): static
     {
         return $this->addProperty('min_children', $minChildren);
     }
@@ -81,7 +83,7 @@ class HasChild extends Node
      * @param string $scoreMode
      * @return static
      */
-    public function scoreMode($scoreMode)
+    public function scoreMode(string $scoreMode): static
     {
         return $this->addProperty('score_mode', $scoreMode);
     }

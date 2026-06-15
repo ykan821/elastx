@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Geo;
 
 use ElasticKit\DSL\Node;
@@ -13,9 +15,9 @@ use ElasticKit\DSL\Node;
  */
 class GeoGrid extends Node
 {
-    protected $_key = 'geo_grid';
+    protected string $_key = 'geo_grid';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * The geohex grid key to match. Only usable with geo_point fields.
@@ -23,7 +25,7 @@ class GeoGrid extends Node
      * @param string $geohex
      * @return static
      */
-    public function geohex($geohex)
+    public function geohex(string $geohex): static
     {
         return $this->addProperty('geohex', $geohex);
     }
@@ -35,7 +37,7 @@ class GeoGrid extends Node
      * @param string $geotile
      * @return static
      */
-    public function geotile($geotile)
+    public function geotile(string $geotile): static
     {
         return $this->addProperty('geotile', $geotile);
     }
@@ -47,7 +49,7 @@ class GeoGrid extends Node
      * @param string $geohash
      * @return static
      */
-    public function geohash($geohash)
+    public function geohash(string $geohash): static
     {
         return $this->addProperty('geohash', $geohash);
     }

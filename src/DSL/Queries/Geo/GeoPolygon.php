@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Geo;
 
 use ElasticKit\DSL\Node;
@@ -11,9 +13,9 @@ use ElasticKit\DSL\Node;
  */
 class GeoPolygon extends Node
 {
-    protected $_key = 'geo_polygon';
+    protected string $_key = 'geo_polygon';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Array of geo points that define the polygon.
@@ -22,7 +24,7 @@ class GeoPolygon extends Node
      * @param array<int, array<string, mixed>> $points
      * @return static
      */
-    public function points($points)
+    public function points(array $points): static
     {
         return $this->addProperty('points', $points);
     }
@@ -34,7 +36,7 @@ class GeoPolygon extends Node
      * @param string $validationMethod
      * @return static
      */
-    public function validationMethod($validationMethod)
+    public function validationMethod(string $validationMethod): static
     {
         return $this->addProperty('validation_method', $validationMethod);
     }
@@ -46,7 +48,7 @@ class GeoPolygon extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }

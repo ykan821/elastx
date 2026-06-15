@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Geo;
 
 use ElasticKit\DSL\Node;
@@ -14,9 +16,9 @@ use ElasticKit\DSL\Node;
  */
 class GeoShape extends Node
 {
-    protected $_key = 'geo_shape';
+    protected string $_key = 'geo_shape';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Inline shape definition using GeoJSON or Well-Known Text (WKT).
@@ -25,7 +27,7 @@ class GeoShape extends Node
      * @param mixed $shape
      * @return static
      */
-    public function shape($shape)
+    public function shape($shape): static
     {
         return $this->addProperty('shape', $shape);
     }
@@ -37,7 +39,7 @@ class GeoShape extends Node
      * @param string $relation
      * @return static
      */
-    public function relation($relation)
+    public function relation(string $relation): static
     {
         return $this->addProperty('relation', $relation);
     }
@@ -49,7 +51,7 @@ class GeoShape extends Node
      * @param mixed $indexedShape
      * @return static
      */
-    public function indexedShape($indexedShape)
+    public function indexedShape($indexedShape): static
     {
         return $this->addProperty('indexed_shape', $indexedShape);
     }
@@ -61,7 +63,7 @@ class GeoShape extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }

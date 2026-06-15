@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Metric;
 
 use ElasticKit\DSL\Node;
@@ -9,37 +11,26 @@ use ElasticKit\DSL\Node;
  */
 class Avg extends Node
 {
-    protected $_key = 'avg';
+    protected string $_key = 'avg';
 
     /**
-     * The field to aggregate.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
-
-    /**
-     * (Optional) The value to use when the field is missing.
+     * The value to use when the field is missing.
      *
      * @param mixed $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing($missing): static
     {
         return $this->addProperty('missing', $missing);
     }
 
     /**
-     * (Optional) The script to use for the aggregation.
+     * The script to use for the aggregation.
      *
      * @param string|callable $script
      * @return static
      */
-    public function script($script)
+    public function script($script): static
     {
         return $this->addProperty('script', $script);
     }

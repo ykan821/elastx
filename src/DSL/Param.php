@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL;
 
 /**
@@ -279,7 +281,7 @@ trait Param
     }
 
     /**
-     * (Optional) Filter applied after query and aggregation execution.
+     * Filter applied after query and aggregation execution.
      * Accepts a closure, array, or Query object.
      *
      * @param mixed $filter
@@ -292,7 +294,7 @@ trait Param
     }
 
     /**
-     * (Optional) Collapse search results by field value.
+     * Collapse search results by field value.
      *
      * @param mixed $collapse
      * @return $this
@@ -304,7 +306,7 @@ trait Param
     }
 
     /**
-     * (Optional) Rescore the top documents with a secondary query.
+     * Rescore the top documents with a secondary query.
      *
      * @param mixed $rescore
      * @return $this
@@ -316,7 +318,7 @@ trait Param
     }
 
     /**
-     * (Optional) Highlight search matches in field values.
+     * Highlight search matches in field values.
      * Supports chaining — fields are merged across calls.
      *
      * @param mixed $highlight
@@ -350,7 +352,7 @@ trait Param
     }
 
     /**
-     * (Optional) Search suggestions based on term, completion, or phrase.
+     * Search suggestions based on term, completion, or phrase.
      *
      * @param mixed $suggest
      * @return $this
@@ -386,7 +388,7 @@ trait Param
     }
 
     /**
-     * (Optional) Performs a k-nearest neighbor (kNN) search on a dense_vector field.
+     * Performs a k-nearest neighbor (kNN) search on a dense_vector field.
      * Supports chaining — multiple calls append knn clauses as an array.
      *
      * - knn(array) — raw ES structure

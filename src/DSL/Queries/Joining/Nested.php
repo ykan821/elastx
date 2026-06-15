@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Joining;
 
 use ElasticKit\DSL\Query;
@@ -12,7 +14,7 @@ use ElasticKit\DSL\Node;
  */
 class Nested extends Node
 {
-    protected $_key = 'nested';
+    protected string $_key = 'nested';
 
     /**
      * Create an instance from various input formats.
@@ -24,7 +26,7 @@ class Nested extends Node
      * @param mixed $value
      * @return static
      */
-    public static function create($field = null, $value = null)
+    public static function create($field = null, $value = null): static
     {
         if ($value === null && is_string($field)) {
             return (new static())->path($field);
@@ -38,7 +40,7 @@ class Nested extends Node
      * @param string $path
      * @return static
      */
-    public function path($path)
+    public function path(string $path): static
     {
         return $this->addProperty('path', $path);
     }
@@ -50,7 +52,7 @@ class Nested extends Node
      * @param mixed $query
      * @return static
      */
-    public function query($query)
+    public function query($query): static
     {
         return $this->addProperty('query', Query::create($query));
     }
@@ -62,7 +64,7 @@ class Nested extends Node
      * @param string $scoreMode
      * @return static
      */
-    public function scoreMode($scoreMode)
+    public function scoreMode(string $scoreMode): static
     {
         return $this->addProperty('score_mode', $scoreMode);
     }
@@ -74,7 +76,7 @@ class Nested extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }

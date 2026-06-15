@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -12,7 +14,7 @@ use ElasticKit\DSL\Node;
  */
 class QueryString extends Node
 {
-    protected $_key = 'query_string';
+    protected string $_key = 'query_string';
 
     /**
      * Query string you wish to parse and use for search.
@@ -20,7 +22,7 @@ class QueryString extends Node
      * @param string $query
      * @return static
      */
-    public function query($query)
+    public function query(string $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -32,7 +34,7 @@ class QueryString extends Node
      * @param string $defaultField
      * @return static
      */
-    public function defaultField($defaultField)
+    public function defaultField(string $defaultField): static
     {
         return $this->addProperty('default_field', $defaultField);
     }
@@ -44,7 +46,7 @@ class QueryString extends Node
      * @param bool $allowLeadingWildcard
      * @return static
      */
-    public function allowLeadingWildcard($allowLeadingWildcard)
+    public function allowLeadingWildcard(bool $allowLeadingWildcard): static
     {
         return $this->addProperty('allow_leading_wildcard', $allowLeadingWildcard);
     }
@@ -57,7 +59,7 @@ class QueryString extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -69,7 +71,7 @@ class QueryString extends Node
      * @param bool $autoGenerateSynonymsPhraseQuery
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery($autoGenerateSynonymsPhraseQuery)
+    public function autoGenerateSynonymsPhraseQuery(bool $autoGenerateSynonymsPhraseQuery): static
     {
         return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
     }
@@ -82,7 +84,7 @@ class QueryString extends Node
      * @param string $defaultOperator
      * @return static
      */
-    public function defaultOperator($defaultOperator)
+    public function defaultOperator(string $defaultOperator): static
     {
         return $this->addProperty('default_operator', $defaultOperator);
     }
@@ -94,7 +96,7 @@ class QueryString extends Node
      * @param bool $enablePositionIncrements
      * @return static
      */
-    public function enablePositionIncrements($enablePositionIncrements)
+    public function enablePositionIncrements(bool $enablePositionIncrements): static
     {
         return $this->addProperty('enable_position_increments', $enablePositionIncrements);
     }
@@ -106,7 +108,7 @@ class QueryString extends Node
      * @param array<int, string> $fields
      * @return static
      */
-    public function fields($fields)
+    public function fields(array $fields): static
     {
         return $this->addProperty('fields', $fields);
     }
@@ -114,10 +116,10 @@ class QueryString extends Node
     /**
      * Maximum edit distance allowed for fuzzy matching.
      *
-     * @param string $fuzziness
+     * @param int|string $fuzziness
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $fuzziness): static
     {
         return $this->addProperty('fuzziness', $fuzziness);
     }
@@ -129,7 +131,7 @@ class QueryString extends Node
      * @param int $fuzzyMaxExpansions
      * @return static
      */
-    public function fuzzyMaxExpansions($fuzzyMaxExpansions)
+    public function fuzzyMaxExpansions(int $fuzzyMaxExpansions): static
     {
         return $this->addProperty('fuzzy_max_expansions', $fuzzyMaxExpansions);
     }
@@ -141,7 +143,7 @@ class QueryString extends Node
      * @param int $fuzzyPrefixLength
      * @return static
      */
-    public function fuzzyPrefixLength($fuzzyPrefixLength)
+    public function fuzzyPrefixLength(int $fuzzyPrefixLength): static
     {
         return $this->addProperty('fuzzy_prefix_length', $fuzzyPrefixLength);
     }
@@ -153,7 +155,7 @@ class QueryString extends Node
      * @param bool $fuzzyTranspositions
      * @return static
      */
-    public function fuzzyTranspositions($fuzzyTranspositions)
+    public function fuzzyTranspositions(bool $fuzzyTranspositions): static
     {
         return $this->addProperty('fuzzy_transpositions', $fuzzyTranspositions);
     }
@@ -165,7 +167,7 @@ class QueryString extends Node
      * @param bool $lenient
      * @return static
      */
-    public function lenient($lenient)
+    public function lenient(bool $lenient): static
     {
         return $this->addProperty('lenient', $lenient);
     }
@@ -177,7 +179,7 @@ class QueryString extends Node
      * @param int $maxDeterminizedStates
      * @return static
      */
-    public function maxDeterminizedStates($maxDeterminizedStates)
+    public function maxDeterminizedStates(int $maxDeterminizedStates): static
     {
         return $this->addProperty('max_determinized_states', $maxDeterminizedStates);
     }
@@ -186,10 +188,10 @@ class QueryString extends Node
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $minimumShouldMatch
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $minimumShouldMatch): static
     {
         return $this->addProperty('minimum_should_match', $minimumShouldMatch);
     }
@@ -202,7 +204,7 @@ class QueryString extends Node
      * @param string $quoteAnalyzer
      * @return static
      */
-    public function quoteAnalyzer($quoteAnalyzer)
+    public function quoteAnalyzer(string $quoteAnalyzer): static
     {
         return $this->addProperty('quote_analyzer', $quoteAnalyzer);
     }
@@ -215,7 +217,7 @@ class QueryString extends Node
      * @param int $phraseSlop
      * @return static
      */
-    public function phraseSlop($phraseSlop)
+    public function phraseSlop(int $phraseSlop): static
     {
         return $this->addProperty('phrase_slop', $phraseSlop);
     }
@@ -228,7 +230,7 @@ class QueryString extends Node
      * @param string $quoteFieldSuffix
      * @return static
      */
-    public function quoteFieldSuffix($quoteFieldSuffix)
+    public function quoteFieldSuffix(string $quoteFieldSuffix): static
     {
         return $this->addProperty('quote_field_suffix', $quoteFieldSuffix);
     }
@@ -239,7 +241,7 @@ class QueryString extends Node
      * @param string $rewrite
      * @return static
      */
-    public function rewrite($rewrite)
+    public function rewrite(string $rewrite): static
     {
         return $this->addProperty('rewrite', $rewrite);
     }
@@ -251,7 +253,7 @@ class QueryString extends Node
      * @param string $timeZone
      * @return static
      */
-    public function timeZone($timeZone)
+    public function timeZone(string $timeZone): static
     {
         return $this->addProperty('time_zone', $timeZone);
     }
@@ -264,7 +266,7 @@ class QueryString extends Node
      * @param string $type
      * @return static
      */
-    public function type($type)
+    public function type(string $type): static
     {
         return $this->addProperty('type', $type);
     }
@@ -276,7 +278,7 @@ class QueryString extends Node
      * @param bool $analyzeWildcard
      * @return static
      */
-    public function analyzeWildcard($analyzeWildcard)
+    public function analyzeWildcard(bool $analyzeWildcard): static
     {
         return $this->addProperty('analyze_wildcard', $analyzeWildcard);
     }
@@ -288,7 +290,7 @@ class QueryString extends Node
      * @param float $tieBreaker
      * @return static
      */
-    public function tieBreaker($tieBreaker)
+    public function tieBreaker(float $tieBreaker): static
     {
         return $this->addProperty('tie_breaker', $tieBreaker);
     }

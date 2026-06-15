@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Pipeline;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class CumulativeSum extends Node
 {
-    protected $_key = 'cumulative_sum';
+    protected string $_key = 'cumulative_sum';
 
     /**
      * Path to the buckets to cumulatively sum.
@@ -17,7 +19,7 @@ class CumulativeSum extends Node
      * @param string $path
      * @return static
      */
-    public function bucketsPath($path)
+    public function bucketsPath(string $path): static
     {
         return $this->addProperty('buckets_path', $path);
     }
@@ -28,7 +30,7 @@ class CumulativeSum extends Node
      * @param string $format
      * @return static
      */
-    public function format($format)
+    public function format(string $format): static
     {
         return $this->addProperty('format', $format);
     }

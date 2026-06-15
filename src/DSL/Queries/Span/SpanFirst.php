@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Query;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Node;
  */
 class SpanFirst extends Node
 {
-    protected $_key = 'span_first';
+    protected string $_key = 'span_first';
 
     /**
      * The inner span query whose matches are restricted.
@@ -18,7 +20,7 @@ class SpanFirst extends Node
      * @param mixed $match
      * @return static
      */
-    public function match($match)
+    public function match($match): static
     {
         return $this->addProperty('match', Query::create($match));
     }
@@ -29,7 +31,7 @@ class SpanFirst extends Node
      * @param int $end
      * @return static
      */
-    public function end($end)
+    public function end(int $end): static
     {
         return $this->addProperty('end', $end);
     }

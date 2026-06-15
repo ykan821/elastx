@@ -1,21 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
 
 class IpPrefix extends Node
 {
-    protected $_key = 'ip_prefix';
-
-    /**
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'ip_prefix';
 
     /**
      * Length of the network prefix.
@@ -23,7 +16,7 @@ class IpPrefix extends Node
      * @param int $length
      * @return static
      */
-    public function prefixLength($length)
+    public function prefixLength(int $length): static
     {
         return $this->addProperty('prefix_length', $length);
     }
@@ -32,7 +25,7 @@ class IpPrefix extends Node
      * @param int $length
      * @return static
      */
-    public function minPrefixLength($length)
+    public function minPrefixLength(int $length): static
     {
         return $this->addProperty('min_prefix_length', $length);
     }

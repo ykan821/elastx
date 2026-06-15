@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
 use ElasticKit\DSL\Node;
@@ -9,48 +11,48 @@ use ElasticKit\DSL\Node;
  */
 class Script extends Node
 {
-    protected $_key = 'script';
+    protected string $_key = 'script';
 
     /**
-     * (Optional) The ID of a stored script.
+     * The ID of a stored script.
      *
      * @param string $id
      * @return static
      */
-    public function id($id)
+    public function id(string $id): static
     {
         return $this->addProperty('id', $id);
     }
 
     /**
-     * (Optional) The script language. Defaults to painless.
+     * The script language. Defaults to painless.
      *
      * @param string $lang
      * @return static
      */
-    public function lang($lang)
+    public function lang(string $lang): static
     {
         return $this->addProperty('lang', $lang);
     }
 
     /**
-     * (Required) The inline script source to execute.
+     * The inline script source to execute.
      *
      * @param string $source
      * @return static
      */
-    public function source($source)
+    public function source(string $source): static
     {
         return $this->addProperty('source', $source);
     }
 
     /**
-     * (Optional) Named parameters passed into the script.
+     * Named parameters passed into the script.
      *
      * @param array<string, mixed> $params
      * @return static
      */
-    public function params($params)
+    public function params(array $params): static
     {
         return $this->addProperty('params', $params);
     }

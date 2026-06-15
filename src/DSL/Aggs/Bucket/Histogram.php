@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,18 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Histogram extends Node
 {
-    protected $_key = 'histogram';
-
-    /**
-     * The numeric field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'histogram';
 
     /**
      * Interval size for each bucket.
@@ -28,7 +19,7 @@ class Histogram extends Node
      * @param float $interval
      * @return static
      */
-    public function interval($interval)
+    public function interval(float $interval): static
     {
         return $this->addProperty('interval', $interval);
     }
@@ -39,7 +30,7 @@ class Histogram extends Node
      * @param int $minDocCount
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $minDocCount): static
     {
         return $this->addProperty('min_doc_count', $minDocCount);
     }
@@ -50,7 +41,7 @@ class Histogram extends Node
      * @param mixed $bounds
      * @return static
      */
-    public function extendedBounds($bounds)
+    public function extendedBounds($bounds): static
     {
         return $this->addProperty('extended_bounds', $bounds);
     }
@@ -61,7 +52,7 @@ class Histogram extends Node
      * @param mixed $order
      * @return static
      */
-    public function order($order)
+    public function order($order): static
     {
         return $this->addProperty('order', $order);
     }
@@ -72,7 +63,7 @@ class Histogram extends Node
      * @param bool $keyed
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $keyed): static
     {
         return $this->addProperty('keyed', $keyed);
     }
@@ -83,7 +74,7 @@ class Histogram extends Node
      * @param float $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing(float $missing): static
     {
         return $this->addProperty('missing', $missing);
     }
@@ -94,7 +85,7 @@ class Histogram extends Node
      * @param string $format
      * @return static
      */
-    public function format($format)
+    public function format(string $format): static
     {
         return $this->addProperty('format', $format);
     }
@@ -105,7 +96,7 @@ class Histogram extends Node
      * @param string|callable $script
      * @return static
      */
-    public function script($script)
+    public function script($script): static
     {
         return $this->addProperty('script', $script);
     }
@@ -116,7 +107,7 @@ class Histogram extends Node
      * @param float $offset
      * @return static
      */
-    public function offset($offset)
+    public function offset(float $offset): static
     {
         return $this->addProperty('offset', $offset);
     }
@@ -127,7 +118,7 @@ class Histogram extends Node
      * @param mixed $hardBounds
      * @return static
      */
-    public function hardBounds($hardBounds)
+    public function hardBounds($hardBounds): static
     {
         return $this->addProperty('hard_bounds', $hardBounds);
     }

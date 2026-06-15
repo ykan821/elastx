@@ -1,23 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound\Functions;
 
 use ElasticKit\DSL\Node;
 
 class FieldValueFactor extends Node
 {
-    protected $_key = 'field_value_factor';
-
-    /**
-     * Field to be extracted from the document.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'field_value_factor';
 
     /**
      * Optional factor to multiply the field value with, defaults to 1.
@@ -25,7 +16,7 @@ class FieldValueFactor extends Node
      * @param float $factor
      * @return static
      */
-    public function factor($factor)
+    public function factor(float $factor): static
     {
         return $this->addProperty('factor', $factor);
     }
@@ -36,7 +27,7 @@ class FieldValueFactor extends Node
      * @param string $modifier
      * @return static
      */
-    public function modifier($modifier)
+    public function modifier(string $modifier): static
     {
         return $this->addProperty('modifier', $modifier);
     }
@@ -44,10 +35,10 @@ class FieldValueFactor extends Node
     /**
      * Value used if the document doesn’t have that field. The modifier and factor are still applied to it as though it were read from the document.
      *
-     * @param mixed $missing
+     * @param string|int|float|bool $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing(string|int|float|bool $missing): static
     {
         return $this->addProperty('missing', $missing);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -12,7 +14,7 @@ use ElasticKit\DSL\Node;
  */
 class SimpleQueryString extends Node
 {
-    protected $_key = 'simple_query_string';
+    protected string $_key = 'simple_query_string';
 
     /**
      * Query string you wish to parse and use for search.
@@ -20,7 +22,7 @@ class SimpleQueryString extends Node
      * @param string $query
      * @return static
      */
-    public function query($query)
+    public function query(string $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -33,7 +35,7 @@ class SimpleQueryString extends Node
      * @param array<int, string> $fields
      * @return static
      */
-    public function fields($fields)
+    public function fields(array $fields): static
     {
         return $this->addProperty('fields', $fields);
     }
@@ -46,7 +48,7 @@ class SimpleQueryString extends Node
      * @param string $defaultOperator
      * @return static
      */
-    public function defaultOperator($defaultOperator)
+    public function defaultOperator(string $defaultOperator): static
     {
         return $this->addProperty('default_operator', $defaultOperator);
     }
@@ -58,7 +60,7 @@ class SimpleQueryString extends Node
      * @param bool $analyzeWildcard
      * @return static
      */
-    public function analyzeWildcard($analyzeWildcard)
+    public function analyzeWildcard(bool $analyzeWildcard): static
     {
         return $this->addProperty('analyze_wildcard', $analyzeWildcard);
     }
@@ -71,7 +73,7 @@ class SimpleQueryString extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -83,7 +85,7 @@ class SimpleQueryString extends Node
      * @param bool $autoGenerateSynonymsPhraseQuery
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery($autoGenerateSynonymsPhraseQuery)
+    public function autoGenerateSynonymsPhraseQuery(bool $autoGenerateSynonymsPhraseQuery): static
     {
         return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
     }
@@ -95,7 +97,7 @@ class SimpleQueryString extends Node
      * @param string $flags
      * @return static
      */
-    public function flags($flags)
+    public function flags(string $flags): static
     {
         return $this->addProperty('flags', $flags);
     }
@@ -107,7 +109,7 @@ class SimpleQueryString extends Node
      * @param int $fuzzyMaxExpansions
      * @return static
      */
-    public function fuzzyMaxExpansions($fuzzyMaxExpansions)
+    public function fuzzyMaxExpansions(int $fuzzyMaxExpansions): static
     {
         return $this->addProperty('fuzzy_max_expansions', $fuzzyMaxExpansions);
     }
@@ -119,7 +121,7 @@ class SimpleQueryString extends Node
      * @param int $fuzzyPrefixLength
      * @return static
      */
-    public function fuzzyPrefixLength($fuzzyPrefixLength)
+    public function fuzzyPrefixLength(int $fuzzyPrefixLength): static
     {
         return $this->addProperty('fuzzy_prefix_length', $fuzzyPrefixLength);
     }
@@ -131,7 +133,7 @@ class SimpleQueryString extends Node
      * @param bool $fuzzyTranspositions
      * @return static
      */
-    public function fuzzyTranspositions($fuzzyTranspositions)
+    public function fuzzyTranspositions(bool $fuzzyTranspositions): static
     {
         return $this->addProperty('fuzzy_transpositions', $fuzzyTranspositions);
     }
@@ -143,7 +145,7 @@ class SimpleQueryString extends Node
      * @param bool $lenient
      * @return static
      */
-    public function lenient($lenient)
+    public function lenient(bool $lenient): static
     {
         return $this->addProperty('lenient', $lenient);
     }
@@ -152,10 +154,10 @@ class SimpleQueryString extends Node
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $minimumShouldMatch
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $minimumShouldMatch): static
     {
         return $this->addProperty('minimum_should_match', $minimumShouldMatch);
     }
@@ -168,7 +170,7 @@ class SimpleQueryString extends Node
      * @param string $quoteFieldSuffix
      * @return static
      */
-    public function quoteFieldSuffix($quoteFieldSuffix)
+    public function quoteFieldSuffix(string $quoteFieldSuffix): static
     {
         return $this->addProperty('quote_field_suffix', $quoteFieldSuffix);
     }

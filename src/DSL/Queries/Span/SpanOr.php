@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Support\ClausesSupport;
@@ -12,7 +14,7 @@ class SpanOr extends Node
 {
     use ClausesSupport;
 
-    protected $_key = 'span_or';
+    protected string $_key = 'span_or';
 
     /**
      * The list of span query clauses to combine.
@@ -21,7 +23,7 @@ class SpanOr extends Node
      * @param mixed $clauses
      * @return static
      */
-    public function clauses($clauses)
+    public function clauses($clauses): static
     {
         return $this->addClause('clauses', $clauses);
     }

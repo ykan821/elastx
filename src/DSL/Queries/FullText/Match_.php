@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -13,21 +15,21 @@ use ElasticKit\DSL\Node;
  */
 class Match_ extends Node
 {
-    protected $_key = 'match';
+    protected string $_key = 'match';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
-    protected $_valueKey = 'query';
+    protected string $_valueKey = 'query';
 
     /**
      * Text, number, boolean value or date you wish to find
      * in the provided field. The match query analyzes any provided text before
      * performing a search.
      *
-     * @param string $query
+     * @param string|int|float|bool $query
      * @return static
      */
-    public function query($query)
+    public function query(string|int|float|bool $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -39,7 +41,7 @@ class Match_ extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -51,7 +53,7 @@ class Match_ extends Node
      * @param bool $autoGenerateSynonymsPhraseQuery
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery($autoGenerateSynonymsPhraseQuery)
+    public function autoGenerateSynonymsPhraseQuery(bool $autoGenerateSynonymsPhraseQuery): static
     {
         return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
     }
@@ -60,10 +62,10 @@ class Match_ extends Node
      * Maximum edit distance allowed for matching.
      * See Fuzziness for valid values and more information.
      *
-     * @param string $fuzziness
+     * @param int|string $fuzziness
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $fuzziness): static
     {
         return $this->addProperty('fuzziness', $fuzziness);
     }
@@ -75,7 +77,7 @@ class Match_ extends Node
      * @param int $maxExpansions
      * @return static
      */
-    public function maxExpansions($maxExpansions)
+    public function maxExpansions(int $maxExpansions): static
     {
         return $this->addProperty('max_expansions', $maxExpansions);
     }
@@ -87,7 +89,7 @@ class Match_ extends Node
      * @param int $prefixLength
      * @return static
      */
-    public function prefixLength($prefixLength)
+    public function prefixLength(int $prefixLength): static
     {
         return $this->addProperty('prefix_length', $prefixLength);
     }
@@ -99,7 +101,7 @@ class Match_ extends Node
      * @param bool $fuzzyTranspositions
      * @return static
      */
-    public function fuzzyTranspositions($fuzzyTranspositions)
+    public function fuzzyTranspositions(bool $fuzzyTranspositions): static
     {
         return $this->addProperty('fuzzy_transpositions', $fuzzyTranspositions);
     }
@@ -112,7 +114,7 @@ class Match_ extends Node
      * @param string $fuzzyRewrite
      * @return static
      */
-    public function fuzzyRewrite($fuzzyRewrite)
+    public function fuzzyRewrite(string $fuzzyRewrite): static
     {
         return $this->addProperty('fuzzy_rewrite', $fuzzyRewrite);
     }
@@ -124,7 +126,7 @@ class Match_ extends Node
      * @param bool $lenient
      * @return static
      */
-    public function lenient($lenient)
+    public function lenient(bool $lenient): static
     {
         return $this->addProperty('lenient', $lenient);
     }
@@ -136,7 +138,7 @@ class Match_ extends Node
      * @param string $operator
      * @return static
      */
-    public function operator($operator)
+    public function operator(string $operator): static
     {
         return $this->addProperty('operator', $operator);
     }
@@ -145,10 +147,10 @@ class Match_ extends Node
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $minimumShouldMatch
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $minimumShouldMatch): static
     {
         return $this->addProperty('minimum_should_match', $minimumShouldMatch);
     }
@@ -161,7 +163,7 @@ class Match_ extends Node
      * @param string $zeroTermsQuery
      * @return static
      */
-    public function zeroTermsQuery($zeroTermsQuery)
+    public function zeroTermsQuery(string $zeroTermsQuery): static
     {
         return $this->addProperty('zero_terms_query', $zeroTermsQuery);
     }
