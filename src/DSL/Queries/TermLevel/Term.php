@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
@@ -17,17 +19,17 @@ use ElasticKit\DSL\Node;
  */
 class Term extends Node
 {
-    protected $_key = 'term';
+    protected string $_key = 'term';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Term you wish to find in the provided <field>. To return a document, the term must exactly match the field value, including whitespace and capitalization.
      *
-     * @param string $value
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function value($value)
+    public function value(string|int|float|bool $value): static
     {
         return $this->addProperty('value', $value);
     }
@@ -40,7 +42,7 @@ class Term extends Node
      * @return static
      * @version 7.10.0
      */
-    public function caseInsensitive($caseInsensitive)
+    public function caseInsensitive(bool $caseInsensitive): static
     {
         return $this->addProperty('case_insensitive', $caseInsensitive);
     }

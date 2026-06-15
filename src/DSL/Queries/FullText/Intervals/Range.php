@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -13,48 +15,48 @@ class Range extends Node
 {
     use RangeSupport;
 
-    protected $_key = 'range';
+    protected string $_key = 'range';
 
     /**
-     * (Optional) Greater than or equal to the specified value.
+     * Greater than or equal to the specified value.
      *
-     * @param mixed $gte
+     * @param string|int|float|bool $gte
      * @return static
      */
-    public function gte($gte)
+    public function gte(string|int|float|bool $gte): static
     {
         return $this->addProperty('gte', $gte);
     }
 
     /**
-     * (Optional) Greater than the specified value.
+     * Greater than the specified value.
      *
-     * @param mixed $gt
+     * @param string|int|float|bool $gt
      * @return static
      */
-    public function gt($gt)
+    public function gt(string|int|float|bool $gt): static
     {
         return $this->addProperty('gt', $gt);
     }
 
     /**
-     * (Optional) Less than or equal to the specified value.
+     * Less than or equal to the specified value.
      *
-     * @param mixed $lte
+     * @param string|int|float|bool $lte
      * @return static
      */
-    public function lte($lte)
+    public function lte(string|int|float|bool $lte): static
     {
         return $this->addProperty('lte', $lte);
     }
 
     /**
-     * (Optional) Less than the specified value.
+     * Less than the specified value.
      *
-     * @param mixed $lt
+     * @param string|int|float|bool $lt
      * @return static
      */
-    public function lt($lt)
+    public function lt(string|int|float|bool $lt): static
     {
         return $this->addProperty('lt', $lt);
     }
@@ -66,7 +68,7 @@ class Range extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -78,7 +80,7 @@ class Range extends Node
      * @param string $useField
      * @return static
      */
-    public function useField($useField)
+    public function useField(string $useField): static
     {
         return $this->addProperty('use_field', $useField);
     }

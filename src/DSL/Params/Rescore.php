@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Query;
@@ -13,7 +15,7 @@ use stdClass;
  */
 class Rescore extends Node
 {
-    protected $_key = 'rescore';
+    protected string $_key = 'rescore';
 
     /**
      * Number of documents to rescore per shard.
@@ -21,18 +23,18 @@ class Rescore extends Node
      * @param int $size
      * @return static
      */
-    public function windowSize($size)
+    public function windowSize(int $size): static
     {
         return $this->addProperty('window_size', $size);
     }
 
     /**
-     * (Required) The query to use for rescoring.
+     * The query to use for rescoring.
      *
      * @param mixed $query
      * @return static
      */
-    public function query($query)
+    public function query($query): static
     {
         $this->_properties['query']['rescore_query'] = Query::create($query);
         return $this;
@@ -44,7 +46,7 @@ class Rescore extends Node
      * @param float $weight
      * @return static
      */
-    public function rescoreQueryWeight($weight)
+    public function rescoreQueryWeight(float $weight): static
     {
         $this->_properties['query']['rescore_query_weight'] = $weight;
         return $this;
@@ -56,7 +58,7 @@ class Rescore extends Node
      * @param float $weight
      * @return static
      */
-    public function queryWeight($weight)
+    public function queryWeight(float $weight): static
     {
         $this->_properties['query']['query_weight'] = $weight;
         return $this;
@@ -69,7 +71,7 @@ class Rescore extends Node
      * @param string $mode
      * @return static
      */
-    public function scoreMode($mode)
+    public function scoreMode(string $mode): static
     {
         $this->_properties['query']['score_mode'] = $mode;
         return $this;

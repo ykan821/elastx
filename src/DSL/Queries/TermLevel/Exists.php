@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Exists extends Node
 {
-    protected $_key = 'exists';
+    protected string $_key = 'exists';
 
     /**
      * @param mixed $field

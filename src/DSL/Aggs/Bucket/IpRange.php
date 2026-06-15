@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,18 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class IpRange extends Node
 {
-    protected $_key = 'ip_range';
-
-    /**
-     * The IP field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'ip_range';
 
     /**
      * Array of IP range definitions for bucketing.
@@ -28,7 +19,7 @@ class IpRange extends Node
      * @param array<string, mixed> $ranges
      * @return static
      */
-    public function ranges($ranges)
+    public function ranges(array $ranges): static
     {
         return $this->addProperty('ranges', $ranges);
     }
@@ -39,7 +30,7 @@ class IpRange extends Node
      * @param bool $keyed
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $keyed): static
     {
         return $this->addProperty('keyed', $keyed);
     }
@@ -50,7 +41,7 @@ class IpRange extends Node
      * @param mixed $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing($missing): static
     {
         return $this->addProperty('missing', $missing);
     }

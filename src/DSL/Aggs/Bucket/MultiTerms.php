@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
 
 class MultiTerms extends Node
 {
-    protected $_key = 'multi_terms';
+    protected string $_key = 'multi_terms';
 
     /**
      * @param mixed $terms
      * @return static
      */
-    public function terms($terms)
+    public function terms($terms): static
     {
         return $this->addProperty('terms', $terms, true);
     }
@@ -21,7 +23,7 @@ class MultiTerms extends Node
      * @param mixed $order
      * @return static
      */
-    public function order($order)
+    public function order($order): static
     {
         return $this->addProperty('order', $order);
     }
@@ -30,7 +32,7 @@ class MultiTerms extends Node
      * @param int $size
      * @return static
      */
-    public function size($size)
+    public function size(int $size): static
     {
         return $this->addProperty('size', $size);
     }
@@ -39,7 +41,7 @@ class MultiTerms extends Node
      * @param int $shardSize
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $shardSize): static
     {
         return $this->addProperty('shard_size', $shardSize);
     }
@@ -48,7 +50,7 @@ class MultiTerms extends Node
      * @param int $minDocCount
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $minDocCount): static
     {
         return $this->addProperty('min_doc_count', $minDocCount);
     }
@@ -57,7 +59,7 @@ class MultiTerms extends Node
      * @param int $shardMinDocCount
      * @return static
      */
-    public function shardMinDocCount($shardMinDocCount)
+    public function shardMinDocCount(int $shardMinDocCount): static
     {
         return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
     }
@@ -66,7 +68,7 @@ class MultiTerms extends Node
      * @param string $collectMode
      * @return static
      */
-    public function collectMode($collectMode)
+    public function collectMode(string $collectMode): static
     {
         return $this->addProperty('collect_mode', $collectMode);
     }

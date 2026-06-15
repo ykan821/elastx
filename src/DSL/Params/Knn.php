@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Node;
@@ -13,18 +15,7 @@ use stdClass;
  */
 class Knn extends Node
 {
-    protected $_key = 'knn';
-
-    /**
-     * The vector field to search against.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'knn';
 
     /**
      * The query vector to search for.
@@ -32,7 +23,7 @@ class Knn extends Node
      * @param array<int|float> $vector
      * @return static
      */
-    public function queryVector($vector)
+    public function queryVector(array $vector): static
     {
         return $this->addProperty('query_vector', $vector);
     }
@@ -44,7 +35,7 @@ class Knn extends Node
      * @param int $k
      * @return static
      */
-    public function k($k)
+    public function k(int $k): static
     {
         return $this->addProperty('k', $k);
     }
@@ -56,7 +47,7 @@ class Knn extends Node
      * @param int $num
      * @return static
      */
-    public function numCandidates($num)
+    public function numCandidates(int $num): static
     {
         return $this->addProperty('num_candidates', $num);
     }
@@ -68,7 +59,7 @@ class Knn extends Node
      * @param float $similarity
      * @return static
      */
-    public function similarity($similarity)
+    public function similarity(float $similarity): static
     {
         return $this->addProperty('similarity', $similarity);
     }
@@ -79,41 +70,41 @@ class Knn extends Node
      * @param float $boost
      * @return static
      */
-    public function boost($boost)
+    public function boost($boost): static
     {
         return $this->addProperty('boost', $boost);
     }
 
     /**
-     * (Optional) Pre-filter applied during kNN search. Accepts a closure,
+     * Pre-filter applied during kNN search. Accepts a closure,
      * array, or Query object.
      *
      * @param mixed $filter
      * @return static
      */
-    public function filter($filter)
+    public function filter($filter): static
     {
         return $this->addProperty('filter', Query::create($filter));
     }
 
     /**
-     * (Optional) Inner hits configuration for nested kNN search.
+     * Inner hits configuration for nested kNN search.
      *
      * @param mixed $innerHits
      * @return static
      */
-    public function innerHits($innerHits)
+    public function innerHits($innerHits): static
     {
         return $this->addProperty('inner_hits', $innerHits);
     }
 
     /**
-     * (Optional) Rescore vector configuration for quantized vector rescoring.
+     * Rescore vector configuration for quantized vector rescoring.
      *
      * @param array<string, mixed> $rescoreVector
      * @return static
      */
-    public function rescoreVector($rescoreVector)
+    public function rescoreVector(array $rescoreVector): static
     {
         return $this->addProperty('rescore_vector', $rescoreVector);
     }

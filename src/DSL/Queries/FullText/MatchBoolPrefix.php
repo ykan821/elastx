@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -11,11 +13,11 @@ use ElasticKit\DSL\Node;
  */
 class MatchBoolPrefix extends Node
 {
-    protected $_key = 'match_bool_prefix';
+    protected string $_key = 'match_bool_prefix';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
-    protected $_valueKey = 'query';
+    protected string $_valueKey = 'query';
 
     /**
      * Text you wish to find in the provided field.
@@ -25,7 +27,7 @@ class MatchBoolPrefix extends Node
      * @param string $query
      * @return static
      */
-    public function query($query)
+    public function query(string $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -37,7 +39,7 @@ class MatchBoolPrefix extends Node
      * @param int $maxExpansions
      * @return static
      */
-    public function maxExpansions($maxExpansions)
+    public function maxExpansions(int $maxExpansions): static
     {
         return $this->addProperty('max_expansions', $maxExpansions);
     }
@@ -49,7 +51,7 @@ class MatchBoolPrefix extends Node
      * @param bool $lenient
      * @return static
      */
-    public function lenient($lenient)
+    public function lenient(bool $lenient): static
     {
         return $this->addProperty('lenient', $lenient);
     }
@@ -61,7 +63,7 @@ class MatchBoolPrefix extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -70,10 +72,10 @@ class MatchBoolPrefix extends Node
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $minimumShouldMatch
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $minimumShouldMatch): static
     {
         return $this->addProperty('minimum_should_match', $minimumShouldMatch);
     }
@@ -81,10 +83,10 @@ class MatchBoolPrefix extends Node
     /**
      * Maximum edit distance allowed for fuzzy matching.
      *
-     * @param string $fuzziness
+     * @param int|string $fuzziness
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $fuzziness): static
     {
         return $this->addProperty('fuzziness', $fuzziness);
     }
@@ -96,7 +98,7 @@ class MatchBoolPrefix extends Node
      * @param int $prefixLength
      * @return static
      */
-    public function prefixLength($prefixLength)
+    public function prefixLength(int $prefixLength): static
     {
         return $this->addProperty('prefix_length', $prefixLength);
     }
@@ -108,7 +110,7 @@ class MatchBoolPrefix extends Node
      * @param bool $fuzzyTranspositions
      * @return static
      */
-    public function fuzzyTranspositions($fuzzyTranspositions)
+    public function fuzzyTranspositions(bool $fuzzyTranspositions): static
     {
         return $this->addProperty('fuzzy_transpositions', $fuzzyTranspositions);
     }
@@ -119,7 +121,7 @@ class MatchBoolPrefix extends Node
      * @param string $fuzzyRewrite
      * @return static
      */
-    public function fuzzyRewrite($fuzzyRewrite)
+    public function fuzzyRewrite(string $fuzzyRewrite): static
     {
         return $this->addProperty('fuzzy_rewrite', $fuzzyRewrite);
     }
@@ -131,7 +133,7 @@ class MatchBoolPrefix extends Node
      * @param string $operator
      * @return static
      */
-    public function operator($operator)
+    public function operator(string $operator): static
     {
         return $this->addProperty('operator', $operator);
     }

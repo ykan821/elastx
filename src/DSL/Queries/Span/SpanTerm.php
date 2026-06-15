@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Query;
@@ -10,17 +12,17 @@ use ElasticKit\DSL\Node;
  */
 class SpanTerm extends Node
 {
-    protected $_key = 'span_term';
+    protected string $_key = 'span_term';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * The value of the term to match.
      *
-     * @param string $term
+     * @param string|int|float|bool $term
      * @return static
      */
-    public function term($term)
+    public function term(string|int|float|bool $term): static
     {
         return $this->addProperty('term', $term);
     }
@@ -28,10 +30,10 @@ class SpanTerm extends Node
     /**
      * The value of the term to match (alias for the field value).
      *
-     * @param string $value
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function value($value)
+    public function value(string|int|float|bool $value): static
     {
         return $this->addProperty('value', $value);
     }

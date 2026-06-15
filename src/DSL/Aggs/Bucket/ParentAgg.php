@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class ParentAgg extends Node
 {
-    protected $_key = 'parent';
+    protected string $_key = 'parent';
 
     /**
      * The child type that identifies the parent documents to aggregate on.
@@ -17,7 +19,7 @@ class ParentAgg extends Node
      * @param string $type
      * @return static
      */
-    public function type($type)
+    public function type(string $type): static
     {
         return $this->addProperty('type', $type);
     }

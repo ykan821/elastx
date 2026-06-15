@@ -1,27 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
 
 class TimeSeries extends Node
 {
-    protected $_key = 'time_series';
-
-    /**
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'time_series';
 
     /**
      * @param string $calendarInterval
      * @return static
      */
-    public function calendarInterval($calendarInterval)
+    public function calendarInterval(string $calendarInterval): static
     {
         return $this->addProperty('calendar_interval', $calendarInterval);
     }
@@ -30,7 +23,7 @@ class TimeSeries extends Node
      * @param string $fixedInterval
      * @return static
      */
-    public function fixedInterval($fixedInterval)
+    public function fixedInterval(string $fixedInterval): static
     {
         return $this->addProperty('fixed_interval', $fixedInterval);
     }
@@ -39,7 +32,7 @@ class TimeSeries extends Node
      * @param mixed $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing($missing): static
     {
         return $this->addProperty('missing', $missing);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL;
 
 use BadMethodCallException;
@@ -20,32 +22,28 @@ class Agg
 
     /**
      * The aggregation type node.
-     *
-     * @var Node|null
      */
-    protected $_node;
+    protected ?Node $_node = null;
 
     /**
      * The alias name that wraps this aggregation in DSL output.
-     *
-     * @var string|null
      */
-    protected $_alias;
+    protected ?string $_alias = null;
 
     /**
      * Nested sub-aggregations keyed by alias.
      *
      * @var array<string, Agg>
      */
-    protected $subAggs = [];
+    protected array $subAggs = [];
 
     /**
-     * Properties for array-based aggregation definitions.
-     * Supports nested Query, Node, and Agg instances (resolved by resolveProperties).
+     * Properties for array-based aggregation definitions (raw DSL mode).
+     * Null when the aggregation is node-based or empty.
      *
      * @var array<string, mixed>|null
      */
-    protected $_properties;
+    protected ?array $_properties = null;
 
     /**
      * Static factory — thin proxy over the constructor.
@@ -56,7 +54,7 @@ class Agg
      * @param mixed $agg
      * @return static
      */
-    public static function create($agg = [])
+    public static function create($agg = []): static
     {
         if ($agg instanceof static) {
             return $agg;
@@ -83,7 +81,7 @@ class Agg
      * @param Node $node
      * @return $this
      */
-    protected function node($node)
+    protected function node($node): static
     {
         $this->_node = $node;
         $this->_properties = null;
@@ -99,7 +97,7 @@ class Agg
      * @param string $alias
      * @return $this
      */
-    public function alias($alias)
+    public function alias($alias): static
     {
         $this->_alias = $alias;
         return $this;
@@ -128,7 +126,7 @@ class Agg
      * @return $this
      * @throws \BadMethodCallException if called with a string alias and no definition
      */
-    public function aggs($alias, $aggs = null)
+    public function aggs($alias, $aggs = null): static
     {
         if ($aggs === null && !is_string($alias)) {
             $aggs = $alias;
@@ -236,9 +234,11 @@ class Agg
      * @param int $depth
      * @return string
      */
-    public function toJson($flags = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT, $depth = 512)
+    public function toJson(int $flags = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT, int $depth = 512): string
     {
-        return json_encode($this->toArray(), $flags, $depth);
+        $json = json_encode($this->toArray(), $flags, $depth);
+
+        return $json === false ? '' : $json;
     }
 
     /**
@@ -246,7 +246,7 @@ class Agg
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toJson();
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Query;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Node;
  */
 class SpanNot extends Node
 {
-    protected $_key = 'span_not';
+    protected string $_key = 'span_not';
 
     /**
      * The span query whose matches are included.
@@ -18,7 +20,7 @@ class SpanNot extends Node
      * @param mixed $include
      * @return static
      */
-    public function include($include)
+    public function include($include): static
     {
         return $this->addProperty('include', Query::create($include));
     }
@@ -29,7 +31,7 @@ class SpanNot extends Node
      * @param mixed $exclude
      * @return static
      */
-    public function exclude($exclude)
+    public function exclude($exclude): static
     {
         return $this->addProperty('exclude', Query::create($exclude));
     }
@@ -40,7 +42,7 @@ class SpanNot extends Node
      * @param int $pre
      * @return static
      */
-    public function pre($pre)
+    public function pre(int $pre): static
     {
         return $this->addProperty('pre', $pre);
     }
@@ -51,7 +53,7 @@ class SpanNot extends Node
      * @param int $post
      * @return static
      */
-    public function post($post)
+    public function post(int $post): static
     {
         return $this->addProperty('post', $post);
     }
@@ -62,7 +64,7 @@ class SpanNot extends Node
      * @param int $dist
      * @return static
      */
-    public function dist($dist)
+    public function dist(int $dist): static
     {
         return $this->addProperty('dist', $dist);
     }

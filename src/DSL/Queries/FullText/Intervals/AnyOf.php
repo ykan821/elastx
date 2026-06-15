@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Queries\FullText\Intervals;
  */
 class AnyOf extends Node
 {
-    protected $_key = 'any_of';
+    protected string $_key = 'any_of';
 
     /**
      * An array of rules to match.
@@ -18,10 +20,10 @@ class AnyOf extends Node
      * @param mixed $intervals
      * @return static
      */
-    public function intervals($intervals)
+    public function intervals($intervals): static
     {
         $intervals = Intervals::create($intervals)
-            ->isPropertyField(false)
+            ->fieldKeyed(false)
             ->multi(true);
         return $this->addProperty('intervals', $intervals);
     }
@@ -32,10 +34,10 @@ class AnyOf extends Node
      * @param mixed $interval
      * @return static
      */
-    public function addInterval($interval)
+    public function addInterval($interval): static
     {
         if (!isset($this->_properties['intervals'])) {
-            $this->_properties['intervals'] = (new Intervals())->isPropertyField(false)->multi(true);
+            $this->_properties['intervals'] = (new Intervals())->fieldKeyed(false)->multi(true);
         }
         $target = $this->_properties['intervals'];
         if ($interval instanceof \Closure) {
@@ -53,7 +55,7 @@ class AnyOf extends Node
      * @param mixed $filter
      * @return static
      */
-    public function filter($filter)
+    public function filter($filter): static
     {
         return $this->addProperty('filter', Filter::create($filter));
     }

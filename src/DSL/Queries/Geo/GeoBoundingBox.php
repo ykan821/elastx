@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Geo;
 
 use ElasticKit\DSL\Node;
@@ -11,9 +13,9 @@ use ElasticKit\DSL\Node;
  */
 class GeoBoundingBox extends Node
 {
-    protected $_key = 'geo_bounding_box';
+    protected string $_key = 'geo_bounding_box';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Top-left corner of the bounding box.
@@ -21,7 +23,7 @@ class GeoBoundingBox extends Node
      * @param mixed $topLeft
      * @return static
      */
-    public function topLeft($topLeft)
+    public function topLeft($topLeft): static
     {
         return $this->addProperty('top_left', $topLeft);
     }
@@ -32,7 +34,7 @@ class GeoBoundingBox extends Node
      * @param mixed $bottomRight
      * @return static
      */
-    public function bottomRight($bottomRight)
+    public function bottomRight($bottomRight): static
     {
         return $this->addProperty('bottom_right', $bottomRight);
     }
@@ -43,7 +45,7 @@ class GeoBoundingBox extends Node
      * @param float $top
      * @return static
      */
-    public function top($top)
+    public function top(float $top): static
     {
         return $this->addProperty('top', $top);
     }
@@ -54,7 +56,7 @@ class GeoBoundingBox extends Node
      * @param float $left
      * @return static
      */
-    public function left($left)
+    public function left(float $left): static
     {
         return $this->addProperty('left', $left);
     }
@@ -65,7 +67,7 @@ class GeoBoundingBox extends Node
      * @param float $bottom
      * @return static
      */
-    public function bottom($bottom)
+    public function bottom(float $bottom): static
     {
         return $this->addProperty('bottom', $bottom);
     }
@@ -76,7 +78,7 @@ class GeoBoundingBox extends Node
      * @param float $right
      * @return static
      */
-    public function right($right)
+    public function right(float $right): static
     {
         return $this->addProperty('right', $right);
     }
@@ -87,7 +89,7 @@ class GeoBoundingBox extends Node
      * @param string $wkt
      * @return static
      */
-    public function wkt($wkt)
+    public function wkt(string $wkt): static
     {
         return $this->addProperty('wkt', $wkt);
     }
@@ -98,7 +100,7 @@ class GeoBoundingBox extends Node
      * @param mixed $topRight
      * @return static
      */
-    public function topRight($topRight)
+    public function topRight($topRight): static
     {
         return $this->addProperty('top_right', $topRight);
     }
@@ -109,7 +111,7 @@ class GeoBoundingBox extends Node
      * @param mixed $bottomLeft
      * @return static
      */
-    public function bottomLeft($bottomLeft)
+    public function bottomLeft($bottomLeft): static
     {
         return $this->addProperty('bottom_left', $bottomLeft);
     }
@@ -121,7 +123,7 @@ class GeoBoundingBox extends Node
      * @param string $validationMethod
      * @return static
      */
-    public function validationMethod($validationMethod)
+    public function validationMethod(string $validationMethod): static
     {
         return $this->addProperty('validation_method', $validationMethod);
     }
@@ -133,7 +135,7 @@ class GeoBoundingBox extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }

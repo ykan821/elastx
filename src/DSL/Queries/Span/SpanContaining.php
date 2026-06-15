@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Query;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Node;
  */
 class SpanContaining extends Node
 {
-    protected $_key = 'span_containing';
+    protected string $_key = 'span_containing';
 
     /**
      * The little span query whose matches must be contained within the big span.
@@ -18,7 +20,7 @@ class SpanContaining extends Node
      * @param mixed $little
      * @return static
      */
-    public function little($little)
+    public function little($little): static
     {
         return $this->addProperty('little', Query::create($little));
     }
@@ -29,7 +31,7 @@ class SpanContaining extends Node
      * @param mixed $big
      * @return static
      */
-    public function big($big)
+    public function big($big): static
     {
         return $this->addProperty('big', Query::create($big));
     }

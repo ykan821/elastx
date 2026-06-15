@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Joining;
 
 use ElasticKit\DSL\Node;
@@ -11,7 +13,7 @@ use ElasticKit\DSL\Node;
  */
 class ParentId extends Node
 {
-    protected $_key = 'parent_id';
+    protected string $_key = 'parent_id';
 
     /**
      * Name of the child relationship mapped for the join field.
@@ -19,7 +21,7 @@ class ParentId extends Node
      * @param string $type
      * @return static
      */
-    public function type($type)
+    public function type(string $type): static
     {
         return $this->addProperty('type', $type);
     }
@@ -30,7 +32,7 @@ class ParentId extends Node
      * @param string $id
      * @return static
      */
-    public function id($id)
+    public function id(string $id): static
     {
         return $this->addProperty('id', $id);
     }
@@ -42,7 +44,7 @@ class ParentId extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }

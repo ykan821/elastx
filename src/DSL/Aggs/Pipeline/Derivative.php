@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Pipeline;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Derivative extends Node
 {
-    protected $_key = 'derivative';
+    protected string $_key = 'derivative';
 
     /**
      * Path to the buckets to differentiate.
@@ -17,7 +19,7 @@ class Derivative extends Node
      * @param string $path
      * @return static
      */
-    public function bucketsPath($path)
+    public function bucketsPath(string $path): static
     {
         return $this->addProperty('buckets_path', $path);
     }
@@ -28,7 +30,7 @@ class Derivative extends Node
      * @param string $policy
      * @return static
      */
-    public function gapPolicy($policy)
+    public function gapPolicy(string $policy): static
     {
         return $this->addProperty('gap_policy', $policy);
     }
@@ -39,7 +41,7 @@ class Derivative extends Node
      * @param string $format
      * @return static
      */
-    public function format($format)
+    public function format(string $format): static
     {
         return $this->addProperty('format', $format);
     }
@@ -50,7 +52,7 @@ class Derivative extends Node
      * @param string $unit
      * @return static
      */
-    public function unit($unit)
+    public function unit(string $unit): static
     {
         return $this->addProperty('unit', $unit);
     }

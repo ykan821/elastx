@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -12,7 +14,7 @@ use ElasticKit\DSL\Node;
  */
 class CombinedFields extends Node
 {
-    protected $_key = 'combined_fields';
+    protected string $_key = 'combined_fields';
 
     /**
      * Text to search for in the provided fields.
@@ -22,7 +24,7 @@ class CombinedFields extends Node
      * @param string $query
      * @return static
      */
-    public function query($query)
+    public function query(string $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -35,7 +37,7 @@ class CombinedFields extends Node
      * @param array<int, string> $fields
      * @return static
      */
-    public function fields($fields)
+    public function fields(array $fields): static
     {
         return $this->addProperty('fields', $fields);
     }
@@ -47,7 +49,7 @@ class CombinedFields extends Node
      * @param bool $autoGenerateSynonymsPhraseQuery
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery($autoGenerateSynonymsPhraseQuery)
+    public function autoGenerateSynonymsPhraseQuery(bool $autoGenerateSynonymsPhraseQuery): static
     {
         return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
     }
@@ -59,7 +61,7 @@ class CombinedFields extends Node
      * @param string $operator
      * @return static
      */
-    public function operator($operator)
+    public function operator(string $operator): static
     {
         return $this->addProperty('operator', $operator);
     }
@@ -68,10 +70,10 @@ class CombinedFields extends Node
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $minimumShouldMatch
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $minimumShouldMatch): static
     {
         return $this->addProperty('minimum_should_match', $minimumShouldMatch);
     }
@@ -84,7 +86,7 @@ class CombinedFields extends Node
      * @param string $zeroTermsQuery
      * @return static
      */
-    public function zeroTermsQuery($zeroTermsQuery)
+    public function zeroTermsQuery(string $zeroTermsQuery): static
     {
         return $this->addProperty('zero_terms_query', $zeroTermsQuery);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Support\ClausesSupport;
@@ -12,7 +14,7 @@ class SpanNear extends Node
 {
     use ClausesSupport;
 
-    protected $_key = 'span_near';
+    protected string $_key = 'span_near';
 
     /**
      * The list of span query clauses that must appear near each other.
@@ -21,7 +23,7 @@ class SpanNear extends Node
      * @param mixed $clauses
      * @return static
      */
-    public function clauses($clauses)
+    public function clauses($clauses): static
     {
         return $this->addClause('clauses', $clauses);
     }
@@ -32,7 +34,7 @@ class SpanNear extends Node
      * @param int $slop
      * @return static
      */
-    public function slop($slop)
+    public function slop(int $slop): static
     {
         return $this->addProperty('slop', $slop);
     }
@@ -43,7 +45,7 @@ class SpanNear extends Node
      * @param bool $inOrder
      * @return static
      */
-    public function inOrder($inOrder)
+    public function inOrder(bool $inOrder): static
     {
         return $this->addProperty('in_order', $inOrder);
     }

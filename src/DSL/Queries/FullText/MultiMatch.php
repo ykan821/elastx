@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -11,16 +13,16 @@ use ElasticKit\DSL\Node;
  */
 class MultiMatch extends Node
 {
-    protected $_key = 'multi_match';
+    protected string $_key = 'multi_match';
 
     /**
      * Text, number, boolean value or date you wish to find
      * in the provided fields.
      *
-     * @param string $query
+     * @param string|int|float|bool $query
      * @return static
      */
-    public function query($query)
+    public function query(string|int|float|bool $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -33,7 +35,7 @@ class MultiMatch extends Node
      * @param array<int, string> $fields
      * @return static
      */
-    public function fields($fields)
+    public function fields(array $fields): static
     {
         return $this->addProperty('fields', $fields);
     }
@@ -46,7 +48,7 @@ class MultiMatch extends Node
      * @param string $type
      * @return static
      */
-    public function type($type)
+    public function type(string $type): static
     {
         return $this->addProperty('type', $type);
     }
@@ -58,7 +60,7 @@ class MultiMatch extends Node
      * @param string $operator
      * @return static
      */
-    public function operator($operator)
+    public function operator(string $operator): static
     {
         return $this->addProperty('operator', $operator);
     }
@@ -70,7 +72,7 @@ class MultiMatch extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -79,10 +81,10 @@ class MultiMatch extends Node
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $minimumShouldMatch
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $minimumShouldMatch): static
     {
         return $this->addProperty('minimum_should_match', $minimumShouldMatch);
     }
@@ -94,7 +96,7 @@ class MultiMatch extends Node
      * @param float $tieBreaker
      * @return static
      */
-    public function tieBreaker($tieBreaker)
+    public function tieBreaker(float $tieBreaker): static
     {
         return $this->addProperty('tie_breaker', $tieBreaker);
     }
@@ -102,10 +104,10 @@ class MultiMatch extends Node
     /**
      * Maximum edit distance allowed for fuzzy matching.
      *
-     * @param string $fuzziness
+     * @param int|string $fuzziness
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $fuzziness): static
     {
         return $this->addProperty('fuzziness', $fuzziness);
     }
@@ -117,7 +119,7 @@ class MultiMatch extends Node
      * @param int $prefixLength
      * @return static
      */
-    public function prefixLength($prefixLength)
+    public function prefixLength(int $prefixLength): static
     {
         return $this->addProperty('prefix_length', $prefixLength);
     }
@@ -129,7 +131,7 @@ class MultiMatch extends Node
      * @param int $maxExpansions
      * @return static
      */
-    public function maxExpansions($maxExpansions)
+    public function maxExpansions(int $maxExpansions): static
     {
         return $this->addProperty('max_expansions', $maxExpansions);
     }
@@ -141,7 +143,7 @@ class MultiMatch extends Node
      * @param bool $fuzzyTranspositions
      * @return static
      */
-    public function fuzzyTranspositions($fuzzyTranspositions)
+    public function fuzzyTranspositions(bool $fuzzyTranspositions): static
     {
         return $this->addProperty('fuzzy_transpositions', $fuzzyTranspositions);
     }
@@ -152,7 +154,7 @@ class MultiMatch extends Node
      * @param string $fuzzyRewrite
      * @return static
      */
-    public function fuzzyRewrite($fuzzyRewrite)
+    public function fuzzyRewrite(string $fuzzyRewrite): static
     {
         return $this->addProperty('fuzzy_rewrite', $fuzzyRewrite);
     }
@@ -164,7 +166,7 @@ class MultiMatch extends Node
      * @param bool $lenient
      * @return static
      */
-    public function lenient($lenient)
+    public function lenient(bool $lenient): static
     {
         return $this->addProperty('lenient', $lenient);
     }
@@ -177,7 +179,7 @@ class MultiMatch extends Node
      * @param string $zeroTermsQuery
      * @return static
      */
-    public function zeroTermsQuery($zeroTermsQuery)
+    public function zeroTermsQuery(string $zeroTermsQuery): static
     {
         return $this->addProperty('zero_terms_query', $zeroTermsQuery);
     }
@@ -189,7 +191,7 @@ class MultiMatch extends Node
      * @param int $slop
      * @return static
      */
-    public function slop($slop)
+    public function slop(int $slop): static
     {
         return $this->addProperty('slop', $slop);
     }
@@ -201,7 +203,7 @@ class MultiMatch extends Node
      * @param bool $autoGenerateSynonymsPhraseQuery
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery($autoGenerateSynonymsPhraseQuery)
+    public function autoGenerateSynonymsPhraseQuery(bool $autoGenerateSynonymsPhraseQuery): static
     {
         return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
     }

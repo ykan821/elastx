@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -11,11 +13,11 @@ use ElasticKit\DSL\Node;
  */
 class MatchPhrasePrefix extends Node
 {
-    protected $_key = 'match_phrase_prefix';
+    protected string $_key = 'match_phrase_prefix';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
-    protected $_valueKey = 'query';
+    protected string $_valueKey = 'query';
 
     /**
      * Text you wish to find in the provided field.
@@ -26,7 +28,7 @@ class MatchPhrasePrefix extends Node
      * @param string $query
      * @return static
      */
-    public function query($query)
+    public function query(string $query): static
     {
         return $this->addProperty('query', $query);
     }
@@ -38,7 +40,7 @@ class MatchPhrasePrefix extends Node
      * @param string $analyzer
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $analyzer): static
     {
         return $this->addProperty('analyzer', $analyzer);
     }
@@ -50,7 +52,7 @@ class MatchPhrasePrefix extends Node
      * @param int $maxExpansions
      * @return static
      */
-    public function maxExpansions($maxExpansions)
+    public function maxExpansions(int $maxExpansions): static
     {
         return $this->addProperty('max_expansions', $maxExpansions);
     }
@@ -62,7 +64,7 @@ class MatchPhrasePrefix extends Node
      * @param int $slop
      * @return static
      */
-    public function slop($slop)
+    public function slop(int $slop): static
     {
         return $this->addProperty('slop', $slop);
     }
@@ -75,7 +77,7 @@ class MatchPhrasePrefix extends Node
      * @param string $zeroTermsQuery
      * @return static
      */
-    public function zeroTermsQuery($zeroTermsQuery)
+    public function zeroTermsQuery(string $zeroTermsQuery): static
     {
         return $this->addProperty('zero_terms_query', $zeroTermsQuery);
     }

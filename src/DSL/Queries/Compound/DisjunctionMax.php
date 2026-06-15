@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound;
 
 use ElasticKit\DSL\Support\ClausesSupport;
@@ -12,7 +14,7 @@ class DisjunctionMax extends Node
 {
     use ClausesSupport;
 
-    protected $_key = 'dis_max';
+    protected string $_key = 'dis_max';
 
     /**
      * Contains one or more query clauses. Returned documents must match one or more of these queries. If a document matches multiple queries, Elasticsearch uses the highest relevance score.
@@ -21,7 +23,7 @@ class DisjunctionMax extends Node
      * @param mixed $queries
      * @return static
      */
-    public function queries($queries)
+    public function queries($queries): static
     {
         return $this->addClause('queries', $queries);
     }
@@ -32,7 +34,7 @@ class DisjunctionMax extends Node
      * @param float $tieBreaker
      * @return static
      */
-    public function tieBreaker($tieBreaker)
+    public function tieBreaker(float $tieBreaker): static
     {
         return $this->addProperty('tie_breaker', $tieBreaker);
     }

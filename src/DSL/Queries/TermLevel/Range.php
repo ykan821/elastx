@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
@@ -9,50 +11,50 @@ class Range extends Node
 {
     use RangeSupport;
 
-    protected $_key = 'range';
+    protected string $_key = 'range';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
-     * (Optional) Greater than or equal to.
+     * Greater than or equal to.
      *
-     * @param mixed $gte
+     * @param string|int|float|bool $gte
      * @return static
      */
-    public function gte($gte)
+    public function gte(string|int|float|bool $gte): static
     {
         return $this->addProperty('gte', $gte);
     }
 
     /**
-     * (Optional) Greater than.
+     * Greater than.
      *
-     * @param mixed $gt
+     * @param string|int|float|bool $gt
      * @return static
      */
-    public function gt($gt)
+    public function gt(string|int|float|bool $gt): static
     {
         return $this->addProperty('gt', $gt);
     }
 
     /**
-     * (Optional) Less than or equal to.
+     * Less than or equal to.
      *
-     * @param mixed $lte
+     * @param string|int|float|bool $lte
      * @return static
      */
-    public function lte($lte)
+    public function lte(string|int|float|bool $lte): static
     {
         return $this->addProperty('lte', $lte);
     }
 
     /**
-     * (Optional) Less than.
+     * Less than.
      *
-     * @param mixed $lt
+     * @param string|int|float|bool $lt
      * @return static
      */
-    public function lt($lt)
+    public function lt(string|int|float|bool $lt): static
     {
         return $this->addProperty('lt', $lt);
     }
@@ -69,7 +71,7 @@ class Range extends Node
      * @param string $format
      * @return static
      */
-    public function format($format)
+    public function format(string $format): static
     {
         return $this->addProperty('format', $format);
     }
@@ -87,7 +89,7 @@ class Range extends Node
      * @param string $relation
      * @return static
      */
-    public function relation($relation)
+    public function relation(string $relation): static
     {
         return $this->addProperty('relation', $relation);
     }
@@ -98,7 +100,7 @@ class Range extends Node
      * @param string $timeZone
      * @return static
      */
-    public function timeZone($timeZone)
+    public function timeZone(string $timeZone): static
     {
         return $this->addProperty('time_zone', $timeZone);
     }

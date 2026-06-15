@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Query;
@@ -12,6 +14,8 @@ use ElasticKit\DSL\Queries\Script;
  */
 class Filter extends Node
 {
+    protected string $_key = 'filter';
+
     /**
      * Query used to return intervals that follow an
      * interval from the filter rule.
@@ -19,7 +23,7 @@ class Filter extends Node
      * @param mixed $after
      * @return static
      */
-    public function after($after)
+    public function after($after): static
     {
         return $this->addProperty('after', Query::create($after));
     }
@@ -31,7 +35,7 @@ class Filter extends Node
      * @param mixed $before
      * @return static
      */
-    public function before($before)
+    public function before($before): static
     {
         return $this->addProperty('before', Query::create($before));
     }
@@ -43,7 +47,7 @@ class Filter extends Node
      * @param mixed $containedBy
      * @return static
      */
-    public function containedBy($containedBy)
+    public function containedBy($containedBy): static
     {
         return $this->addProperty('contained_by', Query::create($containedBy));
     }
@@ -55,7 +59,7 @@ class Filter extends Node
      * @param mixed $containing
      * @return static
      */
-    public function containing($containing)
+    public function containing($containing): static
     {
         return $this->addProperty('containing', Query::create($containing));
     }
@@ -67,7 +71,7 @@ class Filter extends Node
      * @param mixed $notContaining
      * @return static
      */
-    public function notContaining($notContaining)
+    public function notContaining($notContaining): static
     {
         return $this->addProperty('not_containing', Query::create($notContaining));
     }
@@ -79,7 +83,7 @@ class Filter extends Node
      * @param mixed $overlapping
      * @return static
      */
-    public function overlapping($overlapping)
+    public function overlapping($overlapping): static
     {
         return $this->addProperty('overlapping', Query::create($overlapping));
     }
@@ -92,7 +96,7 @@ class Filter extends Node
      * @param mixed $script
      * @return static
      */
-    public function script($script)
+    public function script($script): static
     {
         return $this->addProperty('script', Script::create($script));
     }
@@ -104,7 +108,7 @@ class Filter extends Node
      * @param mixed $notContainedBy
      * @return static
      */
-    public function notContainedBy($notContainedBy)
+    public function notContainedBy($notContainedBy): static
     {
         return $this->addProperty('not_contained_by', Query::create($notContainedBy));
     }
@@ -116,7 +120,7 @@ class Filter extends Node
      * @param mixed $notOverlapping
      * @return static
      */
-    public function notOverlapping($notOverlapping)
+    public function notOverlapping($notOverlapping): static
     {
         return $this->addProperty('not_overlapping', Query::create($notOverlapping));
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class IDs extends Node
 {
-    protected $_key = 'ids';
+    protected string $_key = 'ids';
 
     /**
      * An array of document IDs.
@@ -17,7 +19,7 @@ class IDs extends Node
      * @param array<int, string> $values
      * @return static
      */
-    public function values($values)
+    public function values(array $values): static
     {
         return $this->addProperty('values', $values);
     }

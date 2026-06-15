@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class CategorizeText extends Node
 {
-    protected $_key = 'categorize_text';
+    protected string $_key = 'categorize_text';
 
     /**
      * Analyzer used for categorization.
@@ -17,7 +19,7 @@ class CategorizeText extends Node
      * @param mixed $categorizationAnalyzer
      * @return static
      */
-    public function categorizationAnalyzer($categorizationAnalyzer)
+    public function categorizationAnalyzer($categorizationAnalyzer): static
     {
         return $this->addProperty('categorization_analyzer', $categorizationAnalyzer);
     }
@@ -28,7 +30,7 @@ class CategorizeText extends Node
      * @param array<string, mixed> $categorizationFilters
      * @return static
      */
-    public function categorizationFilters($categorizationFilters)
+    public function categorizationFilters(array $categorizationFilters): static
     {
         return $this->addProperty('categorization_filters', $categorizationFilters);
     }
@@ -39,7 +41,7 @@ class CategorizeText extends Node
      * @param int $maxMatchedTokens
      * @return static
      */
-    public function maxMatchedTokens($maxMatchedTokens)
+    public function maxMatchedTokens(int $maxMatchedTokens): static
     {
         return $this->addProperty('max_matched_tokens', $maxMatchedTokens);
     }
@@ -50,7 +52,7 @@ class CategorizeText extends Node
      * @param int $maxUniqueTokens
      * @return static
      */
-    public function maxUniqueTokens($maxUniqueTokens)
+    public function maxUniqueTokens(int $maxUniqueTokens): static
     {
         return $this->addProperty('max_unique_tokens', $maxUniqueTokens);
     }
@@ -61,7 +63,7 @@ class CategorizeText extends Node
      * @param int $minDocCount
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $minDocCount): static
     {
         return $this->addProperty('min_doc_count', $minDocCount);
     }
@@ -72,7 +74,7 @@ class CategorizeText extends Node
      * @param int $shardMinDocCount
      * @return static
      */
-    public function shardMinDocCount($shardMinDocCount)
+    public function shardMinDocCount(int $shardMinDocCount): static
     {
         return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
     }
@@ -83,7 +85,7 @@ class CategorizeText extends Node
      * @param int $shardSize
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $shardSize): static
     {
         return $this->addProperty('shard_size', $shardSize);
     }
@@ -94,7 +96,7 @@ class CategorizeText extends Node
      * @param float $similarityThreshold
      * @return static
      */
-    public function similarityThreshold($similarityThreshold)
+    public function similarityThreshold(float $similarityThreshold): static
     {
         return $this->addProperty('similarity_threshold', $similarityThreshold);
     }
@@ -105,7 +107,7 @@ class CategorizeText extends Node
      * @param int $size
      * @return static
      */
-    public function size($size)
+    public function size(int $size): static
     {
         return $this->addProperty('size', $size);
     }

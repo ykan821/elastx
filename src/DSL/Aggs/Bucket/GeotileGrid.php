@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,18 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class GeotileGrid extends Node
 {
-    protected $_key = 'geotile_grid';
-
-    /**
-     * The geo point field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'geotile_grid';
 
     /**
      * Zoom level (precision) for geotile grid cells.
@@ -28,7 +19,7 @@ class GeotileGrid extends Node
      * @param int $precision
      * @return static
      */
-    public function precision($precision)
+    public function precision(int $precision): static
     {
         return $this->addProperty('precision', $precision);
     }
@@ -39,7 +30,7 @@ class GeotileGrid extends Node
      * @param int $size
      * @return static
      */
-    public function size($size)
+    public function size(int $size): static
     {
         return $this->addProperty('size', $size);
     }
@@ -50,7 +41,7 @@ class GeotileGrid extends Node
      * @param int $shardSize
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $shardSize): static
     {
         return $this->addProperty('shard_size', $shardSize);
     }

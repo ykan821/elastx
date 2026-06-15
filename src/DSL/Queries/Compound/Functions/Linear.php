@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound\Functions;
 
 use ElasticKit\DSL\Node;
@@ -9,50 +11,50 @@ use ElasticKit\DSL\Node;
  */
 class Linear extends Node
 {
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
-    protected $_key = 'linear';
+    protected string $_key = 'linear';
 
     /**
-     * (Required) The point of origin used for calculating distance. Must be a number for numeric fields, date for date fields, and geo point for geo fields.
+     * The point of origin used for calculating distance. Must be a number for numeric fields, date for date fields, and geo point for geo fields.
      *
      * @param mixed $origin
      * @return static
      */
-    public function origin($origin)
+    public function origin($origin): static
     {
         return $this->addProperty('origin', $origin);
     }
 
     /**
-     * (Required) Defines the distance from origin + offset at which the computed score will equal the decay parameter.
+     * Defines the distance from origin + offset at which the computed score will equal the decay parameter.
      *
      * @param mixed $scale
      * @return static
      */
-    public function scale($scale)
+    public function scale($scale): static
     {
         return $this->addProperty('scale', $scale);
     }
 
     /**
-     * (Optional) If defined, the decay function will only compute for documents with a distance greater than this offset. Defaults to 0.
+     * If defined, the decay function will only compute for documents with a distance greater than this offset. Defaults to 0.
      *
      * @param mixed $offset
      * @return static
      */
-    public function offset($offset)
+    public function offset($offset): static
     {
         return $this->addProperty('offset', $offset);
     }
 
     /**
-     * (Optional) Defines how documents are scored at the distance given at scale. Defaults to 0.5.
+     * Defines how documents are scored at the distance given at scale. Defaults to 0.5.
      *
      * @param float $decay
      * @return static
      */
-    public function decay($decay)
+    public function decay(float $decay): static
     {
         return $this->addProperty('decay', $decay);
     }

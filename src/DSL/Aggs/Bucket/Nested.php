@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Nested extends Node
 {
-    protected $_key = 'nested';
+    protected string $_key = 'nested';
 
     /**
      * Path to the nested object to aggregate on.
@@ -17,7 +19,7 @@ class Nested extends Node
      * @param string $path
      * @return static
      */
-    public function path($path)
+    public function path(string $path): static
     {
         return $this->addProperty('path', $path);
     }
@@ -28,7 +30,7 @@ class Nested extends Node
      * @param bool $ignoreUnmapped
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $ignoreUnmapped): static
     {
         return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
     }

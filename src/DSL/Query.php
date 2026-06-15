@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL;
 
 use BadMethodCallException;
@@ -37,12 +39,12 @@ class Query extends Node
     /**
      * @var string
      */
-    protected $_key = 'query';
+    protected string $_key = 'query';
 
     /**
      * @var bool
      */
-    protected $_multi = false;
+    protected bool $_multi = false;
 
     /**
      * Query clauses stored independently from type properties.
@@ -59,23 +61,11 @@ class Query extends Node
     protected $_aggregations = [];
 
     /**
-     * Set whether the query supports multiple clauses.
-     *
-     * @param bool $multi
-     * @return static
-     */
-    protected function setMulti($multi)
-    {
-        $this->_multi = $multi;
-        return $this;
-    }
-
-    /**
      * Whether the query supports multiple clauses.
      *
      * @return bool
      */
-    protected function isMulti()
+    protected function isMulti(): bool
     {
         return $this->_multi;
     }
@@ -106,7 +96,7 @@ class Query extends Node
         } elseif (is_array($field)) {
             $this->fromArray($field);
         } elseif ($field !== null) {
-            $this->_properties = $field;
+            $this->_raw = $field;
         }
     }
 
@@ -132,7 +122,7 @@ class Query extends Node
      *
      * @return array<int, mixed>
      */
-    public function getQueries()
+    public function getQueries(): array
     {
         return $this->_queries;
     }
@@ -143,7 +133,7 @@ class Query extends Node
      * @param mixed $query
      * @return $this
      */
-    public function addQuery($query)
+    public function addQuery($query): static
     {
         $this->_queries[] = $query;
         return $this;
@@ -157,7 +147,7 @@ class Query extends Node
      * @param mixed $default
      * @return $this
      */
-    public function when($condition, $query, $default = null)
+    public function when($condition, $query, $default = null): static
     {
         $truthy = is_callable($condition) ? $condition() : $condition;
 
@@ -183,7 +173,7 @@ class Query extends Node
      * @return $this
      * @throws \BadMethodCallException if called with a string alias and no definition
      */
-    public function aggs($alias, $aggs = null)
+    public function aggs($alias, $aggs = null): static
     {
         if ($aggs === null && !is_string($alias)) {
             $aggs = $alias;
@@ -234,9 +224,9 @@ class Query extends Node
      *
      * @return array<string, mixed>
      */
-    public function toArray()
+    public function toArray(): array
     {
-        $dsl = is_array($this->_properties) ? $this->resolveProperties($this->_properties) : [];
+        $dsl = $this->_properties !== null ? $this->resolveProperties($this->_properties) : [];
 
         $query = $this->buildQuery();
         if (!empty($query)) {
@@ -303,7 +293,7 @@ class Query extends Node
      * @param array<string, mixed> $dsl
      * @return void
      */
-    private function buildAggs(array &$dsl)
+    private function buildAggs(array &$dsl): void
     {
         if (empty($this->_aggregations)) {
             return;
@@ -320,7 +310,7 @@ class Query extends Node
      * @param array<string, mixed> $dsl
      * @return void
      */
-    private function buildParams(array &$dsl)
+    private function buildParams(array &$dsl): void
     {
         foreach ($this->_params as $key => $value) {
             if ($value instanceof Query) {

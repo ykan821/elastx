@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound;
 
 use ElasticKit\DSL\Node;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Query;
  */
 class Boosting extends Node
 {
-    protected $_key = 'boosting';
+    protected string $_key = 'boosting';
 
     /**
      * Query you wish to run. Any returned documents must match this query.
@@ -18,7 +20,7 @@ class Boosting extends Node
      * @param mixed $positive
      * @return static
      */
-    public function positive($positive)
+    public function positive($positive): static
     {
         return $this->addProperty('positive', Query::create($positive));
     }
@@ -29,7 +31,7 @@ class Boosting extends Node
      * @param mixed $negative
      * @return static
      */
-    public function negative($negative)
+    public function negative($negative): static
     {
         return $this->addProperty('negative', Query::create($negative));
     }
@@ -40,7 +42,7 @@ class Boosting extends Node
      * @param float $negativeBoost
      * @return static
      */
-    public function negativeBoost($negativeBoost)
+    public function negativeBoost(float $negativeBoost): static
     {
         return $this->addProperty('negative_boost', $negativeBoost);
     }

@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
 
 class Regexp extends Node
 {
-    protected $_key = 'regexp';
+    protected string $_key = 'regexp';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Regular expression for terms you wish to find in the provided <field>. For a list of supported operators, see Regular expression syntax.
@@ -20,7 +22,7 @@ class Regexp extends Node
      * @param string $value
      * @return static
      */
-    public function value($value)
+    public function value(string $value): static
     {
         return $this->addProperty('value', $value);
     }
@@ -31,7 +33,7 @@ class Regexp extends Node
      * @param string $flags
      * @return static
      */
-    public function flags($flags)
+    public function flags(string $flags): static
     {
         return $this->addProperty('flags', $flags);
     }
@@ -42,7 +44,7 @@ class Regexp extends Node
      * @param bool $caseInsensitive
      * @return static
      */
-    public function caseInsensitive($caseInsensitive)
+    public function caseInsensitive(bool $caseInsensitive): static
     {
         return $this->addProperty('case_insensitive', $caseInsensitive);
     }
@@ -57,7 +59,7 @@ class Regexp extends Node
      * @param int $maxDeterminizedStates
      * @return static
      */
-    public function maxDeterminizedStates($maxDeterminizedStates)
+    public function maxDeterminizedStates(int $maxDeterminizedStates): static
     {
         return $this->addProperty('max_determinized_states', $maxDeterminizedStates);
     }
@@ -68,7 +70,7 @@ class Regexp extends Node
      * @param string $rewrite
      * @return static
      */
-    public function rewrite($rewrite)
+    public function rewrite(string $rewrite): static
     {
         return $this->addProperty('rewrite', $rewrite);
     }

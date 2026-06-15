@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use stdClass;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Node;
  */
 class GlobalAgg extends Node
 {
-    protected $_key = 'global';
+    protected string $_key = 'global';
 
     /**
      * Serialize to an Elasticsearch DSL array.

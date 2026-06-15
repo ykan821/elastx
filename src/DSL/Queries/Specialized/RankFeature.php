@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class RankFeature extends Node
 {
-    protected $_key = 'rank_feature';
+    protected string $_key = 'rank_feature';
 
     /**
      * Saturation function to compute the score. Uses point: 2 by default.
@@ -17,7 +19,7 @@ class RankFeature extends Node
      * @param mixed $saturation
      * @return static
      */
-    public function saturation($saturation)
+    public function saturation($saturation): static
     {
         return $this->addProperty('saturation', $saturation);
     }
@@ -28,7 +30,7 @@ class RankFeature extends Node
      * @param mixed $log
      * @return static
      */
-    public function log($log)
+    public function log($log): static
     {
         return $this->addProperty('log', $log);
     }
@@ -39,7 +41,7 @@ class RankFeature extends Node
      * @param mixed $sigmoid
      * @return static
      */
-    public function sigmoid($sigmoid)
+    public function sigmoid($sigmoid): static
     {
         return $this->addProperty('sigmoid', $sigmoid);
     }
@@ -50,7 +52,7 @@ class RankFeature extends Node
      * @param mixed $linear
      * @return static
      */
-    public function linear($linear)
+    public function linear($linear): static
     {
         return $this->addProperty('linear', $linear);
     }

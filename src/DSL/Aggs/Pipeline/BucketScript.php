@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Pipeline;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class BucketScript extends Node
 {
-    protected $_key = 'bucket_script';
+    protected string $_key = 'bucket_script';
 
     /**
      * Path to the buckets to use in the script.
@@ -17,7 +19,7 @@ class BucketScript extends Node
      * @param mixed $path
      * @return static
      */
-    public function bucketsPath($path)
+    public function bucketsPath($path): static
     {
         return $this->addProperty('buckets_path', $path);
     }
@@ -28,7 +30,7 @@ class BucketScript extends Node
      * @param string|callable $script
      * @return static
      */
-    public function script($script)
+    public function script($script): static
     {
         return $this->addProperty('script', $script);
     }
@@ -39,7 +41,7 @@ class BucketScript extends Node
      * @param string $policy
      * @return static
      */
-    public function gapPolicy($policy)
+    public function gapPolicy(string $policy): static
     {
         return $this->addProperty('gap_policy', $policy);
     }
@@ -50,7 +52,7 @@ class BucketScript extends Node
      * @param string $format
      * @return static
      */
-    public function format($format)
+    public function format(string $format): static
     {
         return $this->addProperty('format', $format);
     }

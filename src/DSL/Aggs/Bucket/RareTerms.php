@@ -1,27 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
 
 class RareTerms extends Node
 {
-    protected $_key = 'rare_terms';
-
-    /**
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'rare_terms';
 
     /**
      * @param int $maxDocCount
      * @return static
      */
-    public function maxDocCount($maxDocCount)
+    public function maxDocCount(int $maxDocCount): static
     {
         return $this->addProperty('max_doc_count', $maxDocCount);
     }
@@ -30,7 +23,7 @@ class RareTerms extends Node
      * @param mixed $precision
      * @return static
      */
-    public function precision($precision)
+    public function precision($precision): static
     {
         return $this->addProperty('precision', $precision);
     }
@@ -39,7 +32,7 @@ class RareTerms extends Node
      * @param mixed $include
      * @return static
      */
-    public function include($include)
+    public function include($include): static
     {
         return $this->addProperty('include', $include);
     }
@@ -48,7 +41,7 @@ class RareTerms extends Node
      * @param mixed $exclude
      * @return static
      */
-    public function exclude($exclude)
+    public function exclude($exclude): static
     {
         return $this->addProperty('exclude', $exclude);
     }
@@ -57,7 +50,7 @@ class RareTerms extends Node
      * @param mixed $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing($missing): static
     {
         return $this->addProperty('missing', $missing);
     }
@@ -66,7 +59,7 @@ class RareTerms extends Node
      * @param int $shardSize
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $shardSize): static
     {
         return $this->addProperty('shard_size', $shardSize);
     }

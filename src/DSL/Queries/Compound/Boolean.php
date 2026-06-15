@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound;
 
 use ElasticKit\DSL\Support\ClausesSupport;
@@ -12,7 +14,7 @@ class Boolean extends Node
 {
     use ClausesSupport;
 
-    protected $_key = 'bool';
+    protected string $_key = 'bool';
 
     /**
      * The clause (query) must appear in matching documents and will contribute to the score.
@@ -21,7 +23,7 @@ class Boolean extends Node
      * @param mixed $must
      * @return static
      */
-    public function must($must)
+    public function must($must): static
     {
         return $this->addClause('must', $must);
     }
@@ -33,7 +35,7 @@ class Boolean extends Node
      * @param mixed $should
      * @return static
      */
-    public function should($should)
+    public function should($should): static
     {
         return $this->addClause('should', $should);
     }
@@ -45,7 +47,7 @@ class Boolean extends Node
      * @param mixed $filter
      * @return static
      */
-    public function filter($filter)
+    public function filter($filter): static
     {
         return $this->addClause('filter', $filter);
     }
@@ -57,7 +59,7 @@ class Boolean extends Node
      * @param mixed $mustNot
      * @return static
      */
-    public function mustNot($mustNot)
+    public function mustNot($mustNot): static
     {
         return $this->addClause('must_not', $mustNot);
     }
@@ -69,10 +71,10 @@ class Boolean extends Node
      *
      * For other valid values, see the minimum_should_match parameter.
      *
-     * @param int $minimumShouldMatch
+     * @param int|string $minimumShouldMatch
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $minimumShouldMatch): static
     {
         return $this->addProperty('minimum_should_match', $minimumShouldMatch);
     }

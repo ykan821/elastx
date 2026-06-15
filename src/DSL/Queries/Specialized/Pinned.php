@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Query;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Node;
  */
 class Pinned extends Node
 {
-    protected $_key = 'pinned';
+    protected string $_key = 'pinned';
 
     /**
      * List of document IDs to pin to the top of the results.
@@ -18,7 +20,7 @@ class Pinned extends Node
      * @param array<int, string> $ids
      * @return static
      */
-    public function ids($ids)
+    public function ids(array $ids): static
     {
         return $this->addProperty('ids', $ids);
     }
@@ -29,7 +31,7 @@ class Pinned extends Node
      * @param mixed $organic
      * @return static
      */
-    public function organic($organic)
+    public function organic($organic): static
     {
         return $this->addProperty('organic', Query::create($organic));
     }
@@ -40,7 +42,7 @@ class Pinned extends Node
      * @param mixed $doc
      * @return static
      */
-    public function doc($doc)
+    public function doc($doc): static
     {
         return $this->addProperty('doc', $doc);
     }

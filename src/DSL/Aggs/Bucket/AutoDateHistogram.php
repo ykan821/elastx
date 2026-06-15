@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class AutoDateHistogram extends Node
 {
-    protected $_key = 'auto_date_histogram';
+    protected string $_key = 'auto_date_histogram';
 
     /**
      * Target number of buckets to return.
@@ -17,7 +19,7 @@ class AutoDateHistogram extends Node
      * @param int $buckets
      * @return static
      */
-    public function buckets($buckets)
+    public function buckets(int $buckets): static
     {
         return $this->addProperty('buckets', $buckets);
     }
@@ -28,7 +30,7 @@ class AutoDateHistogram extends Node
      * @param string $format
      * @return static
      */
-    public function format($format)
+    public function format(string $format): static
     {
         return $this->addProperty('format', $format);
     }
@@ -39,7 +41,7 @@ class AutoDateHistogram extends Node
      * @param string $timeZone
      * @return static
      */
-    public function timeZone($timeZone)
+    public function timeZone(string $timeZone): static
     {
         return $this->addProperty('time_zone', $timeZone);
     }
@@ -50,7 +52,7 @@ class AutoDateHistogram extends Node
      * @param string $minimumInterval
      * @return static
      */
-    public function minimumInterval($minimumInterval)
+    public function minimumInterval(string $minimumInterval): static
     {
         return $this->addProperty('minimum_interval', $minimumInterval);
     }
@@ -61,7 +63,7 @@ class AutoDateHistogram extends Node
      * @param mixed $missing
      * @return static
      */
-    public function missing($missing)
+    public function missing($missing): static
     {
         return $this->addProperty('missing', $missing);
     }

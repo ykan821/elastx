@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Geo;
 
 use ElasticKit\DSL\Node;
@@ -11,12 +13,12 @@ use ElasticKit\DSL\Node;
  * (e.g. {"geo_bounding_box": {"pin.location": {...}}}), geo_distance mixes
  * the field name alongside other parameters like distance and distance_type
  * (e.g. {"geo_distance": {"distance": "200km", "pin.location": {...}}}).
- * Therefore this class does not use _isPropertyField — the field is set
+ * Therefore this class does not use _fieldKeyed — the field is set
  * via location() as a regular property.
  */
 class GeoDistance extends Node
 {
-    protected $_key = 'geo_distance';
+    protected string $_key = 'geo_distance';
 
     /**
      * The radius of the circle centred on the specified location.
@@ -26,7 +28,7 @@ class GeoDistance extends Node
      * @param string $distance
      * @return static
      */
-    public function distance($distance)
+    public function distance(string $distance): static
     {
         return $this->addProperty('distance', $distance);
     }
@@ -39,7 +41,7 @@ class GeoDistance extends Node
      * @param mixed $location
      * @return static
      */
-    public function location($field, $location)
+    public function location(string $field, $location): static
     {
         return $this->addProperty($field, $location);
     }
@@ -51,7 +53,7 @@ class GeoDistance extends Node
      * @param string $distanceType
      * @return static
      */
-    public function distanceType($distanceType)
+    public function distanceType(string $distanceType): static
     {
         return $this->addProperty('distance_type', $distanceType);
     }
@@ -64,7 +66,7 @@ class GeoDistance extends Node
      * @SuppressWarnings(PHPMD.CamelCaseParameterName)
      * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
-    public function _name($_name)
+    public function _name(string $_name): static
     {
         return $this->addProperty('_name', $_name);
     }
@@ -76,7 +78,7 @@ class GeoDistance extends Node
      * @param string $validationMethod
      * @return static
      */
-    public function validationMethod($validationMethod)
+    public function validationMethod(string $validationMethod): static
     {
         return $this->addProperty('validation_method', $validationMethod);
     }
