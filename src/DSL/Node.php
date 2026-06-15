@@ -16,33 +16,23 @@ abstract class Node
     /**
      * Properties owned by a node. Either an array of attributes, or null when
      * the node carries no properties (empty construction / empty closure,
-     * which serializes to null). Whole-value pass-through uses $_raw;
-     * field-value shorthand uses $_rawValue.
+     * which serializes to null). Field-value shorthand uses $_value.
      *
      * @var array<string, mixed>|null
      */
     protected ?array $_properties = null;
 
     /**
-     * Raw whole-value pass-through. When set, toArray() emits this value
-     * verbatim — for nodes constructed with a single non-array, non-closure
-     * argument (a wrapped Node, a FilterAgg filter query, etc.).
-     *
-     * @var mixed
-     */
-    protected $_raw;
-
-    /**
-     * Raw scalar value stored separately from properties.
+     * Scalar value stored separately from properties.
      * When set, toArray() outputs shorthand (field => value) if no extra
      * properties exist, or promotes it under $_valueKey when properties are present.
      *
      * @var scalar|null
      */
-    protected $_rawValue;
+    protected int|float|string|bool|null $_value = null;
 
     /**
-     * The key used when promoting $_rawValue into the properties array.
+     * The key used when promoting $_value into the properties array.
      * Override in subclasses that use a different key (e.g. 'query' for match queries).
      *
      * @var string
@@ -61,7 +51,7 @@ abstract class Node
      *
      * @var string
      */
-    protected $_field;
+    protected string $_field;
 
     /**
      * Whether the node supports multiple clauses.
@@ -86,9 +76,10 @@ abstract class Node
      * - new Term('status', fn($t) => ...) — K,V closure
      * - new Term([...])                   — array properties
      * - new Term(fn($t) => ...)           — closure
+     * - new Script('_score * ...')        — bare scalar (whole node value)
      * - new Term()                        — empty
      *
-     * @param mixed $field Properties, field name, closure, or null
+     * @param mixed $field Properties, field name, closure, scalar value, or null
      * @param mixed $value Value/properties/closure when using two-arg mode
      */
     public function __construct($field = null, $value = null)
@@ -99,12 +90,10 @@ abstract class Node
             $this->fromClosure($field);
         } elseif ($this->_fieldKeyed && is_array($field)) {
             $this->fromArrayField($field);
-        } elseif ($this->_fieldKeyed && is_scalar($field)) {
+        } elseif (is_scalar($field)) {
             $this->fromScalar($field);
         } elseif (is_array($field)) {
             $this->_properties = $field;
-        } elseif ($field !== null) {
-            $this->_raw = $field;
         }
     }
 
@@ -119,12 +108,10 @@ abstract class Node
         if ($value instanceof Closure) {
             $value($this);
         } elseif (is_scalar($value)) {
-            $this->_rawValue = $value;
+            $this->_value = $value;
             $this->_properties = [];
         } elseif (is_array($value)) {
             $this->_properties = $value;
-        } else {
-            $this->_raw = $value;
         }
         if ($this->_fieldKeyed) {
             $this->field($field);
@@ -151,12 +138,10 @@ abstract class Node
         foreach ($field as $key => $val) {
             $this->field($key);
             if (is_scalar($val)) {
-                $this->_rawValue = $val;
+                $this->_value = $val;
                 $this->_properties = [];
             } elseif (is_array($val)) {
                 $this->_properties = $val;
-            } else {
-                $this->_raw = $val;
             }
             break;
         }
@@ -169,7 +154,7 @@ abstract class Node
      */
     protected function fromScalar($value): void
     {
-        $this->_rawValue = $value;
+        $this->_value = $value;
         $this->_properties = [];
     }
 
@@ -301,16 +286,14 @@ abstract class Node
      */
     public function toArray()
     {
-        if ($this->_raw !== null) {
-            $properties = $this->_raw;
-        } elseif ($this->_rawValue !== null) {
+        if ($this->_value !== null) {
             $props = $this->_properties ?? [];
             if ($props === []) {
-                $properties = $this->_rawValue;
+                $properties = $this->_value;
             } else {
                 $properties = $this->resolveProperties($props);
                 if (!isset($properties[$this->_valueKey])) {
-                    $properties = array_merge([$this->_valueKey => $this->_rawValue], $properties);
+                    $properties = array_merge([$this->_valueKey => $this->_value], $properties);
                 }
             }
         } else {

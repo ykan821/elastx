@@ -10,9 +10,12 @@ use ElasticKit\DSL\Node;
 /**
  * A single bucket aggregation that limits documents matching a query.
  */
-class FilterAgg extends Node
+class Filter extends Node
 {
     protected string $_key = 'filter';
+
+    /** @var mixed */
+    protected $_filter;
 
     /**
      * The filter query to apply.
@@ -20,9 +23,9 @@ class FilterAgg extends Node
      * @param mixed $filter
      * @return static
      */
-    public function setFilter($filter): static
+    public function filter($filter): static
     {
-        $this->_raw = $filter;
+        $this->_filter = $filter;
         return $this;
     }
 
@@ -33,6 +36,6 @@ class FilterAgg extends Node
      */
     public function toArray()
     {
-        return Query::create($this->_raw)->toArray()['query'];
+        return Query::create($this->_filter)->toArray()['query'];
     }
 }

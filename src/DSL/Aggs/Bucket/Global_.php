@@ -10,7 +10,7 @@ use ElasticKit\DSL\Node;
 /**
  * A single bucket aggregation that defines all documents within the search context.
  */
-class GlobalAgg extends Node
+class Global_ extends Node
 {
     protected string $_key = 'global';
 

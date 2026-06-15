@@ -745,7 +745,7 @@ JSON;
         $query = new Query();
         $query->matchAll();
         $query->aggs('all', function ($a) {
-            $a->globalAggregation();
+            $a->global();
         });
         $this->assertQuery($expectedJson, $query);
     }
