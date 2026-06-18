@@ -23,12 +23,12 @@ class Intervals extends Node
     /**
      * Add a match rule that matches analyzed text.
      *
-     * @param mixed $match
+     * @param mixed $value
      * @return static
      */
-    public function match($match): static
+    public function match($value): static
     {
-        $this->_intervals[] = Intervals\Match_::create($match);
+        $this->_intervals[] = Intervals\Match_::create($value);
         return $this;
     }
 
@@ -54,6 +54,19 @@ class Intervals extends Node
     public function wildcard($value): static
     {
         $this->_intervals[] = Intervals\Wildcard::create($value);
+        return $this;
+    }
+
+    /**
+     * Add a regexp rule that matches terms using a regular expression
+     * pattern.
+     *
+     * @param mixed $value
+     * @return static
+     */
+    public function regexp($value): static
+    {
+        $this->_intervals[] = Intervals\Regexp::create($value);
         return $this;
     }
 

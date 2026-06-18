@@ -503,6 +503,30 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
+    public function testIntervalsRegexp()
+    {
+        $exampleJson = <<<JSON
+{
+  "query": {
+    "intervals": {
+      "my_text": {
+        "regexp": {
+          "pattern": "h[ao]t"
+        }
+      }
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->regexp(function (Intervals\Regexp $r) {
+                $r->pattern('h[ao]t');
+            });
+        });
+        $this->assertQuery($exampleJson, $query);
+    }
+
     public function testIntervalsRange()
     {
         $exampleJson = <<<JSON
