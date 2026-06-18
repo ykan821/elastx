@@ -52,144 +52,144 @@ class Highlight extends Node
     /**
      * Opening HTML tags for highlighted snippets.
      *
-     * @param array<int, string> $tags
+     * @param array<int, string> $value
      * @return static
      */
-    public function preTags(array $tags): static
+    public function preTags(array $value): static
     {
-        return $this->addProperty('pre_tags', $tags);
+        return $this->addProperty('pre_tags', $value);
     }
 
     /**
      * Closing HTML tags for highlighted snippets.
      *
-     * @param array<int, string> $tags
+     * @param array<int, string> $value
      * @return static
      */
-    public function postTags(array $tags): static
+    public function postTags(array $value): static
     {
-        return $this->addProperty('post_tags', $tags);
+        return $this->addProperty('post_tags', $value);
     }
 
     /**
      * Size of a highlighted fragment. Defaults to 100.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function fragmentSize(int $size): static
+    public function fragmentSize(int $value): static
     {
-        return $this->addProperty('fragment_size', $size);
+        return $this->addProperty('fragment_size', $value);
     }
 
     /**
      * Maximum number of fragments to return.
      *
-     * @param int $num
+     * @param int $value
      * @return static
      */
-    public function numberOfFragments(int $num): static
+    public function numberOfFragments(int $value): static
     {
-        return $this->addProperty('number_of_fragments', $num);
+        return $this->addProperty('number_of_fragments', $value);
     }
 
     /**
      * Highlighter encoder: html or default.
      *
-     * @param string $encoder
+     * @param string $value
      * @return static
      */
-    public function encoder(string $encoder): static
+    public function encoder(string $value): static
     {
-        return $this->addProperty('encoder', $encoder);
+        return $this->addProperty('encoder', $value);
     }
 
     /**
      * Sort order for highlighted fragments: score or none.
      *
-     * @param string $order
+     * @param string $value
      * @return static
      */
-    public function order(string $order): static
+    public function order(string $value): static
     {
-        return $this->addProperty('order', $order);
+        return $this->addProperty('order', $value);
     }
 
     /**
      * Highlight against a query other than the search query.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function highlightQuery($query): static
+    public function highlightQuery($value): static
     {
-        return $this->addProperty('highlight_query', Query::create($query));
+        return $this->addProperty('highlight_query', Query::create($value));
     }
 
     /**
      * Highlighter type: unified, plain, or fvh.
      *
-     * @param string $type
+     * @param string $value
      * @return static
      */
-    public function type(string $type): static
+    public function type(string $value): static
     {
-        return $this->addProperty('type', $type);
+        return $this->addProperty('type', $value);
     }
 
     /**
      * Boundary scanner: chars, sentence, or word.
      *
-     * @param string $scanner
+     * @param string $value
      * @return static
      */
-    public function boundaryScanner(string $scanner): static
+    public function boundaryScanner(string $value): static
     {
-        return $this->addProperty('boundary_scanner', $scanner);
+        return $this->addProperty('boundary_scanner', $value);
     }
 
     /**
      * Locale for the boundary scanner.
      *
-     * @param string $locale
+     * @param string $value
      * @return static
      */
-    public function boundaryScannerLocale(string $locale): static
+    public function boundaryScannerLocale(string $value): static
     {
-        return $this->addProperty('boundary_scanner_locale', $locale);
+        return $this->addProperty('boundary_scanner_locale', $value);
     }
 
     /**
      * Maximum distance for the boundary scanner.
      *
-     * @param int $max
+     * @param int $value
      * @return static
      */
-    public function boundaryMaxScan(int $max): static
+    public function boundaryMaxScan(int $value): static
     {
-        return $this->addProperty('boundary_max_scan', $max);
+        return $this->addProperty('boundary_max_scan', $value);
     }
 
     /**
      * Size of snippet when no matching fragment is found.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function noMatchSize(int $size): static
+    public function noMatchSize(int $value): static
     {
-        return $this->addProperty('no_match_size', $size);
+        return $this->addProperty('no_match_size', $value);
     }
 
     /**
      * Fragmenter: simple or span (plain highlighter only).
      *
-     * @param string $fragmenter
+     * @param string $value
      * @return static
      */
-    public function fragmenter(string $fragmenter): static
+    public function fragmenter(string $value): static
     {
-        return $this->addProperty('fragmenter', $fragmenter);
+        return $this->addProperty('fragmenter', $value);
     }
 
     public function toArray()

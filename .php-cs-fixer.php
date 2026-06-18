@@ -8,4 +8,5 @@ return (new PhpCsFixer\Config())
         '@PSR12' => true,
         'no_unused_imports' => true,
     ])
-    ->setFinder($finder);
+    ->setFinder($finder)
+    ->setUnsupportedPhpVersionAllowed(true);

@@ -16,11 +16,11 @@ class Percolate extends Node
     /**
      * The source document to percolate against registered queries.
      *
-     * @param mixed $document
+     * @param mixed $value
      * @return static
      */
-    public function document($document): static
+    public function document($value): static
     {
-        return $this->addProperty('document', $document);
+        return $this->addProperty('document', $value);
     }
 }

@@ -16,11 +16,11 @@ class IDs extends Node
     /**
      * An array of document IDs.
      *
-     * @param array<int, string> $values
+     * @param array<int, string> $value
      * @return static
      */
-    public function values(array $values): static
+    public function values(array $value): static
     {
-        return $this->addProperty('values', $values);
+        return $this->addProperty('values', $value);
     }
 }

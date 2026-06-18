@@ -14,7 +14,7 @@ trait Param
      *
      * @var array<string, mixed>
      */
-    protected $_params = [];
+    protected array $_params = [];
 
     /**
      * Check if a search request parameter has been set.
@@ -22,7 +22,7 @@ trait Param
      * @param string $key
      * @return bool
      */
-    public function hasParam($key)
+    public function hasParam($key): bool
     {
         return array_key_exists($key, $this->_params);
     }
@@ -34,7 +34,7 @@ trait Param
      * @param int $size
      * @return $this
      */
-    public function size($size)
+    public function size($size): static
     {
         $this->_params['size'] = $size;
         return $this;
@@ -47,7 +47,7 @@ trait Param
      * @param int $from
      * @return $this
      */
-    public function from($from)
+    public function from($from): static
     {
         $this->_params['from'] = $from;
         return $this;
@@ -60,7 +60,7 @@ trait Param
      * @param string $timeout
      * @return $this
      */
-    public function timeout($timeout)
+    public function timeout($timeout): static
     {
         $this->_params['timeout'] = $timeout;
         return $this;
@@ -73,7 +73,7 @@ trait Param
      * @param float $minScore
      * @return $this
      */
-    public function minScore($minScore)
+    public function minScore($minScore): static
     {
         $this->_params['min_score'] = $minScore;
         return $this;
@@ -86,7 +86,7 @@ trait Param
      * @param int $terminateAfter
      * @return $this
      */
-    public function terminateAfter($terminateAfter)
+    public function terminateAfter($terminateAfter): static
     {
         $this->_params['terminate_after'] = $terminateAfter;
         return $this;
@@ -99,7 +99,7 @@ trait Param
      * @param bool $explain
      * @return $this
      */
-    public function explain($explain)
+    public function explain($explain): static
     {
         $this->_params['explain'] = $explain;
         return $this;
@@ -112,7 +112,7 @@ trait Param
      * @param bool $version
      * @return $this
      */
-    public function version($version)
+    public function version($version): static
     {
         $this->_params['version'] = $version;
         return $this;
@@ -124,7 +124,7 @@ trait Param
      * @param bool $profile
      * @return $this
      */
-    public function profile($profile)
+    public function profile($profile): static
     {
         $this->_params['profile'] = $profile;
         return $this;
@@ -137,7 +137,7 @@ trait Param
      * @param bool|int $trackTotalHits
      * @return $this
      */
-    public function trackTotalHits($trackTotalHits)
+    public function trackTotalHits($trackTotalHits): static
     {
         $this->_params['track_total_hits'] = $trackTotalHits;
         return $this;
@@ -150,7 +150,7 @@ trait Param
      * @param bool $seqNoPrimaryTerm
      * @return $this
      */
-    public function seqNoPrimaryTerm($seqNoPrimaryTerm)
+    public function seqNoPrimaryTerm($seqNoPrimaryTerm): static
     {
         $this->_params['seq_no_primary_term'] = $seqNoPrimaryTerm;
         return $this;
@@ -167,7 +167,7 @@ trait Param
      * @param string|null $order
      * @return $this
      */
-    public function sort($field, $order = null)
+    public function sort($field, $order = null): static
     {
         if ($order !== null) {
             $this->_params['sort'][] = [$field => $order];
@@ -186,7 +186,7 @@ trait Param
      * @param array<int, string>|string $source
      * @return $this
      */
-    public function source($source)
+    public function source($source): static
     {
         $this->_params['_source'] = $source;
         return $this;
@@ -198,7 +198,7 @@ trait Param
      * @param array<int, mixed> $searchAfter
      * @return $this
      */
-    public function searchAfter($searchAfter)
+    public function searchAfter($searchAfter): static
     {
         $this->_params['search_after'] = $searchAfter;
         return $this;
@@ -211,7 +211,7 @@ trait Param
      * @param array<int, string> $storedFields
      * @return $this
      */
-    public function storedFields($storedFields)
+    public function storedFields($storedFields): static
     {
         $this->_params['stored_fields'] = $storedFields;
         return $this;
@@ -223,7 +223,7 @@ trait Param
      * @param array<int, mixed> $docvalueFields
      * @return $this
      */
-    public function docvalueFields($docvalueFields)
+    public function docvalueFields($docvalueFields): static
     {
         $this->_params['docvalue_fields'] = $docvalueFields;
         return $this;
@@ -236,7 +236,7 @@ trait Param
      * @param array<string, float> $indicesBoost
      * @return $this
      */
-    public function indicesBoost($indicesBoost)
+    public function indicesBoost($indicesBoost): static
     {
         $this->_params['indices_boost'] = [$indicesBoost];
         return $this;
@@ -249,7 +249,7 @@ trait Param
      * @param bool $trackScores
      * @return $this
      */
-    public function trackScores($trackScores)
+    public function trackScores($trackScores): static
     {
         $this->_params['track_scores'] = $trackScores;
         return $this;
@@ -262,7 +262,7 @@ trait Param
      * @param array<int, mixed> $fields
      * @return $this
      */
-    public function fields($fields)
+    public function fields($fields): static
     {
         $this->_params['fields'] = $fields;
         return $this;
@@ -274,7 +274,7 @@ trait Param
      * @param array<string, mixed> $pit
      * @return $this
      */
-    public function pit($pit)
+    public function pit($pit): static
     {
         $this->_params['pit'] = $pit;
         return $this;
@@ -287,7 +287,7 @@ trait Param
      * @param mixed $filter
      * @return $this
      */
-    public function postFilter($filter)
+    public function postFilter($filter): static
     {
         $this->_params['post_filter'] = Query::create($filter);
         return $this;
@@ -299,7 +299,7 @@ trait Param
      * @param mixed $collapse
      * @return $this
      */
-    public function collapse($collapse)
+    public function collapse($collapse): static
     {
         $this->_params['collapse'] = Params\Collapse::create($collapse);
         return $this;
@@ -311,7 +311,7 @@ trait Param
      * @param mixed $rescore
      * @return $this
      */
-    public function rescore($rescore)
+    public function rescore($rescore): static
     {
         $this->_params['rescore'] = Params\Rescore::create($rescore);
         return $this;
@@ -324,7 +324,7 @@ trait Param
      * @param mixed $highlight
      * @return $this
      */
-    public function highlight($highlight)
+    public function highlight($highlight): static
     {
         $new = Params\Highlight::create($highlight);
 
@@ -357,7 +357,7 @@ trait Param
      * @param mixed $suggest
      * @return $this
      */
-    public function suggest($suggest)
+    public function suggest($suggest): static
     {
         $this->_params['suggest'] = Params\Suggest::create($suggest);
         return $this;
@@ -369,7 +369,7 @@ trait Param
      * @param array<string, mixed> $scriptFields
      * @return $this
      */
-    public function scriptFields($scriptFields)
+    public function scriptFields($scriptFields): static
     {
         $this->_params['script_fields'] = $scriptFields;
         return $this;
@@ -381,7 +381,7 @@ trait Param
      * @param array<string, mixed> $runtimeMappings
      * @return $this
      */
-    public function runtimeMappings($runtimeMappings)
+    public function runtimeMappings($runtimeMappings): static
     {
         $this->_params['runtime_mappings'] = $runtimeMappings;
         return $this;
@@ -399,7 +399,7 @@ trait Param
      * @param array<int|float>|null $queryVector
      * @return $this
      */
-    public function knn($knn, $queryVector = null)
+    public function knn($knn, $queryVector = null): static
     {
         if (is_string($knn) && $queryVector !== null) {
             $node = (new Params\Knn())->field($knn)->queryVector($queryVector);

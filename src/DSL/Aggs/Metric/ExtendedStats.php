@@ -16,33 +16,33 @@ class ExtendedStats extends Node
     /**
      * The value to use when the field is missing.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
      * The script to use for the aggregation.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 
     /**
      * Number of standard deviations above/below the mean to display.
      *
-     * @param int $sigma
+     * @param int $value
      * @return static
      */
-    public function sigma(int $sigma): static
+    public function sigma(int $value): static
     {
-        return $this->addProperty('sigma', $sigma);
+        return $this->addProperty('sigma', $value);
     }
 }

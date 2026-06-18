@@ -16,12 +16,12 @@ class RandomScore extends Node
     /**
      * Seed value for reproducible random scores.
      *
-     * @param mixed $seed
+     * @param mixed $value
      * @return static
      */
-    public function seed($seed): static
+    public function seed($value): static
     {
-        return $this->addProperty('seed', $seed);
+        return $this->addProperty('seed', $value);
     }
 
     /**

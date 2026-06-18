@@ -19,36 +19,36 @@ class QueryString extends Node
     /**
      * Query string you wish to parse and use for search.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query(string $query): static
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 
     /**
      * Default field to search if no field is provided in
      * the query string. Supports wildcards (*). Defaults to *.
      *
-     * @param string $defaultField
+     * @param string $value
      * @return static
      */
-    public function defaultField(string $defaultField): static
+    public function defaultField(string $value): static
     {
-        return $this->addProperty('default_field', $defaultField);
+        return $this->addProperty('default_field', $value);
     }
 
     /**
      * If true, the wildcard characters * and ? are allowed
      * as the first character of the query string. Defaults to true.
      *
-     * @param bool $allowLeadingWildcard
+     * @param bool $value
      * @return static
      */
-    public function allowLeadingWildcard(bool $allowLeadingWildcard): static
+    public function allowLeadingWildcard(bool $value): static
     {
-        return $this->addProperty('allow_leading_wildcard', $allowLeadingWildcard);
+        return $this->addProperty('allow_leading_wildcard', $value);
     }
 
     /**
@@ -56,24 +56,24 @@ class QueryString extends Node
      * into tokens. Defaults to the index-time analyzer mapped for the
      * default_field.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer(string $analyzer): static
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
      * If true, match phrase queries are automatically
      * created for multi-term synonyms. Defaults to true.
      *
-     * @param bool $autoGenerateSynonymsPhraseQuery
+     * @param bool $value
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery(bool $autoGenerateSynonymsPhraseQuery): static
+    public function autoGenerateSynonymsPhraseQuery(bool $value): static
     {
-        return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
+        return $this->addProperty('auto_generate_synonyms_phrase_query', $value);
     }
 
     /**
@@ -81,119 +81,119 @@ class QueryString extends Node
      * query string if no operators are specified. Valid values are:
      * OR (Default), AND.
      *
-     * @param string $defaultOperator
+     * @param string $value
      * @return static
      */
-    public function defaultOperator(string $defaultOperator): static
+    public function defaultOperator(string $value): static
     {
-        return $this->addProperty('default_operator', $defaultOperator);
+        return $this->addProperty('default_operator', $value);
     }
 
     /**
      * If true, enable position increments in queries
      * constructed from a query_string search. Defaults to true.
      *
-     * @param bool $enablePositionIncrements
+     * @param bool $value
      * @return static
      */
-    public function enablePositionIncrements(bool $enablePositionIncrements): static
+    public function enablePositionIncrements(bool $value): static
     {
-        return $this->addProperty('enable_position_increments', $enablePositionIncrements);
+        return $this->addProperty('enable_position_increments', $value);
     }
 
     /**
      * Array of fields to search. Supports
      * wildcards (*).
      *
-     * @param array<int, string> $fields
+     * @param array<int, string> $value
      * @return static
      */
-    public function fields(array $fields): static
+    public function fields(array $value): static
     {
-        return $this->addProperty('fields', $fields);
+        return $this->addProperty('fields', $value);
     }
 
     /**
      * Maximum edit distance allowed for fuzzy matching.
      *
-     * @param int|string $fuzziness
+     * @param int|string $value
      * @return static
      */
-    public function fuzziness(int|string $fuzziness): static
+    public function fuzziness(int|string $value): static
     {
-        return $this->addProperty('fuzziness', $fuzziness);
+        return $this->addProperty('fuzziness', $value);
     }
 
     /**
      * Maximum number of terms to which the query expands
      * for fuzzy matching. Defaults to 50.
      *
-     * @param int $fuzzyMaxExpansions
+     * @param int $value
      * @return static
      */
-    public function fuzzyMaxExpansions(int $fuzzyMaxExpansions): static
+    public function fuzzyMaxExpansions(int $value): static
     {
-        return $this->addProperty('fuzzy_max_expansions', $fuzzyMaxExpansions);
+        return $this->addProperty('fuzzy_max_expansions', $value);
     }
 
     /**
      * Number of beginning characters left unchanged for
      * fuzzy matching. Defaults to 0.
      *
-     * @param int $fuzzyPrefixLength
+     * @param int $value
      * @return static
      */
-    public function fuzzyPrefixLength(int $fuzzyPrefixLength): static
+    public function fuzzyPrefixLength(int $value): static
     {
-        return $this->addProperty('fuzzy_prefix_length', $fuzzyPrefixLength);
+        return $this->addProperty('fuzzy_prefix_length', $value);
     }
 
     /**
      * If true, edits for fuzzy matching include
      * transpositions of two adjacent characters (ab -> ba). Defaults to true.
      *
-     * @param bool $fuzzyTranspositions
+     * @param bool $value
      * @return static
      */
-    public function fuzzyTranspositions(bool $fuzzyTranspositions): static
+    public function fuzzyTranspositions(bool $value): static
     {
-        return $this->addProperty('fuzzy_transpositions', $fuzzyTranspositions);
+        return $this->addProperty('fuzzy_transpositions', $value);
     }
 
     /**
      * If true, format-based errors, such as providing a
      * text value for a numeric field, are ignored. Defaults to false.
      *
-     * @param bool $lenient
+     * @param bool $value
      * @return static
      */
-    public function lenient(bool $lenient): static
+    public function lenient(bool $value): static
     {
-        return $this->addProperty('lenient', $lenient);
+        return $this->addProperty('lenient', $value);
     }
 
     /**
      * Maximum number of automaton states required for
      * the query. Default is 10000.
      *
-     * @param int $maxDeterminizedStates
+     * @param int $value
      * @return static
      */
-    public function maxDeterminizedStates(int $maxDeterminizedStates): static
+    public function maxDeterminizedStates(int $value): static
     {
-        return $this->addProperty('max_determinized_states', $maxDeterminizedStates);
+        return $this->addProperty('max_determinized_states', $value);
     }
 
     /**
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param int|string $minimumShouldMatch
+     * @param int|string $value
      * @return static
      */
-    public function minimumShouldMatch(int|string $minimumShouldMatch): static
+    public function minimumShouldMatch(int|string $value): static
     {
-        return $this->addProperty('minimum_should_match', $minimumShouldMatch);
+        return $this->addProperty('minimum_should_match', $value);
     }
 
     /**
@@ -201,12 +201,12 @@ class QueryString extends Node
      * string into tokens. Defaults to the search_quote_analyzer mapped for
      * the default_field.
      *
-     * @param string $quoteAnalyzer
+     * @param string $value
      * @return static
      */
-    public function quoteAnalyzer(string $quoteAnalyzer): static
+    public function quoteAnalyzer(string $value): static
     {
-        return $this->addProperty('quote_analyzer', $quoteAnalyzer);
+        return $this->addProperty('quote_analyzer', $value);
     }
 
     /**
@@ -214,12 +214,12 @@ class QueryString extends Node
      * tokens for phrases. Defaults to 0. If 0, exact phrase matches are
      * required. Transposed terms have a slop of 2.
      *
-     * @param int $phraseSlop
+     * @param int $value
      * @return static
      */
-    public function phraseSlop(int $phraseSlop): static
+    public function phraseSlop(int $value): static
     {
-        return $this->addProperty('phrase_slop', $phraseSlop);
+        return $this->addProperty('phrase_slop', $value);
     }
 
     /**
@@ -227,35 +227,35 @@ class QueryString extends Node
      * You can use this suffix to use a different analysis method for exact
      * matches.
      *
-     * @param string $quoteFieldSuffix
+     * @param string $value
      * @return static
      */
-    public function quoteFieldSuffix(string $quoteFieldSuffix): static
+    public function quoteFieldSuffix(string $value): static
     {
-        return $this->addProperty('quote_field_suffix', $quoteFieldSuffix);
+        return $this->addProperty('quote_field_suffix', $value);
     }
 
     /**
      * Method used to rewrite the query.
      *
-     * @param string $rewrite
+     * @param string $value
      * @return static
      */
-    public function rewrite(string $rewrite): static
+    public function rewrite(string $value): static
     {
-        return $this->addProperty('rewrite', $rewrite);
+        return $this->addProperty('rewrite', $value);
     }
 
     /**
      * Coordinated Universal Time (UTC) offset or IANA time
      * zone used to convert date values in the query string to UTC.
      *
-     * @param string $timeZone
+     * @param string $value
      * @return static
      */
-    public function timeZone(string $timeZone): static
+    public function timeZone(string $value): static
     {
-        return $this->addProperty('time_zone', $timeZone);
+        return $this->addProperty('time_zone', $value);
     }
 
     /**
@@ -263,35 +263,35 @@ class QueryString extends Node
      * when searching multiple fields. Valid values are: best_fields (Default),
      * most_fields, cross_fields, phrase, phrase_prefix, bool_prefix.
      *
-     * @param string $type
+     * @param string $value
      * @return static
      */
-    public function type(string $type): static
+    public function type(string $value): static
     {
-        return $this->addProperty('type', $type);
+        return $this->addProperty('type', $value);
     }
 
     /**
      * If true, the query attempts to analyze wildcard terms
      * in the query string. Defaults to false.
      *
-     * @param bool $analyzeWildcard
+     * @param bool $value
      * @return static
      */
-    public function analyzeWildcard(bool $analyzeWildcard): static
+    public function analyzeWildcard(bool $value): static
     {
-        return $this->addProperty('analyze_wildcard', $analyzeWildcard);
+        return $this->addProperty('analyze_wildcard', $value);
     }
 
     /**
      * Floating point number used to control the scoring of
      * results when searching multiple fields. Defaults to 0.
      *
-     * @param float $tieBreaker
+     * @param float $value
      * @return static
      */
-    public function tieBreaker(float $tieBreaker): static
+    public function tieBreaker(float $value): static
     {
-        return $this->addProperty('tie_breaker', $tieBreaker);
+        return $this->addProperty('tie_breaker', $value);
     }
 }

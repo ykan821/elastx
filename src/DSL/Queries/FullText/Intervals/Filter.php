@@ -20,72 +20,72 @@ class Filter extends Node
      * Query used to return intervals that follow an
      * interval from the filter rule.
      *
-     * @param mixed $after
+     * @param mixed $value
      * @return static
      */
-    public function after($after): static
+    public function after($value): static
     {
-        return $this->addProperty('after', Query::create($after));
+        return $this->addProperty('after', Query::create($value));
     }
 
     /**
      * Query used to return intervals that occur before
      * an interval from the filter rule.
      *
-     * @param mixed $before
+     * @param mixed $value
      * @return static
      */
-    public function before($before): static
+    public function before($value): static
     {
-        return $this->addProperty('before', Query::create($before));
+        return $this->addProperty('before', Query::create($value));
     }
 
     /**
      * Query used to return intervals contained by an
      * interval from the filter rule.
      *
-     * @param mixed $containedBy
+     * @param mixed $value
      * @return static
      */
-    public function containedBy($containedBy): static
+    public function containedBy($value): static
     {
-        return $this->addProperty('contained_by', Query::create($containedBy));
+        return $this->addProperty('contained_by', Query::create($value));
     }
 
     /**
      * Query used to return intervals that contain an
      * interval from the filter rule.
      *
-     * @param mixed $containing
+     * @param mixed $value
      * @return static
      */
-    public function containing($containing): static
+    public function containing($value): static
     {
-        return $this->addProperty('containing', Query::create($containing));
+        return $this->addProperty('containing', Query::create($value));
     }
 
     /**
      * Query used to return intervals that do not
      * contain an interval from the filter rule.
      *
-     * @param mixed $notContaining
+     * @param mixed $value
      * @return static
      */
-    public function notContaining($notContaining): static
+    public function notContaining($value): static
     {
-        return $this->addProperty('not_containing', Query::create($notContaining));
+        return $this->addProperty('not_containing', Query::create($value));
     }
 
     /**
      * Query used to return intervals that overlap
      * with an interval from the filter rule.
      *
-     * @param mixed $overlapping
+     * @param mixed $value
      * @return static
      */
-    public function overlapping($overlapping): static
+    public function overlapping($value): static
     {
-        return $this->addProperty('overlapping', Query::create($overlapping));
+        return $this->addProperty('overlapping', Query::create($value));
     }
 
     /**
@@ -93,35 +93,35 @@ class Filter extends Node
      * This script must return a boolean value, true or false. The script can
      * use the interval variable with start, end, and gaps methods.
      *
-     * @param mixed $script
+     * @param mixed $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', Script::create($script));
+        return $this->addProperty('script', Script::create($value));
     }
 
     /**
      * Query used to return intervals that are not
      * contained by an interval from the filter rule.
      *
-     * @param mixed $notContainedBy
+     * @param mixed $value
      * @return static
      */
-    public function notContainedBy($notContainedBy): static
+    public function notContainedBy($value): static
     {
-        return $this->addProperty('not_contained_by', Query::create($notContainedBy));
+        return $this->addProperty('not_contained_by', Query::create($value));
     }
 
     /**
      * Query used to return intervals that do not
      * overlap with an interval from the filter rule.
      *
-     * @param mixed $notOverlapping
+     * @param mixed $value
      * @return static
      */
-    public function notOverlapping($notOverlapping): static
+    public function notOverlapping($value): static
     {
-        return $this->addProperty('not_overlapping', Query::create($notOverlapping));
+        return $this->addProperty('not_overlapping', Query::create($value));
     }
 }

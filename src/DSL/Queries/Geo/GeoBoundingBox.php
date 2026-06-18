@@ -20,123 +20,123 @@ class GeoBoundingBox extends Node
     /**
      * Top-left corner of the bounding box.
      *
-     * @param mixed $topLeft
+     * @param mixed $value
      * @return static
      */
-    public function topLeft($topLeft): static
+    public function topLeft($value): static
     {
-        return $this->addProperty('top_left', $topLeft);
+        return $this->addProperty('top_left', $value);
     }
 
     /**
      * Bottom-right corner of the bounding box.
      *
-     * @param mixed $bottomRight
+     * @param mixed $value
      * @return static
      */
-    public function bottomRight($bottomRight): static
+    public function bottomRight($value): static
     {
-        return $this->addProperty('bottom_right', $bottomRight);
+        return $this->addProperty('bottom_right', $value);
     }
 
     /**
      * Top latitude of the bounding box. Can be used instead of topLeft/bottomRight pairs to set values separately.
      *
-     * @param float $top
+     * @param float $value
      * @return static
      */
-    public function top(float $top): static
+    public function top(float $value): static
     {
-        return $this->addProperty('top', $top);
+        return $this->addProperty('top', $value);
     }
 
     /**
      * Left longitude of the bounding box. Can be used instead of topLeft/bottomRight pairs to set values separately.
      *
-     * @param float $left
+     * @param float $value
      * @return static
      */
-    public function left(float $left): static
+    public function left(float $value): static
     {
-        return $this->addProperty('left', $left);
+        return $this->addProperty('left', $value);
     }
 
     /**
      * Bottom latitude of the bounding box. Can be used instead of topLeft/bottomRight pairs to set values separately.
      *
-     * @param float $bottom
+     * @param float $value
      * @return static
      */
-    public function bottom(float $bottom): static
+    public function bottom(float $value): static
     {
-        return $this->addProperty('bottom', $bottom);
+        return $this->addProperty('bottom', $value);
     }
 
     /**
      * Right longitude of the bounding box. Can be used instead of topLeft/bottomRight pairs to set values separately.
      *
-     * @param float $right
+     * @param float $value
      * @return static
      */
-    public function right(float $right): static
+    public function right(float $value): static
     {
-        return $this->addProperty('right', $right);
+        return $this->addProperty('right', $value);
     }
 
     /**
      * Bounding box defined as Well-Known Text (WKT) BBOX format.
      *
-     * @param string $wkt
+     * @param string $value
      * @return static
      */
-    public function wkt(string $wkt): static
+    public function wkt(string $value): static
     {
-        return $this->addProperty('wkt', $wkt);
+        return $this->addProperty('wkt', $value);
     }
 
     /**
      * Top-right corner of the bounding box. Can be used with bottomLeft instead of topLeft/bottomRight.
      *
-     * @param mixed $topRight
+     * @param mixed $value
      * @return static
      */
-    public function topRight($topRight): static
+    public function topRight($value): static
     {
-        return $this->addProperty('top_right', $topRight);
+        return $this->addProperty('top_right', $value);
     }
 
     /**
      * Bottom-left corner of the bounding box. Can be used with topRight instead of topLeft/bottomRight.
      *
-     * @param mixed $bottomLeft
+     * @param mixed $value
      * @return static
      */
-    public function bottomLeft($bottomLeft): static
+    public function bottomLeft($value): static
     {
-        return $this->addProperty('bottom_left', $bottomLeft);
+        return $this->addProperty('bottom_left', $value);
     }
 
     /**
      * Set to IGNORE_MALFORMED to accept geo points with invalid latitude or longitude,
      * set to COERCE to also try to infer correct latitude or longitude. Defaults to STRICT.
      *
-     * @param string $validationMethod
+     * @param string $value
      * @return static
      */
-    public function validationMethod(string $validationMethod): static
+    public function validationMethod(string $value): static
     {
-        return $this->addProperty('validation_method', $validationMethod);
+        return $this->addProperty('validation_method', $value);
     }
 
     /**
      * When set to true, the ignore_unmapped option will ignore an unmapped field
      * and will not match any documents for this query. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped(bool $ignoreUnmapped): static
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

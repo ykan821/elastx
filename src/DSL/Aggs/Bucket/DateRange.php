@@ -16,55 +16,55 @@ class DateRange extends Node
     /**
      * Array of range definitions for bucketing.
      *
-     * @param array<string, mixed> $ranges
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function ranges(array $ranges): static
+    public function ranges(array $value): static
     {
-        return $this->addProperty('ranges', $ranges);
+        return $this->addProperty('ranges', $value);
     }
 
     /**
      * Whether to return range buckets as a hash keyed by range key.
      *
-     * @param bool $keyed
+     * @param bool $value
      * @return static
      */
-    public function keyed(bool $keyed): static
+    public function keyed(bool $value): static
     {
-        return $this->addProperty('keyed', $keyed);
+        return $this->addProperty('keyed', $value);
     }
 
     /**
      * Date format pattern for range keys.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format(string $format): static
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
      * Time zone for date calculations.
      *
-     * @param string $timeZone
+     * @param string $value
      * @return static
      */
-    public function timeZone(string $timeZone): static
+    public function timeZone(string $value): static
     {
-        return $this->addProperty('time_zone', $timeZone);
+        return $this->addProperty('time_zone', $value);
     }
 }

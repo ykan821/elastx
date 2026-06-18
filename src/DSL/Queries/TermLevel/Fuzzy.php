@@ -26,55 +26,55 @@ class Fuzzy extends Node
     /**
      * Maximum edit distance allowed for matching. See Fuzziness for valid values and more information.
      *
-     * @param int|string $fuzziness
+     * @param int|string $value
      * @return static
      */
-    public function fuzziness(int|string $fuzziness): static
+    public function fuzziness(int|string $value): static
     {
-        return $this->addProperty('fuzziness', $fuzziness);
+        return $this->addProperty('fuzziness', $value);
     }
 
     /**
      * Maximum number of variations created. Defaults to 50.
      *
-     * @param int $maxExpansions
+     * @param int $value
      * @return static
      */
-    public function maxExpansions(int $maxExpansions): static
+    public function maxExpansions(int $value): static
     {
-        return $this->addProperty('max_expansions', $maxExpansions);
+        return $this->addProperty('max_expansions', $value);
     }
 
     /**
      * Number of beginning characters left unchanged when creating expansions. Defaults to 0.
      *
-     * @param int $prefixLength
+     * @param int $value
      * @return static
      */
-    public function prefixLength(int $prefixLength): static
+    public function prefixLength(int $value): static
     {
-        return $this->addProperty('prefix_length', $prefixLength);
+        return $this->addProperty('prefix_length', $value);
     }
 
     /**
      * Indicates whether edits include transpositions of two adjacent characters (ab → ba). Defaults to true.
      *
-     * @param bool $transpositions
+     * @param bool $value
      * @return static
      */
-    public function transpositions(bool $transpositions): static
+    public function transpositions(bool $value): static
     {
-        return $this->addProperty('transpositions', $transpositions);
+        return $this->addProperty('transpositions', $value);
     }
 
     /**
      * Method used to rewrite the query. For valid values and more information, see the rewrite parameter.
      *
-     * @param string $rewrite
+     * @param string $value
      * @return static
      */
-    public function rewrite(string $rewrite): static
+    public function rewrite(string $value): static
     {
-        return $this->addProperty('rewrite', $rewrite);
+        return $this->addProperty('rewrite', $value);
     }
 }

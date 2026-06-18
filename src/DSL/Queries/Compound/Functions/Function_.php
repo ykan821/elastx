@@ -18,57 +18,57 @@ class Function_ extends Node
     /**
      * A filtering query that restricts the score function to matching documents only.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter): static
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Query::create($filter));
+        return $this->addProperty('filter', Query::create($value));
     }
 
     /**
      * Multiplies the score by the provided weight value.
      *
-     * @param float $weight
+     * @param float $value
      * @return static
      */
-    public function weight(float $weight): static
+    public function weight(float $value): static
     {
-        return $this->addProperty('weight', $weight);
+        return $this->addProperty('weight', $value);
     }
 
     /**
      * Generates uniformly distributed random scores from 0 up to but not including 1.
      *
-     * @param mixed $randomScore
+     * @param mixed $value
      * @return static
      */
-    public function randomScore($randomScore = null): static
+    public function randomScore($value = null): static
     {
-        return $this->addProperty('random_score', RandomScore::create($randomScore));
+        return $this->addProperty('random_score', RandomScore::create($value));
     }
 
     /**
      * Wraps another query and customizes the scoring using a script.
      *
-     * @param mixed $scriptScore
+     * @param mixed $value
      * @return static
      */
-    public function scriptScore($scriptScore): static
+    public function scriptScore($value): static
     {
-        return $this->addProperty('script_score', ScriptScore::create($scriptScore));
+        return $this->addProperty('script_score', ScriptScore::create($value));
     }
 
     /**
      * Sets the script for script_score using a Script object or closure.
      *
-     * @param mixed $script
+     * @param mixed $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        $scriptScore = (new ScriptScore())->script($script);
-        return $this->addProperty('script_score', $scriptScore);
+        $valueScore = (new ScriptScore())->script($value);
+        return $this->addProperty('script_score', $valueScore);
     }
 
     /**

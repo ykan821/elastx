@@ -13,20 +13,20 @@ class IpPrefix extends Node
     /**
      * Length of the network prefix.
      *
-     * @param int $length
+     * @param int $value
      * @return static
      */
-    public function prefixLength(int $length): static
+    public function prefixLength(int $value): static
     {
-        return $this->addProperty('prefix_length', $length);
+        return $this->addProperty('prefix_length', $value);
     }
 
     /**
-     * @param int $length
+     * @param int $value
      * @return static
      */
-    public function minPrefixLength(int $length): static
+    public function minPrefixLength(int $value): static
     {
-        return $this->addProperty('min_prefix_length', $length);
+        return $this->addProperty('min_prefix_length', $value);
     }
 }

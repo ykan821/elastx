@@ -17,55 +17,55 @@ class SpanNot extends Node
     /**
      * The span query whose matches are included.
      *
-     * @param mixed $include
+     * @param mixed $value
      * @return static
      */
-    public function include($include): static
+    public function include($value): static
     {
-        return $this->addProperty('include', Query::create($include));
+        return $this->addProperty('include', Query::create($value));
     }
 
     /**
      * The span query whose overlapping matches are excluded.
      *
-     * @param mixed $exclude
+     * @param mixed $value
      * @return static
      */
-    public function exclude($exclude): static
+    public function exclude($value): static
     {
-        return $this->addProperty('exclude', Query::create($exclude));
+        return $this->addProperty('exclude', Query::create($value));
     }
 
     /**
      * The number of positions before the include span that must not overlap with the exclude span.
      *
-     * @param int $pre
+     * @param int $value
      * @return static
      */
-    public function pre(int $pre): static
+    public function pre(int $value): static
     {
-        return $this->addProperty('pre', $pre);
+        return $this->addProperty('pre', $value);
     }
 
     /**
      * The number of positions after the include span that must not overlap with the exclude span.
      *
-     * @param int $post
+     * @param int $value
      * @return static
      */
-    public function post(int $post): static
+    public function post(int $value): static
     {
-        return $this->addProperty('post', $post);
+        return $this->addProperty('post', $value);
     }
 
     /**
      * The number of positions both before and after the include span that must not overlap with the exclude span.
      *
-     * @param int $dist
+     * @param int $value
      * @return static
      */
-    public function dist(int $dist): static
+    public function dist(int $value): static
     {
-        return $this->addProperty('dist', $dist);
+        return $this->addProperty('dist', $value);
     }
 }

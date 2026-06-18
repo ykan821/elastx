@@ -27,11 +27,11 @@ class ReverseNested extends Node
     /**
      * Path to the nested object to reverse out of.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function path(string $path): static
+    public function path(string $value): static
     {
-        return $this->addProperty('path', $path);
+        return $this->addProperty('path', $value);
     }
 }

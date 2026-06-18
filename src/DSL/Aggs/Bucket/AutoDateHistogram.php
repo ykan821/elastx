@@ -16,55 +16,55 @@ class AutoDateHistogram extends Node
     /**
      * Target number of buckets to return.
      *
-     * @param int $buckets
+     * @param int $value
      * @return static
      */
-    public function buckets(int $buckets): static
+    public function buckets(int $value): static
     {
-        return $this->addProperty('buckets', $buckets);
+        return $this->addProperty('buckets', $value);
     }
 
     /**
      * Date format pattern for bucket keys.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format(string $format): static
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * Time zone for bucketing.
      *
-     * @param string $timeZone
+     * @param string $value
      * @return static
      */
-    public function timeZone(string $timeZone): static
+    public function timeZone(string $value): static
     {
-        return $this->addProperty('time_zone', $timeZone);
+        return $this->addProperty('time_zone', $value);
     }
 
     /**
      * Minimum interval to use when automatically determining buckets.
      *
-     * @param string $minimumInterval
+     * @param string $value
      * @return static
      */
-    public function minimumInterval(string $minimumInterval): static
+    public function minimumInterval(string $value): static
     {
-        return $this->addProperty('minimum_interval', $minimumInterval);
+        return $this->addProperty('minimum_interval', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }

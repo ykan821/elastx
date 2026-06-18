@@ -48,11 +48,11 @@ class Collapse extends Node
     /**
      * Maximum number of concurrent group searches.
      *
-     * @param int $max
+     * @param int $value
      * @return static
      */
-    public function maxConcurrentGroupSearches(int $max): static
+    public function maxConcurrentGroupSearches(int $value): static
     {
-        return $this->addProperty('max_concurrent_group_searches', $max);
+        return $this->addProperty('max_concurrent_group_searches', $value);
     }
 }

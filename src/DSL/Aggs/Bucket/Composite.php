@@ -16,44 +16,44 @@ class Composite extends Node
     /**
      * List of source definitions used to build composite buckets.
      *
-     * @param mixed $sources
+     * @param mixed $value
      * @return static
      */
-    public function sources($sources): static
+    public function sources($value): static
     {
-        return $this->addProperty('sources', $sources);
+        return $this->addProperty('sources', $value);
     }
 
     /**
      * Cursor value to resume pagination after a previous composite response.
      *
-     * @param mixed $after
+     * @param mixed $value
      * @return static
      */
-    public function after($after): static
+    public function after($value): static
     {
-        return $this->addProperty('after', $after);
+        return $this->addProperty('after', $value);
     }
 
     /**
      * Sort order for composite buckets.
      *
-     * @param mixed $order
+     * @param mixed $value
      * @return static
      */
-    public function order($order): static
+    public function order($value): static
     {
-        return $this->addProperty('order', $order);
+        return $this->addProperty('order', $value);
     }
 
     /**
      * Maximum number of composite buckets to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size(int $size): static
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 }

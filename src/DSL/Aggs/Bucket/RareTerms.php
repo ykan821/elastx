@@ -11,56 +11,56 @@ class RareTerms extends Node
     protected string $_key = 'rare_terms';
 
     /**
-     * @param int $maxDocCount
+     * @param int $value
      * @return static
      */
-    public function maxDocCount(int $maxDocCount): static
+    public function maxDocCount(int $value): static
     {
-        return $this->addProperty('max_doc_count', $maxDocCount);
+        return $this->addProperty('max_doc_count', $value);
     }
 
     /**
-     * @param mixed $precision
+     * @param mixed $value
      * @return static
      */
-    public function precision($precision): static
+    public function precision($value): static
     {
-        return $this->addProperty('precision', $precision);
+        return $this->addProperty('precision', $value);
     }
 
     /**
-     * @param mixed $include
+     * @param mixed $value
      * @return static
      */
-    public function include($include): static
+    public function include($value): static
     {
-        return $this->addProperty('include', $include);
+        return $this->addProperty('include', $value);
     }
 
     /**
-     * @param mixed $exclude
+     * @param mixed $value
      * @return static
      */
-    public function exclude($exclude): static
+    public function exclude($value): static
     {
-        return $this->addProperty('exclude', $exclude);
+        return $this->addProperty('exclude', $value);
     }
 
     /**
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize(int $shardSize): static
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 }

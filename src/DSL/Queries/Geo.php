@@ -22,7 +22,7 @@ trait Geo
      * @param mixed $value
      * @return $this
      */
-    public function geoBoundingBox($field, $value = null)
+    public function geoBoundingBox($field, $value = null): static
     {
         return $this->addQuery(GeoBoundingBox::create($field, $value));
     }
@@ -35,7 +35,7 @@ trait Geo
      * @param callable|GeoDistance|array<string, mixed> $value
      * @return $this
      */
-    public function geoDistance($value = null)
+    public function geoDistance($value = null): static
     {
         return $this->addQuery(GeoDistance::create($value));
     }
@@ -47,7 +47,7 @@ trait Geo
      * @param mixed $value
      * @return $this
      */
-    public function geoGrid($field, $value = null)
+    public function geoGrid($field, $value = null): static
     {
         return $this->addQuery(GeoGrid::create($field, $value));
     }
@@ -59,7 +59,7 @@ trait Geo
      * @param mixed $value
      * @return $this
      */
-    public function geoPolygon($field, $value = null)
+    public function geoPolygon($field, $value = null): static
     {
         return $this->addQuery(GeoPolygon::create($field, $value));
     }
@@ -71,7 +71,7 @@ trait Geo
      * @param mixed $value
      * @return $this
      */
-    public function geoShape($field, $value = null)
+    public function geoShape($field, $value = null): static
     {
         return $this->addQuery(GeoShape::create($field, $value));
     }

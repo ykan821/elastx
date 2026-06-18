@@ -17,33 +17,33 @@ class Pinned extends Node
     /**
      * List of document IDs to pin to the top of the results.
      *
-     * @param array<int, string> $ids
+     * @param array<int, string> $value
      * @return static
      */
-    public function ids(array $ids): static
+    public function ids(array $value): static
     {
-        return $this->addProperty('ids', $ids);
+        return $this->addProperty('ids', $value);
     }
 
     /**
      * The organic query used to rank non-pinned documents.
      *
-     * @param mixed $organic
+     * @param mixed $value
      * @return static
      */
-    public function organic($organic): static
+    public function organic($value): static
     {
-        return $this->addProperty('organic', Query::create($organic));
+        return $this->addProperty('organic', Query::create($value));
     }
 
     /**
      * A document to pin instead of using an ID.
      *
-     * @param mixed $doc
+     * @param mixed $value
      * @return static
      */
-    public function doc($doc): static
+    public function doc($value): static
     {
-        return $this->addProperty('doc', $doc);
+        return $this->addProperty('doc', $value);
     }
 }

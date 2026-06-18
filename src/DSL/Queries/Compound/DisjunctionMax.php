@@ -20,22 +20,22 @@ class DisjunctionMax extends Node
      * Contains one or more query clauses. Returned documents must match one or more of these queries. If a document matches multiple queries, Elasticsearch uses the highest relevance score.
      * Supports multiple calls to incrementally build.
      *
-     * @param mixed $queries
+     * @param mixed $value
      * @return static
      */
-    public function queries($queries): static
+    public function queries($value): static
     {
-        return $this->addClause('queries', $queries);
+        return $this->addClause('queries', $value);
     }
 
     /**
      * Floating point number between 0 and 1.0 used to increase the relevance scores of documents matching multiple query clauses. Defaults to 0.0.
      *
-     * @param float $tieBreaker
+     * @param float $value
      * @return static
      */
-    public function tieBreaker(float $tieBreaker): static
+    public function tieBreaker(float $value): static
     {
-        return $this->addProperty('tie_breaker', $tieBreaker);
+        return $this->addProperty('tie_breaker', $value);
     }
 }

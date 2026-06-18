@@ -20,33 +20,33 @@ class SpanNear extends Node
      * The list of span query clauses that must appear near each other.
      * Supports multiple calls to incrementally build.
      *
-     * @param mixed $clauses
+     * @param mixed $value
      * @return static
      */
-    public function clauses($clauses): static
+    public function clauses($value): static
     {
-        return $this->addClause('clauses', $clauses);
+        return $this->addClause('clauses', $value);
     }
 
     /**
      * The maximum number of positions allowed between matching spans.
      *
-     * @param int $slop
+     * @param int $value
      * @return static
      */
-    public function slop(int $slop): static
+    public function slop(int $value): static
     {
-        return $this->addProperty('slop', $slop);
+        return $this->addProperty('slop', $value);
     }
 
     /**
      * Whether the span clauses must appear in their specified order.
      *
-     * @param bool $inOrder
+     * @param bool $value
      * @return static
      */
-    public function inOrder(bool $inOrder): static
+    public function inOrder(bool $value): static
     {
-        return $this->addProperty('in_order', $inOrder);
+        return $this->addProperty('in_order', $value);
     }
 }

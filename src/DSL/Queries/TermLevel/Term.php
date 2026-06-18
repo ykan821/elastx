@@ -38,12 +38,12 @@ class Term extends Node
      *
      * Allows ASCII case insensitive matching of the value with the indexed field values when set to true. Default is false which means the case sensitivity of matching depends on the underlying field’s mapping.
      *
-     * @param bool $caseInsensitive
+     * @param bool $value
      * @return static
      * @version 7.10.0
      */
-    public function caseInsensitive(bool $caseInsensitive): static
+    public function caseInsensitive(bool $value): static
     {
-        return $this->addProperty('case_insensitive', $caseInsensitive);
+        return $this->addProperty('case_insensitive', $value);
     }
 }

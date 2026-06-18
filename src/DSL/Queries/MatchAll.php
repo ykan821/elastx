@@ -18,7 +18,7 @@ trait MatchAll
      * @param mixed $matchAll
      * @return $this
      */
-    public function matchAll($matchAll = null)
+    public function matchAll($matchAll = null): static
     {
         return $this->addQuery(QMatchAll::create($matchAll));
     }
@@ -28,7 +28,7 @@ trait MatchAll
      *
      * @return $this
      */
-    public function matchNone()
+    public function matchNone(): static
     {
         return $this->addQuery(MatchNone::create());
     }

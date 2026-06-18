@@ -28,7 +28,7 @@ trait Compound
      * @param callable|Boolean|array<string, mixed> $bool
      * @return $this
      */
-    public function bool($bool)
+    public function bool($bool): static
     {
         if (is_array($bool)) {
             $boolean = new Boolean();
@@ -51,7 +51,7 @@ trait Compound
      * @param callable|Boosting|array<string, mixed> $boosting
      * @return $this
      */
-    public function boosting($boosting)
+    public function boosting($boosting): static
     {
         if (is_array($boosting)) {
             $b = new Boosting();
@@ -74,7 +74,7 @@ trait Compound
      * @param callable|ConstantScore|array<string, mixed> $constantScore
      * @return $this
      */
-    public function constantScore($constantScore)
+    public function constantScore($constantScore): static
     {
         if (is_array($constantScore)) {
             $cs = new ConstantScore();
@@ -96,7 +96,7 @@ trait Compound
      * @param callable|DisjunctionMax|array<string, mixed> $disMax
      * @return $this
      */
-    public function disMax($disMax)
+    public function disMax($disMax): static
     {
         if (is_array($disMax)) {
             $dm = new DisjunctionMax();
@@ -118,7 +118,7 @@ trait Compound
      * @param mixed $functionScore
      * @return $this
      */
-    public function functionScore($functionScore)
+    public function functionScore($functionScore): static
     {
         return $this->addQuery(FunctionScore::create($functionScore));
     }

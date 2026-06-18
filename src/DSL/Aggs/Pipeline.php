@@ -21,7 +21,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function avgBucket($params)
+    public function avgBucket($params): static
     {
         return $this->node(AvgBucket::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }
@@ -32,7 +32,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function sumBucket($params)
+    public function sumBucket($params): static
     {
         return $this->node(SumBucket::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }
@@ -43,7 +43,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function maxBucket($params)
+    public function maxBucket($params): static
     {
         return $this->node(MaxBucket::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }
@@ -54,7 +54,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function minBucket($params)
+    public function minBucket($params): static
     {
         return $this->node(MinBucket::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }
@@ -65,7 +65,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function statsBucket($params)
+    public function statsBucket($params): static
     {
         return $this->node(StatsBucket::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }
@@ -76,7 +76,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function cumulativeSum($params)
+    public function cumulativeSum($params): static
     {
         return $this->node(CumulativeSum::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }
@@ -87,7 +87,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function derivative($params)
+    public function derivative($params): static
     {
         return $this->node(Derivative::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }
@@ -98,7 +98,7 @@ trait Pipeline
      * @param mixed $params
      * @return static
      */
-    public function bucketScript($params)
+    public function bucketScript($params): static
     {
         return $this->node(BucketScript::create(is_string($params) ? ['buckets_path' => $params] : $params));
     }

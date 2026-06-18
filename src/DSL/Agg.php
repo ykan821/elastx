@@ -94,12 +94,12 @@ class Agg
      * Similar to Node::field(), the alias wraps the output:
      * {"alias_name": {"terms": {"field": "status"}}}.
      *
-     * @param string $alias
+     * @param string $value
      * @return $this
      */
-    public function alias($alias): static
+    public function alias($value): static
     {
-        $this->_alias = $alias;
+        $this->_alias = $value;
         return $this;
     }
 
@@ -108,7 +108,7 @@ class Agg
      *
      * @return string|null
      */
-    public function getAlias()
+    public function getAlias(): ?string
     {
         return $this->_alias;
     }
@@ -175,7 +175,7 @@ class Agg
      * @param array<string, mixed> $properties
      * @return array<string, mixed>
      */
-    protected function resolveProperties(array $properties)
+    protected function resolveProperties(array $properties): array
     {
         foreach ($properties as $key => $property) {
             if ($property instanceof Query) {

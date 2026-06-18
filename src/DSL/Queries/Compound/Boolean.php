@@ -20,48 +20,48 @@ class Boolean extends Node
      * The clause (query) must appear in matching documents and will contribute to the score.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $must
+     * @param mixed $value
      * @return static
      */
-    public function must($must): static
+    public function must($value): static
     {
-        return $this->addClause('must', $must);
+        return $this->addClause('must', $value);
     }
 
     /**
      * The clause (query) should appear in the matching document.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $should
+     * @param mixed $value
      * @return static
      */
-    public function should($should): static
+    public function should($value): static
     {
-        return $this->addClause('should', $should);
+        return $this->addClause('should', $value);
     }
 
     /**
      * The clause (query) must appear in matching documents. However unlike must the score of the query will be ignored. Filter clauses are executed in filter context, meaning that scoring is ignored and clauses are considered for caching.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter): static
+    public function filter($value): static
     {
-        return $this->addClause('filter', $filter);
+        return $this->addClause('filter', $value);
     }
 
     /**
      * The clause (query) must not appear in the matching documents. Clauses are executed in filter context meaning that scoring is ignored and clauses are considered for caching. Because scoring is ignored, a score of 0 for all documents is returned.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $mustNot
+     * @param mixed $value
      * @return static
      */
-    public function mustNot($mustNot): static
+    public function mustNot($value): static
     {
-        return $this->addClause('must_not', $mustNot);
+        return $this->addClause('must_not', $value);
     }
 
     /**
@@ -71,11 +71,11 @@ class Boolean extends Node
      *
      * For other valid values, see the minimum_should_match parameter.
      *
-     * @param int|string $minimumShouldMatch
+     * @param int|string $value
      * @return static
      */
-    public function minimumShouldMatch(int|string $minimumShouldMatch): static
+    public function minimumShouldMatch(int|string $value): static
     {
-        return $this->addProperty('minimum_should_match', $minimumShouldMatch);
+        return $this->addProperty('minimum_should_match', $value);
     }
 }

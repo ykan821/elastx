@@ -17,11 +17,11 @@ class ScriptScore extends Node
     /**
      * The script used to compute the custom score.
      *
-     * @param mixed $script
+     * @param mixed $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', Script::create($script));
+        return $this->addProperty('script', Script::create($value));
     }
 }

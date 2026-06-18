@@ -16,22 +16,22 @@ class RandomSampler extends Node
     /**
      * Probability that a document is included in the sample (between 0 and 1).
      *
-     * @param float $probability
+     * @param float $value
      * @return static
      */
-    public function probability(float $probability): static
+    public function probability(float $value): static
     {
-        return $this->addProperty('probability', $probability);
+        return $this->addProperty('probability', $value);
     }
 
     /**
      * Seed for the random number generator to produce repeatable samples.
      *
-     * @param int $seed
+     * @param int $value
      * @return static
      */
-    public function seed(int $seed): static
+    public function seed(int $value): static
     {
-        return $this->addProperty('seed', $seed);
+        return $this->addProperty('seed', $value);
     }
 }

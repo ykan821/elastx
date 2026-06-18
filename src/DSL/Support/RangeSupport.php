@@ -29,7 +29,7 @@ trait RangeSupport
      * @param array<string, mixed> $props
      * @return array<string, mixed>
      */
-    private static function normalizeKeys(array $props)
+    private static function normalizeKeys(array $props): array
     {
         $operators = [
             '>=' => 'gte', '>' => 'gt', '<=' => 'lte', '<' => 'lt',

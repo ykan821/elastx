@@ -26,7 +26,7 @@ trait Span
      * @param mixed $spanContaining
      * @return $this
      */
-    public function spanContaining($spanContaining)
+    public function spanContaining($spanContaining): static
     {
         return $this->addQuery(SpanContaining::create($spanContaining));
     }
@@ -37,7 +37,7 @@ trait Span
      * @param mixed $spanFieldMasking
      * @return $this
      */
-    public function spanFieldMasking($spanFieldMasking)
+    public function spanFieldMasking($spanFieldMasking): static
     {
         return $this->addQuery(SpanFieldMasking::create($spanFieldMasking));
     }
@@ -48,7 +48,7 @@ trait Span
      * @param mixed $spanFirst
      * @return $this
      */
-    public function spanFirst($spanFirst)
+    public function spanFirst($spanFirst): static
     {
         return $this->addQuery(SpanFirst::create($spanFirst));
     }
@@ -59,7 +59,7 @@ trait Span
      * @param mixed $spanMulti
      * @return $this
      */
-    public function spanMulti($spanMulti)
+    public function spanMulti($spanMulti): static
     {
         return $this->addQuery(SpanMulti::create($spanMulti));
     }
@@ -70,7 +70,7 @@ trait Span
      * @param mixed $spanNear
      * @return $this
      */
-    public function spanNear($spanNear)
+    public function spanNear($spanNear): static
     {
         return $this->addQuery(SpanNear::create($spanNear));
     }
@@ -81,7 +81,7 @@ trait Span
      * @param mixed $spanNot
      * @return $this
      */
-    public function spanNot($spanNot)
+    public function spanNot($spanNot): static
     {
         return $this->addQuery(SpanNot::create($spanNot));
     }
@@ -92,7 +92,7 @@ trait Span
      * @param mixed $spanOr
      * @return $this
      */
-    public function spanOr($spanOr)
+    public function spanOr($spanOr): static
     {
         return $this->addQuery(SpanOr::create($spanOr));
     }
@@ -104,7 +104,7 @@ trait Span
      * @param mixed $value
      * @return $this
      */
-    public function spanTerm($field, $value = null)
+    public function spanTerm($field, $value = null): static
     {
         return $this->addQuery(SpanTerm::create($field, $value));
     }
@@ -115,7 +115,7 @@ trait Span
      * @param mixed $spanWithin
      * @return $this
      */
-    public function spanWithin($spanWithin)
+    public function spanWithin($spanWithin): static
     {
         return $this->addQuery(SpanWithin::create($spanWithin));
     }

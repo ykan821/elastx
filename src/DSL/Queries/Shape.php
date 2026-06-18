@@ -18,7 +18,7 @@ trait Shape
      * @param mixed $value
      * @return $this
      */
-    public function shape($field, $value = null)
+    public function shape($field, $value = null): static
     {
         return $this->addQuery(QShape::create($field, $value));
     }

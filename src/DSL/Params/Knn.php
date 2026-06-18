@@ -20,93 +20,82 @@ class Knn extends Node
     /**
      * The query vector to search for.
      *
-     * @param array<int|float> $vector
+     * @param array<int|float> $value
      * @return static
      */
-    public function queryVector(array $vector): static
+    public function queryVector(array $value): static
     {
-        return $this->addProperty('query_vector', $vector);
+        return $this->addProperty('query_vector', $value);
     }
 
     /**
      * Number of nearest neighbors to return as top hits.
      * Defaults to the search request's size.
      *
-     * @param int $k
+     * @param int $value
      * @return static
      */
-    public function k(int $k): static
+    public function k(int $value): static
     {
-        return $this->addProperty('k', $k);
+        return $this->addProperty('k', $value);
     }
 
     /**
      * Number of candidates to evaluate per shard.
      * Defaults to max(k * 4, 50).
      *
-     * @param int $num
+     * @param int $value
      * @return static
      */
-    public function numCandidates(int $num): static
+    public function numCandidates(int $value): static
     {
-        return $this->addProperty('num_candidates', $num);
+        return $this->addProperty('num_candidates', $value);
     }
 
     /**
      * Minimum similarity threshold for a vector to be
      * considered a match.
      *
-     * @param float $similarity
+     * @param float $value
      * @return static
      */
-    public function similarity(float $similarity): static
+    public function similarity(float $value): static
     {
-        return $this->addProperty('similarity', $similarity);
-    }
-
-    /**
-     * Boost value for the kNN score.
-     *
-     * @param float $boost
-     * @return static
-     */
-    public function boost($boost): static
-    {
-        return $this->addProperty('boost', $boost);
+        return $this->addProperty('similarity', $value);
     }
 
     /**
      * Pre-filter applied during kNN search. Accepts a closure,
      * array, or Query object.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter): static
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Query::create($filter));
+        return $this->addProperty('filter', Query::create($value));
     }
 
     /**
      * Inner hits configuration for nested kNN search.
      *
-     * @param mixed $innerHits
+     * @param mixed $value
      * @return static
      */
-    public function innerHits($innerHits): static
+    public function innerHits($value): static
     {
-        return $this->addProperty('inner_hits', $innerHits);
+        return $this->addProperty('inner_hits', $value);
     }
 
     /**
      * Rescore vector configuration for quantized vector rescoring.
      *
-     * @param array<string, mixed> $rescoreVector
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function rescoreVector(array $rescoreVector): static
+    public function rescoreVector(array $value): static
     {
-        return $this->addProperty('rescore_vector', $rescoreVector);
+        return $this->addProperty('rescore_vector', $value);
     }
 
     public function toArray()

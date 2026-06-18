@@ -30,23 +30,23 @@ class Regexp extends Node
     /**
      * Enables optional operators for the regular expression. For valid values and more information, see Regular expression syntax.
      *
-     * @param string $flags
+     * @param string $value
      * @return static
      */
-    public function flags(string $flags): static
+    public function flags(string $value): static
     {
-        return $this->addProperty('flags', $flags);
+        return $this->addProperty('flags', $value);
     }
 
     /**
      * Allows case insensitive matching of the regular expression value with the indexed field values when set to true. Default is false which means the case sensitivity of matching depends on the underlying field’s mapping.
      *
-     * @param bool $caseInsensitive
+     * @param bool $value
      * @return static
      */
-    public function caseInsensitive(bool $caseInsensitive): static
+    public function caseInsensitive(bool $value): static
     {
-        return $this->addProperty('case_insensitive', $caseInsensitive);
+        return $this->addProperty('case_insensitive', $value);
     }
 
     /**
@@ -56,22 +56,22 @@ class Regexp extends Node
      *
      * You can use this parameter to prevent that conversion from unintentionally consuming too many resources. You may need to increase this limit to run complex regular expressions.
      *
-     * @param int $maxDeterminizedStates
+     * @param int $value
      * @return static
      */
-    public function maxDeterminizedStates(int $maxDeterminizedStates): static
+    public function maxDeterminizedStates(int $value): static
     {
-        return $this->addProperty('max_determinized_states', $maxDeterminizedStates);
+        return $this->addProperty('max_determinized_states', $value);
     }
 
     /**
      * Method used to rewrite the query. For valid values and more information, see the rewrite parameter.
      *
-     * @param string $rewrite
+     * @param string $value
      * @return static
      */
-    public function rewrite(string $rewrite): static
+    public function rewrite(string $value): static
     {
-        return $this->addProperty('rewrite', $rewrite);
+        return $this->addProperty('rewrite', $value);
     }
 }

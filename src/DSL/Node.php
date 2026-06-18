@@ -183,16 +183,6 @@ abstract class Node
     }
 
     /**
-     * Whether the node supports multiple clauses.
-     *
-     * @return bool
-     */
-    protected function isMulti(): bool
-    {
-        return $this->_multi;
-    }
-
-    /**
      * Get the Elasticsearch type identifier.
      *
      * @return string
@@ -334,11 +324,11 @@ abstract class Node
      * Floating point number used to decrease or increase
      * the relevance scores of a query. Defaults to 1.0.
      *
-     * @param float $boost
+     * @param float $value
      * @return static
      */
-    public function boost($boost): static
+    public function boost($value): static
     {
-        return $this->addProperty('boost', $boost);
+        return $this->addProperty('boost', $value);
     }
 }

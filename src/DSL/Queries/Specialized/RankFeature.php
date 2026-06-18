@@ -16,44 +16,44 @@ class RankFeature extends Node
     /**
      * Saturation function to compute the score. Uses point: 2 by default.
      *
-     * @param mixed $saturation
+     * @param mixed $value
      * @return static
      */
-    public function saturation($saturation): static
+    public function saturation($value): static
     {
-        return $this->addProperty('saturation', $saturation);
+        return $this->addProperty('saturation', $value);
     }
 
     /**
      * Logarithmic function to compute the score. Supports a scaling_factor parameter.
      *
-     * @param mixed $log
+     * @param mixed $value
      * @return static
      */
-    public function log($log): static
+    public function log($value): static
     {
-        return $this->addProperty('log', $log);
+        return $this->addProperty('log', $value);
     }
 
     /**
      * Sigmoid function to compute the score. Requires exponent and pivot parameters.
      *
-     * @param mixed $sigmoid
+     * @param mixed $value
      * @return static
      */
-    public function sigmoid($sigmoid): static
+    public function sigmoid($value): static
     {
-        return $this->addProperty('sigmoid', $sigmoid);
+        return $this->addProperty('sigmoid', $value);
     }
 
     /**
      * Linear function to compute the score, producing a linear relation between the feature value and the score.
      *
-     * @param mixed $linear
+     * @param mixed $value
      * @return static
      */
-    public function linear($linear): static
+    public function linear($value): static
     {
-        return $this->addProperty('linear', $linear);
+        return $this->addProperty('linear', $value);
     }
 }

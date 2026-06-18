@@ -17,33 +17,33 @@ class Boosting extends Node
     /**
      * Query you wish to run. Any returned documents must match this query.
      *
-     * @param mixed $positive
+     * @param mixed $value
      * @return static
      */
-    public function positive($positive): static
+    public function positive($value): static
     {
-        return $this->addProperty('positive', Query::create($positive));
+        return $this->addProperty('positive', Query::create($value));
     }
 
     /**
      * Query used to decrease the relevance score of matching documents.
      *
-     * @param mixed $negative
+     * @param mixed $value
      * @return static
      */
-    public function negative($negative): static
+    public function negative($value): static
     {
-        return $this->addProperty('negative', Query::create($negative));
+        return $this->addProperty('negative', Query::create($value));
     }
 
     /**
      * Floating point number between 0 and 1.0 used to decrease the relevance scores of documents matching the negative query.
      *
-     * @param float $negativeBoost
+     * @param float $value
      * @return static
      */
-    public function negativeBoost(float $negativeBoost): static
+    public function negativeBoost(float $value): static
     {
-        return $this->addProperty('negative_boost', $negativeBoost);
+        return $this->addProperty('negative_boost', $value);
     }
 }

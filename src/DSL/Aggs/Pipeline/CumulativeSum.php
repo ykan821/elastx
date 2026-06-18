@@ -16,22 +16,22 @@ class CumulativeSum extends Node
     /**
      * Path to the buckets to cumulatively sum.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function bucketsPath(string $path): static
+    public function bucketsPath(string $value): static
     {
-        return $this->addProperty('buckets_path', $path);
+        return $this->addProperty('buckets_path', $value);
     }
 
     /**
      * Format for the output value.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format(string $format): static
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 }

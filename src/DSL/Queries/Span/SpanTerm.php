@@ -19,12 +19,12 @@ class SpanTerm extends Node
     /**
      * The value of the term to match.
      *
-     * @param string|int|float|bool $term
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function term(string|int|float|bool $term): static
+    public function term(string|int|float|bool $value): static
     {
-        return $this->addProperty('term', $term);
+        return $this->addProperty('term', $value);
     }
 
     /**

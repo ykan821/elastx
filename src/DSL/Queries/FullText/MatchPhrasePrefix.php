@@ -25,48 +25,48 @@ class MatchPhrasePrefix extends Node
      * before performing a search. The last term of this text is treated as a
      * prefix, matching any words that begin with that term.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query(string $query): static
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 
     /**
      * Analyzer used to convert text in the query value
      * into tokens. Defaults to the index-time analyzer mapped for the field.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer(string $analyzer): static
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
      * Maximum number of terms to which the last provided
      * term of the query value will expand. Defaults to 50.
      *
-     * @param int $maxExpansions
+     * @param int $value
      * @return static
      */
-    public function maxExpansions(int $maxExpansions): static
+    public function maxExpansions(int $value): static
     {
-        return $this->addProperty('max_expansions', $maxExpansions);
+        return $this->addProperty('max_expansions', $value);
     }
 
     /**
      * Maximum number of positions allowed between matching
      * tokens. Defaults to 0. Transposed terms have a slop of 2.
      *
-     * @param int $slop
+     * @param int $value
      * @return static
      */
-    public function slop(int $slop): static
+    public function slop(int $value): static
     {
-        return $this->addProperty('slop', $slop);
+        return $this->addProperty('slop', $value);
     }
 
     /**
@@ -74,11 +74,11 @@ class MatchPhrasePrefix extends Node
      * analyzer removes all tokens, such as when using a stop filter.
      * Valid values are: none (Default), all.
      *
-     * @param string $zeroTermsQuery
+     * @param string $value
      * @return static
      */
-    public function zeroTermsQuery(string $zeroTermsQuery): static
+    public function zeroTermsQuery(string $value): static
     {
-        return $this->addProperty('zero_terms_query', $zeroTermsQuery);
+        return $this->addProperty('zero_terms_query', $value);
     }
 }

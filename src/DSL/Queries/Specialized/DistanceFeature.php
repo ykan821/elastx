@@ -16,22 +16,22 @@ class DistanceFeature extends Node
     /**
      * Location or date to use as the origin from which to calculate distance.
      *
-     * @param mixed $origin
+     * @param mixed $value
      * @return static
      */
-    public function origin($origin): static
+    public function origin($value): static
     {
-        return $this->addProperty('origin', $origin);
+        return $this->addProperty('origin', $value);
     }
 
     /**
      * Distance from the origin at which relevance scores receive half of the boost value.
      *
-     * @param string $pivot
+     * @param string $value
      * @return static
      */
-    public function pivot(string $pivot): static
+    public function pivot(string $value): static
     {
-        return $this->addProperty('pivot', $pivot);
+        return $this->addProperty('pivot', $value);
     }
 }

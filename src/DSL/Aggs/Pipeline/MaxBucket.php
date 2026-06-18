@@ -16,44 +16,44 @@ class MaxBucket extends Node
     /**
      * Path to the buckets to find the maximum.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function bucketsPath(string $path): static
+    public function bucketsPath(string $value): static
     {
-        return $this->addProperty('buckets_path', $path);
+        return $this->addProperty('buckets_path', $value);
     }
 
     /**
      * Policy to apply when gaps are found in the data.
      *
-     * @param string $policy
+     * @param string $value
      * @return static
      */
-    public function gapPolicy(string $policy): static
+    public function gapPolicy(string $value): static
     {
-        return $this->addProperty('gap_policy', $policy);
+        return $this->addProperty('gap_policy', $value);
     }
 
     /**
      * Format for the output value.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format(string $format): static
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * The value to use when the aggregation is missing a value.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }

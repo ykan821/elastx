@@ -17,11 +17,11 @@ class SpanMulti extends Node
     /**
      * The non-span query to wrap as a span query.
      *
-     * @param mixed $match
+     * @param mixed $value
      * @return static
      */
-    public function match($match): static
+    public function match($value): static
     {
-        return $this->addProperty('match', Query::create($match));
+        return $this->addProperty('match', Query::create($value));
     }
 }

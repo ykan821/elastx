@@ -17,22 +17,22 @@ class SpanContaining extends Node
     /**
      * The little span query whose matches must be contained within the big span.
      *
-     * @param mixed $little
+     * @param mixed $value
      * @return static
      */
-    public function little($little): static
+    public function little($value): static
     {
-        return $this->addProperty('little', Query::create($little));
+        return $this->addProperty('little', Query::create($value));
     }
 
     /**
      * The big span query that must contain matches from the little span.
      *
-     * @param mixed $big
+     * @param mixed $value
      * @return static
      */
-    public function big($big): static
+    public function big($value): static
     {
-        return $this->addProperty('big', Query::create($big));
+        return $this->addProperty('big', Query::create($value));
     }
 }

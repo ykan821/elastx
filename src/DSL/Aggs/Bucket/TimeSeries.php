@@ -11,29 +11,29 @@ class TimeSeries extends Node
     protected string $_key = 'time_series';
 
     /**
-     * @param string $calendarInterval
+     * @param string $value
      * @return static
      */
-    public function calendarInterval(string $calendarInterval): static
+    public function calendarInterval(string $value): static
     {
-        return $this->addProperty('calendar_interval', $calendarInterval);
+        return $this->addProperty('calendar_interval', $value);
     }
 
     /**
-     * @param string $fixedInterval
+     * @param string $value
      * @return static
      */
-    public function fixedInterval(string $fixedInterval): static
+    public function fixedInterval(string $value): static
     {
-        return $this->addProperty('fixed_interval', $fixedInterval);
+        return $this->addProperty('fixed_interval', $value);
     }
 
     /**
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }

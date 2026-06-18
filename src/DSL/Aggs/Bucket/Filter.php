@@ -20,12 +20,12 @@ class Filter extends Node
     /**
      * The filter query to apply.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter): static
+    public function filter($value): static
     {
-        $this->_filter = $filter;
+        $this->_filter = $value;
         return $this;
     }
 
