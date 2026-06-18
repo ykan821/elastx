@@ -17,11 +17,11 @@ class SpanFieldMasking extends Node
     /**
      * The inner span query to execute.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query): static
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 }

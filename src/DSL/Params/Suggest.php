@@ -20,7 +20,7 @@ class Suggest extends Node
      *
      * @param string $alias
      * @param string $field
-     * @param string|null $text
+     * @param ?string $text
      * @return static
      */
     public function term(string $alias, string $field, ?string $text = null): static
@@ -37,7 +37,7 @@ class Suggest extends Node
      *
      * @param string $alias
      * @param string $field
-     * @param string|null $prefix
+     * @param ?string $prefix
      * @return static
      */
     public function completion(string $alias, string $field, ?string $prefix = null): static
@@ -54,7 +54,7 @@ class Suggest extends Node
      *
      * @param string $alias
      * @param string $field
-     * @param string|null $text
+     * @param ?string $text
      * @return static
      */
     public function phrase(string $alias, string $field, ?string $text = null): static

@@ -34,11 +34,11 @@ class Wrapper extends Node
     /**
      * A query in base64 encoded format.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query(string $query): static
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 }

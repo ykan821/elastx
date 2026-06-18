@@ -16,33 +16,33 @@ class DiversifiedSampler extends Node
     /**
      * Number of documents to sample per shard.
      *
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize(int $shardSize): static
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 
     /**
      * Maximum number of documents per unique value.
      *
-     * @param int $maxDocsPerValue
+     * @param int $value
      * @return static
      */
-    public function maxDocsPerValue(int $maxDocsPerValue): static
+    public function maxDocsPerValue(int $value): static
     {
-        return $this->addProperty('max_docs_per_value', $maxDocsPerValue);
+        return $this->addProperty('max_docs_per_value', $value);
     }
 
     /**
      * Execution hint for the aggregation.
      *
-     * @param string $executionHint
+     * @param string $value
      * @return static
      */
-    public function executionHint(string $executionHint): static
+    public function executionHint(string $value): static
     {
-        return $this->addProperty('execution_hint', $executionHint);
+        return $this->addProperty('execution_hint', $value);
     }
 }

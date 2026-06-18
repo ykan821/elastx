@@ -24,47 +24,47 @@ class GeoShape extends Node
      * Inline shape definition using GeoJSON or Well-Known Text (WKT).
      * Contains the shape type and coordinates.
      *
-     * @param mixed $shape
+     * @param mixed $value
      * @return static
      */
-    public function shape($shape): static
+    public function shape($value): static
     {
-        return $this->addProperty('shape', $shape);
+        return $this->addProperty('shape', $value);
     }
 
     /**
      * Spatial relation operator to use at search time.
      * Valid values: INTERSECTS (default), DISJOINT, WITHIN, CONTAINS.
      *
-     * @param string $relation
+     * @param string $value
      * @return static
      */
-    public function relation(string $relation): static
+    public function relation(string $value): static
     {
-        return $this->addProperty('relation', $relation);
+        return $this->addProperty('relation', $value);
     }
 
     /**
      * Reference to a pre-indexed shape. Contains id, index, path, and routing fields
      * to identify the shape document in another index.
      *
-     * @param mixed $indexedShape
+     * @param mixed $value
      * @return static
      */
-    public function indexedShape($indexedShape): static
+    public function indexedShape($value): static
     {
-        return $this->addProperty('indexed_shape', $indexedShape);
+        return $this->addProperty('indexed_shape', $value);
     }
 
     /**
      * When set to true, the ignore_unmapped option will ignore an unmapped field
      * and will not match any documents for this query. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped(bool $ignoreUnmapped): static
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

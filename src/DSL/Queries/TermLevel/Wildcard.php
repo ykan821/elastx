@@ -15,24 +15,24 @@ class Wildcard extends Node
     /**
      * Allows case insensitive matching of the pattern with the indexed field values when set to true. Default is false which means the case sensitivity of matching depends on the underlying field’s mapping.
      *
-     * @param bool $caseInsensitive
+     * @param bool $value
      * @return static
      * @version 7.10.0
      */
-    public function caseInsensitive(bool $caseInsensitive): static
+    public function caseInsensitive(bool $value): static
     {
-        return $this->addProperty('case_insensitive', $caseInsensitive);
+        return $this->addProperty('case_insensitive', $value);
     }
 
     /**
      * Method used to rewrite the query. For valid values and more information, see the rewrite parameter.
      *
-     * @param string $rewrite
+     * @param string $value
      * @return static
      */
-    public function rewrite(string $rewrite): static
+    public function rewrite(string $value): static
     {
-        return $this->addProperty('rewrite', $rewrite);
+        return $this->addProperty('rewrite', $value);
     }
 
     /**
@@ -55,11 +55,11 @@ class Wildcard extends Node
     /**
      * An alias for the value parameter. If you specify both value and wildcard, the query uses the last one in the request body.
      *
-     * @param string $wildcard
+     * @param string $value
      * @return static
      */
-    public function wildcard(string $wildcard): static
+    public function wildcard(string $value): static
     {
-        return $this->addProperty('wildcard', $wildcard);
+        return $this->addProperty('wildcard', $value);
     }
 }

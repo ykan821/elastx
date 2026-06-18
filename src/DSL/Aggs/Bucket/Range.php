@@ -16,44 +16,44 @@ class Range extends Node
     /**
      * Array of range definitions for bucketing.
      *
-     * @param array<string, mixed> $ranges
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function ranges(array $ranges): static
+    public function ranges(array $value): static
     {
-        return $this->addProperty('ranges', $ranges);
+        return $this->addProperty('ranges', $value);
     }
 
     /**
      * Whether to return range buckets as a hash keyed by range key.
      *
-     * @param bool $keyed
+     * @param bool $value
      * @return static
      */
-    public function keyed(bool $keyed): static
+    public function keyed(bool $value): static
     {
-        return $this->addProperty('keyed', $keyed);
+        return $this->addProperty('keyed', $value);
     }
 
     /**
      * Script to compute the bucket value.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param float $missing
+     * @param float $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }

@@ -20,68 +20,68 @@ class Range extends Node
     /**
      * Greater than or equal to the specified value.
      *
-     * @param string|int|float|bool $gte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gte(string|int|float|bool $gte): static
+    public function gte(string|int|float|bool $value): static
     {
-        return $this->addProperty('gte', $gte);
+        return $this->addProperty('gte', $value);
     }
 
     /**
      * Greater than the specified value.
      *
-     * @param string|int|float|bool $gt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gt(string|int|float|bool $gt): static
+    public function gt(string|int|float|bool $value): static
     {
-        return $this->addProperty('gt', $gt);
+        return $this->addProperty('gt', $value);
     }
 
     /**
      * Less than or equal to the specified value.
      *
-     * @param string|int|float|bool $lte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lte(string|int|float|bool $lte): static
+    public function lte(string|int|float|bool $value): static
     {
-        return $this->addProperty('lte', $lte);
+        return $this->addProperty('lte', $value);
     }
 
     /**
      * Less than the specified value.
      *
-     * @param string|int|float|bool $lt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lt(string|int|float|bool $lt): static
+    public function lt(string|int|float|bool $value): static
     {
-        return $this->addProperty('lt', $lt);
+        return $this->addProperty('lt', $value);
     }
 
     /**
      * Analyzer used to normalize the range values.
      * Defaults to the top-level field's analyzer.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer(string $analyzer): static
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
      * If specified, match intervals from this field rather
      * than the top-level field.
      *
-     * @param string $useField
+     * @param string $value
      * @return static
      */
-    public function useField(string $useField): static
+    public function useField(string $value): static
     {
-        return $this->addProperty('use_field', $useField);
+        return $this->addProperty('use_field', $value);
     }
 }

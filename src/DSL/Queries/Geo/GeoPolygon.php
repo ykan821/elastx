@@ -21,35 +21,35 @@ class GeoPolygon extends Node
      * Array of geo points that define the polygon.
      * At least three points are required to form a polygon.
      *
-     * @param array<int, array<string, mixed>> $points
+     * @param array<int, array<string, mixed>> $value
      * @return static
      */
-    public function points(array $points): static
+    public function points(array $value): static
     {
-        return $this->addProperty('points', $points);
+        return $this->addProperty('points', $value);
     }
 
     /**
      * Set to IGNORE_MALFORMED to accept geo points with invalid latitude or longitude,
      * set to COERCE to try and infer correct latitude or longitude, or STRICT (default).
      *
-     * @param string $validationMethod
+     * @param string $value
      * @return static
      */
-    public function validationMethod(string $validationMethod): static
+    public function validationMethod(string $value): static
     {
-        return $this->addProperty('validation_method', $validationMethod);
+        return $this->addProperty('validation_method', $value);
     }
 
     /**
      * When set to true, the ignore_unmapped option will ignore an unmapped field
      * and will not match any documents for this query. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped(bool $ignoreUnmapped): static
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

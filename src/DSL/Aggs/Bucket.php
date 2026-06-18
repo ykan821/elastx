@@ -44,7 +44,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function terms($params)
+    public function terms($params): static
     {
         return $this->node(Terms::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -55,7 +55,7 @@ trait Bucket
      * @param mixed $filter
      * @return static
      */
-    public function filter($filter)
+    public function filter($filter): static
     {
         $instance = new Filter();
         $instance->filter($filter);
@@ -68,7 +68,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function filters($params)
+    public function filters($params): static
     {
         return $this->node(Filters::create($params));
     }
@@ -79,7 +79,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function adjacencyMatrix($params)
+    public function adjacencyMatrix($params): static
     {
         return $this->node(AdjacencyMatrix::create($params));
     }
@@ -90,7 +90,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function autoDateHistogram($params)
+    public function autoDateHistogram($params): static
     {
         return $this->node(AutoDateHistogram::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -101,7 +101,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function categorizeText($params)
+    public function categorizeText($params): static
     {
         return $this->node(CategorizeText::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -112,7 +112,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function composite($params)
+    public function composite($params): static
     {
         return $this->node(Composite::create($params));
     }
@@ -123,7 +123,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function dateHistogram($params)
+    public function dateHistogram($params): static
     {
         return $this->node(DateHistogram::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -134,7 +134,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function dateRange($params)
+    public function dateRange($params): static
     {
         return $this->node(DateRange::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -145,7 +145,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function diversifiedSampler($params)
+    public function diversifiedSampler($params): static
     {
         return $this->node(DiversifiedSampler::create($params));
     }
@@ -156,7 +156,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function frequentItemSets($params)
+    public function frequentItemSets($params): static
     {
         return $this->node(FrequentItemSets::create($params));
     }
@@ -167,7 +167,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function geoDistance($params)
+    public function geoDistance($params): static
     {
         return $this->node(GeoDistance::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -178,7 +178,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function geoHashGrid($params)
+    public function geoHashGrid($params): static
     {
         return $this->node(GeoHashGrid::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -189,7 +189,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function geohexGrid($params)
+    public function geohexGrid($params): static
     {
         return $this->node(GeohexGrid::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -200,7 +200,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function geotileGrid($params)
+    public function geotileGrid($params): static
     {
         return $this->node(GeotileGrid::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -210,7 +210,7 @@ trait Bucket
      *
      * @return static
      */
-    public function global()
+    public function global(): static
     {
         return $this->node(new Global_());
     }
@@ -221,7 +221,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function histogram($params)
+    public function histogram($params): static
     {
         return $this->node(Histogram::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -232,7 +232,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function ipPrefix($params)
+    public function ipPrefix($params): static
     {
         return $this->node(IpPrefix::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -243,7 +243,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function ipRange($params)
+    public function ipRange($params): static
     {
         return $this->node(IpRange::create($params));
     }
@@ -254,7 +254,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function missing($params)
+    public function missing($params): static
     {
         return $this->node(Missing::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -265,7 +265,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function multiTerms($params)
+    public function multiTerms($params): static
     {
         return $this->node(MultiTerms::create($params));
     }
@@ -276,7 +276,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function nested($params)
+    public function nested($params): static
     {
         return $this->node(Nested::create($params));
     }
@@ -287,7 +287,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function parent($params)
+    public function parent($params): static
     {
         return $this->node(Parent_::create($params));
     }
@@ -298,7 +298,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function randomSampler($params)
+    public function randomSampler($params): static
     {
         return $this->node(RandomSampler::create($params));
     }
@@ -309,7 +309,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function range($params)
+    public function range($params): static
     {
         return $this->node(Range::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -320,7 +320,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function rareTerms($params)
+    public function rareTerms($params): static
     {
         return $this->node(RareTerms::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -331,7 +331,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function reverseNested($params = [])
+    public function reverseNested($params = []): static
     {
         return $this->node(ReverseNested::create($params));
     }
@@ -342,7 +342,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function significantTerms($params)
+    public function significantTerms($params): static
     {
         return $this->node(SignificantTerms::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -353,7 +353,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function significantText($params)
+    public function significantText($params): static
     {
         return $this->node(SignificantText::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -364,7 +364,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function timeSeries($params)
+    public function timeSeries($params): static
     {
         return $this->node(TimeSeries::create($params));
     }
@@ -375,7 +375,7 @@ trait Bucket
      * @param mixed $params
      * @return static
      */
-    public function variableWidthHistogram($params)
+    public function variableWidthHistogram($params): static
     {
         return $this->node(VariableWidthHistogram::create(is_string($params) ? ['field' => $params] : $params));
     }

@@ -16,44 +16,44 @@ class Script extends Node
     /**
      * The ID of a stored script.
      *
-     * @param string $id
+     * @param string $value
      * @return static
      */
-    public function id(string $id): static
+    public function id(string $value): static
     {
-        return $this->addProperty('id', $id);
+        return $this->addProperty('id', $value);
     }
 
     /**
      * The script language. Defaults to painless.
      *
-     * @param string $lang
+     * @param string $value
      * @return static
      */
-    public function lang(string $lang): static
+    public function lang(string $value): static
     {
-        return $this->addProperty('lang', $lang);
+        return $this->addProperty('lang', $value);
     }
 
     /**
      * The inline script source to execute.
      *
-     * @param string $source
+     * @param string $value
      * @return static
      */
-    public function source(string $source): static
+    public function source(string $value): static
     {
-        return $this->addProperty('source', $source);
+        return $this->addProperty('source', $value);
     }
 
     /**
      * Named parameters passed into the script.
      *
-     * @param array<string, mixed> $params
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function params(array $params): static
+    public function params(array $value): static
     {
-        return $this->addProperty('params', $params);
+        return $this->addProperty('params', $value);
     }
 }

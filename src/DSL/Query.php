@@ -51,24 +51,14 @@ class Query extends Node
      *
      * @var array<int, mixed>
      */
-    protected $_queries = [];
+    protected array $_queries = [];
 
     /**
      * Aggregation nodes stored independently from type properties.
      *
      * @var array<string, Agg>
      */
-    protected $_aggregations = [];
-
-    /**
-     * Whether the query supports multiple clauses.
-     *
-     * @return bool
-     */
-    protected function isMulti(): bool
-    {
-        return $this->_multi;
-    }
+    protected array $_aggregations = [];
 
     /**
      * Initialize the query container.
@@ -128,12 +118,12 @@ class Query extends Node
     /**
      * Add a query clause to the query container.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return $this
      */
-    public function addQuery($query): static
+    public function addQuery($value): static
     {
-        $this->_queries[] = $query;
+        $this->_queries[] = $value;
         return $this;
     }
 
@@ -231,8 +221,8 @@ class Query extends Node
             $dsl['query'] = $query;
         }
 
-        $this->buildAggs($dsl);
-        $this->buildParams($dsl);
+        $dsl = $this->buildAggs($dsl);
+        $dsl = $this->buildParams($dsl);
 
         return array_filter($dsl, function ($v) {
             return $v !== [];
@@ -242,9 +232,9 @@ class Query extends Node
     /**
      * Build the query clause array from stored query clauses.
      *
-     * @return array<string, mixed>|object
+     * @return array<int|string, mixed>|object
      */
-    private function buildQuery()
+    private function buildQuery(): array|object
     {
         if (empty($this->_queries)) {
             return $this->_multi ? (object)[] : [];
@@ -277,7 +267,7 @@ class Query extends Node
         }
 
         if ($this->_multi) {
-            return $clauses; // @phpstan-ignore return.type
+            return $clauses;
         }
         if (empty($clauses)) {
             return [];
@@ -289,26 +279,27 @@ class Query extends Node
      * Build aggregation entries into the DSL array.
      *
      * @param array<string, mixed> $dsl
-     * @return void
+     * @return array<string, mixed>
      */
-    private function buildAggs(array &$dsl): void
+    private function buildAggs(array $dsl): array
     {
         if (empty($this->_aggregations)) {
-            return;
+            return $dsl;
         }
         $dsl['aggs'] = [];
         foreach ($this->_aggregations as $agg) {
             $dsl['aggs'] += $agg->toArray();
         }
+        return $dsl;
     }
 
     /**
      * Build search request parameters into the DSL array.
      *
      * @param array<string, mixed> $dsl
-     * @return void
+     * @return array<string, mixed>
      */
-    private function buildParams(array &$dsl): void
+    private function buildParams(array $dsl): array
     {
         foreach ($this->_params as $key => $value) {
             if ($value instanceof Query) {
@@ -320,5 +311,6 @@ class Query extends Node
             }
             $dsl[$key] = $value;
         }
+        return $dsl;
     }
 }

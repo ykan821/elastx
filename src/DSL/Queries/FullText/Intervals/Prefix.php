@@ -19,24 +19,24 @@ class Prefix extends Node
      * Beginning characters of terms you wish to find in
      * the top-level field.
      *
-     * @param string $prefix
+     * @param string $value
      * @return static
      */
-    public function prefix(string $prefix): static
+    public function prefix(string $value): static
     {
-        return $this->addProperty('prefix', $prefix);
+        return $this->addProperty('prefix', $value);
     }
 
     /**
      * Analyzer used to normalize the prefix. Defaults to
      * the top-level field's analyzer.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer(string $analyzer): static
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
@@ -44,11 +44,11 @@ class Prefix extends Node
      * than the top-level field. The prefix is normalized using the search
      * analyzer from this field.
      *
-     * @param string $userField
+     * @param string $value
      * @return static
      */
-    public function useField(string $userField): static
+    public function useField(string $value): static
     {
-        return $this->addProperty('use_field', $userField);
+        return $this->addProperty('use_field', $value);
     }
 }

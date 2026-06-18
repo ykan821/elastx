@@ -24,7 +24,7 @@ trait Specialized
      * @param mixed $distanceFeature
      * @return $this
      */
-    public function distanceFeature($distanceFeature)
+    public function distanceFeature($distanceFeature): static
     {
         return $this->addQuery(DistanceFeature::create($distanceFeature));
     }
@@ -35,7 +35,7 @@ trait Specialized
      * @param mixed $moreLikeThis
      * @return $this
      */
-    public function moreLikeThis($moreLikeThis)
+    public function moreLikeThis($moreLikeThis): static
     {
         return $this->addQuery(MoreLikeThis::create($moreLikeThis));
     }
@@ -46,7 +46,7 @@ trait Specialized
      * @param mixed $percolate
      * @return $this
      */
-    public function percolate($percolate)
+    public function percolate($percolate): static
     {
         return $this->addQuery(Percolate::create($percolate));
     }
@@ -57,7 +57,7 @@ trait Specialized
      * @param mixed $rankFeature
      * @return $this
      */
-    public function rankFeature($rankFeature)
+    public function rankFeature($rankFeature): static
     {
         return $this->addQuery(RankFeature::create($rankFeature));
     }
@@ -68,7 +68,7 @@ trait Specialized
      * @param mixed $script
      * @return $this
      */
-    public function script($script)
+    public function script($script): static
     {
         return $this->addQuery(Script::create($script));
     }
@@ -79,7 +79,7 @@ trait Specialized
      * @param mixed $scriptScore
      * @return $this
      */
-    public function scriptScore($scriptScore)
+    public function scriptScore($scriptScore): static
     {
         return $this->addQuery(ScriptScore::create($scriptScore));
     }
@@ -90,7 +90,7 @@ trait Specialized
      * @param mixed $wrapper
      * @return $this
      */
-    public function wrapper($wrapper)
+    public function wrapper($wrapper): static
     {
         return $this->addQuery(Wrapper::create($wrapper));
     }
@@ -101,7 +101,7 @@ trait Specialized
      * @param mixed $pinned
      * @return $this
      */
-    public function pinned($pinned)
+    public function pinned($pinned): static
     {
         return $this->addQuery(Pinned::create($pinned));
     }

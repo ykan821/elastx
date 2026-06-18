@@ -26,22 +26,22 @@ class Prefix extends Node
     /**
      * Method used to rewrite the query. For valid values and more information, see the rewrite parameter.
      *
-     * @param string $rewrite
+     * @param string $value
      * @return static
      */
-    public function rewrite(string $rewrite): static
+    public function rewrite(string $value): static
     {
-        return $this->addProperty('rewrite', $rewrite);
+        return $this->addProperty('rewrite', $value);
     }
 
     /**
      * Allows ASCII case insensitive matching of the value with the indexed field values when set to true. Default is false which means the case sensitivity of matching depends on the underlying field’s mapping.
      *
-     * @param bool $caseInsensitive
+     * @param bool $value
      * @return static
      */
-    public function caseInsensitive(bool $caseInsensitive): static
+    public function caseInsensitive(bool $value): static
     {
-        return $this->addProperty('case_insensitive', $caseInsensitive);
+        return $this->addProperty('case_insensitive', $value);
     }
 }

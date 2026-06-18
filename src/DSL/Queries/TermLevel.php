@@ -34,7 +34,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function fuzzy($field, $value = null)
+    public function fuzzy($field, $value = null): static
     {
         return $this->addQuery(Fuzzy::create($field, $value));
     }
@@ -52,7 +52,7 @@ trait TermLevel
      * @param mixed $field
      * @return $this
      */
-    public function exists($field)
+    public function exists($field): static
     {
         return $this->addQuery(Exists::create($field));
     }
@@ -63,7 +63,7 @@ trait TermLevel
      * @param mixed $ids
      * @return $this
      */
-    public function ids($ids)
+    public function ids($ids): static
     {
         if (is_array($ids) && !isset($ids['values'])) {
             $ids = ['values' => $ids];
@@ -78,7 +78,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function prefix($field, $value = null)
+    public function prefix($field, $value = null): static
     {
         return $this->addQuery(Prefix::create($field, $value));
     }
@@ -93,7 +93,7 @@ trait TermLevel
      * @param callable|array<string, mixed> $value
      * @return $this
      */
-    public function range($field, $value = null)
+    public function range($field, $value = null): static
     {
         return $this->addQuery(Range::create($field, $value));
     }
@@ -105,7 +105,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function regexp($field, $value = null)
+    public function regexp($field, $value = null): static
     {
         return $this->addQuery(Regexp::create($field, $value));
     }
@@ -119,7 +119,7 @@ trait TermLevel
      * @param callable|string|array<string, mixed> $value
      * @return $this
      */
-    public function term($field, $value = null)
+    public function term($field, $value = null): static
     {
         return $this->addQuery(Term::create($field, $value));
     }
@@ -134,7 +134,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function terms($field, $value = null)
+    public function terms($field, $value = null): static
     {
         return $this->addQuery(Terms::create($field, $value));
     }
@@ -151,7 +151,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function termsSet($field, $value = null)
+    public function termsSet($field, $value = null): static
     {
         return $this->addQuery(TermsSet::create($field, $value));
     }
@@ -165,7 +165,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function wildcard($field, $value = null)
+    public function wildcard($field, $value = null): static
     {
         return $this->addQuery(Wildcard::create($field, $value));
     }

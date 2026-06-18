@@ -11,65 +11,65 @@ class MultiTerms extends Node
     protected string $_key = 'multi_terms';
 
     /**
-     * @param mixed $terms
+     * @param mixed $value
      * @return static
      */
-    public function terms($terms): static
+    public function terms($value): static
     {
-        return $this->addProperty('terms', $terms, true);
+        return $this->addProperty('terms', $value, true);
     }
 
     /**
-     * @param mixed $order
+     * @param mixed $value
      * @return static
      */
-    public function order($order): static
+    public function order($value): static
     {
-        return $this->addProperty('order', $order);
+        return $this->addProperty('order', $value);
     }
 
     /**
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size(int $size): static
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 
     /**
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize(int $shardSize): static
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 
     /**
-     * @param int $minDocCount
+     * @param int $value
      * @return static
      */
-    public function minDocCount(int $minDocCount): static
+    public function minDocCount(int $value): static
     {
-        return $this->addProperty('min_doc_count', $minDocCount);
+        return $this->addProperty('min_doc_count', $value);
     }
 
     /**
-     * @param int $shardMinDocCount
+     * @param int $value
      * @return static
      */
-    public function shardMinDocCount(int $shardMinDocCount): static
+    public function shardMinDocCount(int $value): static
     {
-        return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
+        return $this->addProperty('shard_min_doc_count', $value);
     }
 
     /**
-     * @param string $collectMode
+     * @param string $value
      * @return static
      */
-    public function collectMode(string $collectMode): static
+    public function collectMode(string $value): static
     {
-        return $this->addProperty('collect_mode', $collectMode);
+        return $this->addProperty('collect_mode', $value);
     }
 }

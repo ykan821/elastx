@@ -16,11 +16,11 @@ class Missing extends Node
     /**
      * Value to treat as missing for the field.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }

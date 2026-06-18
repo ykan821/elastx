@@ -31,11 +31,11 @@ class AdjacencyMatrix extends Node
     /**
      * Separator used to concatenate filter names. Defaults to &.
      *
-     * @param string $separator
+     * @param string $value
      * @return static
      */
-    public function separator(string $separator): static
+    public function separator(string $value): static
     {
-        return $this->addProperty('separator', $separator);
+        return $this->addProperty('separator', $value);
     }
 }

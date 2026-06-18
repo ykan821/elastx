@@ -37,47 +37,47 @@ class Nested extends Node
     /**
      * Path to the nested object you wish to search.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function path(string $path): static
+    public function path(string $value): static
     {
-        return $this->addProperty('path', $path);
+        return $this->addProperty('path', $value);
     }
 
     /**
      * Query you wish to run on nested objects in the path.
      * If an object matches the search, the nested query returns the root parent document.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query): static
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 
     /**
      * Indicates how scores for matching child objects affect the root parent
      * document's relevance score. Valid values: avg (default), max, min, none, sum.
      *
-     * @param string $scoreMode
+     * @param string $value
      * @return static
      */
-    public function scoreMode(string $scoreMode): static
+    public function scoreMode(string $value): static
     {
-        return $this->addProperty('score_mode', $scoreMode);
+        return $this->addProperty('score_mode', $value);
     }
 
     /**
      * Indicates whether to ignore an unmapped path and not return any
      * documents instead of an error. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped(bool $ignoreUnmapped): static
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

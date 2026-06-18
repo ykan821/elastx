@@ -19,48 +19,48 @@ class HasChild extends Node
     /**
      * Name of the child relationship mapped for the join field.
      *
-     * @param string $type
+     * @param string $value
      * @return static
      */
-    public function type(string $type): static
+    public function type(string $value): static
     {
-        return $this->addProperty('type', $type);
+        return $this->addProperty('type', $value);
     }
 
     /**
      * Query you wish to run on child documents of the type field.
      * If a child document matches the search, the query returns the parent document.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query): static
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 
     /**
      * Indicates whether to ignore an unmapped type and not return any
      * documents instead of an error. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped(bool $ignoreUnmapped): static
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 
     /**
      * Maximum number of child documents that match the query allowed for a
      * returned parent document. If the parent document exceeds this limit, it is excluded from the search results.
      *
-     * @param int $maxChildren
+     * @param int $value
      * @return static
      */
-    public function maxChildren(int $maxChildren): static
+    public function maxChildren(int $value): static
     {
-        return $this->addProperty('max_children', $maxChildren);
+        return $this->addProperty('max_children', $value);
     }
 
     /**
@@ -68,23 +68,23 @@ class HasChild extends Node
      * the query for a returned parent document. If the parent document does not meet this limit,
      * it is excluded from the search results.
      *
-     * @param int $minChildren
+     * @param int $value
      * @return static
      */
-    public function minChildren(int $minChildren): static
+    public function minChildren(int $value): static
     {
-        return $this->addProperty('min_children', $minChildren);
+        return $this->addProperty('min_children', $value);
     }
 
     /**
      * Indicates how scores for matching child documents affect the root parent
      * document's relevance score. Valid values: none (default), avg, max, min, sum.
      *
-     * @param string $scoreMode
+     * @param string $value
      * @return static
      */
-    public function scoreMode(string $scoreMode): static
+    public function scoreMode(string $value): static
     {
-        return $this->addProperty('score_mode', $scoreMode);
+        return $this->addProperty('score_mode', $value);
     }
 }

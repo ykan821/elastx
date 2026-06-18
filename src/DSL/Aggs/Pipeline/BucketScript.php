@@ -16,44 +16,44 @@ class BucketScript extends Node
     /**
      * Path to the buckets to use in the script.
      *
-     * @param mixed $path
+     * @param mixed $value
      * @return static
      */
-    public function bucketsPath($path): static
+    public function bucketsPath($value): static
     {
-        return $this->addProperty('buckets_path', $path);
+        return $this->addProperty('buckets_path', $value);
     }
 
     /**
      * The script to execute for each bucket.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 
     /**
      * Policy to apply when gaps are found in the data.
      *
-     * @param string $policy
+     * @param string $value
      * @return static
      */
-    public function gapPolicy(string $policy): static
+    public function gapPolicy(string $value): static
     {
-        return $this->addProperty('gap_policy', $policy);
+        return $this->addProperty('gap_policy', $value);
     }
 
     /**
      * Format for the output value.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format(string $format): static
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 }

@@ -21,12 +21,12 @@ class TermsSet extends Node
      *
      * The required number of matching terms is defined in the minimum_should_match, minimum_should_match_field or minimum_should_match_script parameters. Exactly one of these parameters must be provided.
      *
-     * @param array<int, string|int|float|bool> $terms
+     * @param array<int, string|int|float|bool> $value
      * @return static
      */
-    public function terms(array $terms): static
+    public function terms(array $value): static
     {
-        return $this->addProperty('terms', $terms);
+        return $this->addProperty('terms', $value);
     }
 
     /**
@@ -34,21 +34,21 @@ class TermsSet extends Node
      *
      * For valid values, see minimum_should_match parameter.
      *
-     * @param int|string $minimumShouldMatch
+     * @param int|string $value
      * @return static
      */
-    public function minimumShouldMatch(int|string $minimumShouldMatch): static
+    public function minimumShouldMatch(int|string $value): static
     {
-        return $this->addProperty('minimum_should_match', $minimumShouldMatch);
+        return $this->addProperty('minimum_should_match', $value);
     }
 
     /**
-     * @param string $field
+     * @param string $value
      * @return static
      */
-    public function minimumShouldMatchField(string $field): static
+    public function minimumShouldMatchField(string $value): static
     {
-        return $this->addProperty('minimum_should_match_field', $field);
+        return $this->addProperty('minimum_should_match_field', $value);
     }
 
     /**
@@ -58,11 +58,11 @@ class TermsSet extends Node
      *
      * For an example query using the minimum_should_match_script parameter, see How to use the minimum_should_match_script parameter.
      *
-     * @param mixed $minimumShouldMatchScript
+     * @param mixed $value
      * @return static
      */
-    public function minimumShouldMatchScript($minimumShouldMatchScript): static
+    public function minimumShouldMatchScript($value): static
     {
-        return $this->addProperty('minimum_should_match_script', Script::create($minimumShouldMatchScript));
+        return $this->addProperty('minimum_should_match_script', Script::create($value));
     }
 }

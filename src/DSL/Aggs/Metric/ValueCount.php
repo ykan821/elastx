@@ -16,11 +16,11 @@ class ValueCount extends Node
     /**
      * The script to use for the aggregation.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 }

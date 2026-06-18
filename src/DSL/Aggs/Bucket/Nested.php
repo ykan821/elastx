@@ -16,22 +16,22 @@ class Nested extends Node
     /**
      * Path to the nested object to aggregate on.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function path(string $path): static
+    public function path(string $value): static
     {
-        return $this->addProperty('path', $path);
+        return $this->addProperty('path', $value);
     }
 
     /**
      * Whether to return an empty bucket instead of an error for unmapped nested types.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped(bool $ignoreUnmapped): static
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

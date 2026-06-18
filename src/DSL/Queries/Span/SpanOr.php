@@ -20,11 +20,11 @@ class SpanOr extends Node
      * The list of span query clauses to combine.
      * Supports multiple calls to incrementally build.
      *
-     * @param mixed $clauses
+     * @param mixed $value
      * @return static
      */
-    public function clauses($clauses): static
+    public function clauses($value): static
     {
-        return $this->addClause('clauses', $clauses);
+        return $this->addClause('clauses', $value);
     }
 }

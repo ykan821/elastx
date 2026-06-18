@@ -16,33 +16,33 @@ class GeohexGrid extends Node
     /**
      * H3 resolution for grid cells.
      *
-     * @param int $precision
+     * @param int $value
      * @return static
      */
-    public function precision(int $precision): static
+    public function precision(int $value): static
     {
-        return $this->addProperty('precision', $precision);
+        return $this->addProperty('precision', $value);
     }
 
     /**
      * Maximum number of hex buckets to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size(int $size): static
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 
     /**
      * Number of hex buckets to return from each shard.
      *
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize(int $shardSize): static
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 }

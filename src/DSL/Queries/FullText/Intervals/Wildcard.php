@@ -19,24 +19,24 @@ class Wildcard extends Node
      * Wildcard pattern used to find matching terms.
      * Supports ? (any single character) and * (zero or more characters).
      *
-     * @param string $pattern
+     * @param string $value
      * @return static
      */
-    public function pattern(string $pattern): static
+    public function pattern(string $value): static
     {
-        return $this->addProperty('pattern', $pattern);
+        return $this->addProperty('pattern', $value);
     }
 
     /**
      * Analyzer used to normalize the pattern. Defaults to
      * the top-level field's analyzer.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer(string $analyzer): static
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
@@ -44,11 +44,11 @@ class Wildcard extends Node
      * than the top-level field. The pattern is normalized using the search
      * analyzer from this field.
      *
-     * @param string $useField
+     * @param string $value
      * @return static
      */
-    public function useField(string $useField): static
+    public function useField(string $value): static
     {
-        return $this->addProperty('use_field', $useField);
+        return $this->addProperty('use_field', $value);
     }
 }

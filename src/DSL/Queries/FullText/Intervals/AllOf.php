@@ -18,33 +18,33 @@ class AllOf extends Node
      * An array of rules to combine. All rules
      * must produce a match in a document for the overall source to match.
      *
-     * @param mixed $intervals
+     * @param mixed $value
      * @return static
      */
-    public function intervals($intervals): static
+    public function intervals($value): static
     {
-        $intervals = Intervals::create($intervals)
+        $value = Intervals::create($value)
             ->fieldKeyed(false)
             ->multi(true);
-        return $this->addProperty('intervals', $intervals);
+        return $this->addProperty('intervals', $value);
     }
 
     /**
      * Append an interval rule. Supports multiple calls to incrementally build.
      *
-     * @param mixed $interval
+     * @param mixed $value
      * @return static
      */
-    public function addInterval($interval): static
+    public function addInterval($value): static
     {
         if (!isset($this->_properties['intervals'])) {
             $this->_properties['intervals'] = (new Intervals())->fieldKeyed(false)->multi(true);
         }
         $target = $this->_properties['intervals'];
-        if ($interval instanceof \Closure) {
-            $interval($target);
-        } elseif ($interval instanceof Node) {
-            $target->addQuery($interval);
+        if ($value instanceof \Closure) {
+            $value($target);
+        } elseif ($value instanceof Node) {
+            $target->addQuery($value);
         }
         return $this;
     }
@@ -54,35 +54,35 @@ class AllOf extends Node
      * terms. Intervals produced by the rules further apart than this are not
      * considered matches. Defaults to -1 (no restriction).
      *
-     * @param int $maxGaps
+     * @param int $value
      * @return static
      */
-    public function maxGaps(int $maxGaps): static
+    public function maxGaps(int $value): static
     {
-        return $this->addProperty('max_gaps', $maxGaps);
+        return $this->addProperty('max_gaps', $value);
     }
 
     /**
      * If true, intervals produced by the rules should
      * appear in the order in which they are specified. Defaults to false.
      *
-     * @param bool $ordered
+     * @param bool $value
      * @return static
      */
-    public function ordered(bool $ordered): static
+    public function ordered(bool $value): static
     {
-        return $this->addProperty('ordered', $ordered);
+        return $this->addProperty('ordered', $value);
     }
 
     /**
      * Rule used to filter returned
      * intervals.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter): static
+    public function filter($value): static
     {
-        return $this->addProperty('filter', $filter);
+        return $this->addProperty('filter', $value);
     }
 }

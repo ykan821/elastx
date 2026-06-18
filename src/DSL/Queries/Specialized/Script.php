@@ -16,11 +16,11 @@ class Script extends Node
     /**
      * The script to use as the query filter.
      *
-     * @param mixed $script
+     * @param mixed $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', \ElasticKit\DSL\Queries\Script::create($script));
+        return $this->addProperty('script', \ElasticKit\DSL\Queries\Script::create($value));
     }
 }

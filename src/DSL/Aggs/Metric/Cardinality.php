@@ -16,33 +16,33 @@ class Cardinality extends Node
     /**
      * Controls the precision of the count.
      *
-     * @param int $threshold
+     * @param int $value
      * @return static
      */
-    public function precisionThreshold(int $threshold): static
+    public function precisionThreshold(int $value): static
     {
-        return $this->addProperty('precision_threshold', $threshold);
+        return $this->addProperty('precision_threshold', $value);
     }
 
     /**
      * The value to use when the field is missing.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
      * The script to use for the aggregation.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script): static
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 }

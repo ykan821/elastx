@@ -17,22 +17,22 @@ class SpanFirst extends Node
     /**
      * The inner span query whose matches are restricted.
      *
-     * @param mixed $match
+     * @param mixed $value
      * @return static
      */
-    public function match($match): static
+    public function match($value): static
     {
-        return $this->addProperty('match', Query::create($match));
+        return $this->addProperty('match', Query::create($value));
     }
 
     /**
      * The maximum end position permitted for the span match.
      *
-     * @param int $end
+     * @param int $value
      * @return static
      */
-    public function end(int $end): static
+    public function end(int $value): static
     {
-        return $this->addProperty('end', $end);
+        return $this->addProperty('end', $value);
     }
 }

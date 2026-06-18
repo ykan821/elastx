@@ -18,7 +18,7 @@ class Intervals extends Node
     protected bool $_fieldKeyed = true;
 
     /** @var array<int, mixed> */
-    protected $_intervals = [];
+    protected array $_intervals = [];
 
     /**
      * Add a match rule that matches analyzed text.
@@ -36,24 +36,24 @@ class Intervals extends Node
      * Add a prefix rule that matches terms that start with a specified set
      * of characters.
      *
-     * @param mixed $prefix
+     * @param mixed $value
      * @return static
      */
-    public function prefix($prefix): static
+    public function prefix($value): static
     {
-        $this->_intervals[] = Intervals\Prefix::create($prefix);
+        $this->_intervals[] = Intervals\Prefix::create($value);
         return $this;
     }
 
     /**
      * Add a wildcard rule that matches terms using a wildcard pattern.
      *
-     * @param mixed $wildcard
+     * @param mixed $value
      * @return static
      */
-    public function wildcard($wildcard): static
+    public function wildcard($value): static
     {
-        $this->_intervals[] = Intervals\Wildcard::create($wildcard);
+        $this->_intervals[] = Intervals\Wildcard::create($value);
         return $this;
     }
 
@@ -61,24 +61,24 @@ class Intervals extends Node
      * Add a fuzzy rule that matches terms that are similar to the provided
      * term, within a defined edit distance.
      *
-     * @param mixed $fuzzy
+     * @param mixed $value
      * @return static
      */
-    public function fuzzy($fuzzy): static
+    public function fuzzy($value): static
     {
-        $this->_intervals[] = Intervals\Fuzzy::create($fuzzy);
+        $this->_intervals[] = Intervals\Fuzzy::create($value);
         return $this;
     }
 
     /**
      * Add a range rule that matches terms that fall within a specified range.
      *
-     * @param mixed $range
+     * @param mixed $value
      * @return static
      */
-    public function range($range): static
+    public function range($value): static
     {
-        $this->_intervals[] = Intervals\Range::create($range);
+        $this->_intervals[] = Intervals\Range::create($value);
         return $this;
     }
 
@@ -86,12 +86,12 @@ class Intervals extends Node
      * Add an all_of rule that returns matches that span a combination of
      * other rules.
      *
-     * @param mixed $allOf
+     * @param mixed $value
      * @return static
      */
-    public function allOf($allOf): static
+    public function allOf($value): static
     {
-        $this->_intervals[] = Intervals\AllOf::create($allOf);
+        $this->_intervals[] = Intervals\AllOf::create($value);
         return $this;
     }
 
@@ -99,12 +99,12 @@ class Intervals extends Node
      * Add an any_of rule that returns intervals produced by any of its
      * sub-rules.
      *
-     * @param mixed $anyOf
+     * @param mixed $value
      * @return static
      */
-    public function anyOf($anyOf): static
+    public function anyOf($value): static
     {
-        $this->_intervals[] = Intervals\AnyOf::create($anyOf);
+        $this->_intervals[] = Intervals\AnyOf::create($value);
         return $this;
     }
 

@@ -20,47 +20,47 @@ class Rescore extends Node
     /**
      * Number of documents to rescore per shard.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function windowSize(int $size): static
+    public function windowSize(int $value): static
     {
-        return $this->addProperty('window_size', $size);
+        return $this->addProperty('window_size', $value);
     }
 
     /**
      * The query to use for rescoring.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query): static
+    public function query($value): static
     {
-        $this->_properties['query']['rescore_query'] = Query::create($query);
+        $this->_properties['query']['rescore_query'] = Query::create($value);
         return $this;
     }
 
     /**
      * Weight of the rescore query. Defaults to 1.0.
      *
-     * @param float $weight
+     * @param float $value
      * @return static
      */
-    public function rescoreQueryWeight(float $weight): static
+    public function rescoreQueryWeight(float $value): static
     {
-        $this->_properties['query']['rescore_query_weight'] = $weight;
+        $this->_properties['query']['rescore_query_weight'] = $value;
         return $this;
     }
 
     /**
      * Weight of the original query. Defaults to 1.0.
      *
-     * @param float $weight
+     * @param float $value
      * @return static
      */
-    public function queryWeight(float $weight): static
+    public function queryWeight(float $value): static
     {
-        $this->_properties['query']['query_weight'] = $weight;
+        $this->_properties['query']['query_weight'] = $value;
         return $this;
     }
 
@@ -68,12 +68,12 @@ class Rescore extends Node
      * How scores are combined. Valid values: total,
      * multiply, max, avg. Defaults to total.
      *
-     * @param string $mode
+     * @param string $value
      * @return static
      */
-    public function scoreMode(string $mode): static
+    public function scoreMode(string $value): static
     {
-        $this->_properties['query']['score_mode'] = $mode;
+        $this->_properties['query']['score_mode'] = $value;
         return $this;
     }
 

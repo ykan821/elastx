@@ -16,88 +16,88 @@ class SignificantText extends Node
     /**
      * Maximum number of significant terms to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size(int $size): static
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 
     /**
      * Number of candidate terms to return from each shard.
      *
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize(int $shardSize): static
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 
     /**
      * Minimum document count for a term to be returned.
      *
-     * @param int $minDocCount
+     * @param int $value
      * @return static
      */
-    public function minDocCount(int $minDocCount): static
+    public function minDocCount(int $value): static
     {
-        return $this->addProperty('min_doc_count', $minDocCount);
+        return $this->addProperty('min_doc_count', $value);
     }
 
     /**
      * Minimum document count for a term to be considered on each shard.
      *
-     * @param int $shardMinDocCount
+     * @param int $value
      * @return static
      */
-    public function shardMinDocCount(int $shardMinDocCount): static
+    public function shardMinDocCount(int $value): static
     {
-        return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
+        return $this->addProperty('shard_min_doc_count', $value);
     }
 
     /**
      * Terms to include in the aggregation.
      *
-     * @param mixed $include
+     * @param mixed $value
      * @return static
      */
-    public function include($include): static
+    public function include($value): static
     {
-        return $this->addProperty('include', $include);
+        return $this->addProperty('include', $value);
     }
 
     /**
      * Terms to exclude from the aggregation.
      *
-     * @param mixed $exclude
+     * @param mixed $value
      * @return static
      */
-    public function exclude($exclude): static
+    public function exclude($value): static
     {
-        return $this->addProperty('exclude', $exclude);
+        return $this->addProperty('exclude', $value);
     }
 
     /**
      * Query to filter the background document set for significance calculation.
      *
-     * @param mixed $backgroundFilter
+     * @param mixed $value
      * @return static
      */
-    public function backgroundFilter($backgroundFilter): static
+    public function backgroundFilter($value): static
     {
-        return $this->addProperty('background_filter', $backgroundFilter);
+        return $this->addProperty('background_filter', $value);
     }
 
     /**
      * Whether to filter duplicate text before analysis.
      *
-     * @param bool $filter
+     * @param bool $value
      * @return static
      */
-    public function filterDuplicateText(bool $filter): static
+    public function filterDuplicateText(bool $value): static
     {
-        return $this->addProperty('filter_duplicate_text', $filter);
+        return $this->addProperty('filter_duplicate_text', $value);
     }
 }

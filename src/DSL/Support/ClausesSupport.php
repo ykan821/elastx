@@ -22,7 +22,7 @@ trait ClausesSupport
      * @param mixed $clause
      * @return static
      */
-    protected function addClause(string $key, $clause)
+    protected function addClause(string $key, $clause): static
     {
         if (!isset($this->_properties[$key])) {
             $this->_properties[$key] = (new Query())->multi(true);

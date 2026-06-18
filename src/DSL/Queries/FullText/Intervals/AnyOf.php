@@ -17,33 +17,33 @@ class AnyOf extends Node
     /**
      * An array of rules to match.
      *
-     * @param mixed $intervals
+     * @param mixed $value
      * @return static
      */
-    public function intervals($intervals): static
+    public function intervals($value): static
     {
-        $intervals = Intervals::create($intervals)
+        $value = Intervals::create($value)
             ->fieldKeyed(false)
             ->multi(true);
-        return $this->addProperty('intervals', $intervals);
+        return $this->addProperty('intervals', $value);
     }
 
     /**
      * Append an interval rule. Supports multiple calls to incrementally build.
      *
-     * @param mixed $interval
+     * @param mixed $value
      * @return static
      */
-    public function addInterval($interval): static
+    public function addInterval($value): static
     {
         if (!isset($this->_properties['intervals'])) {
             $this->_properties['intervals'] = (new Intervals())->fieldKeyed(false)->multi(true);
         }
         $target = $this->_properties['intervals'];
-        if ($interval instanceof \Closure) {
-            $interval($target);
-        } elseif ($interval instanceof Node) {
-            $target->addQuery($interval);
+        if ($value instanceof \Closure) {
+            $value($target);
+        } elseif ($value instanceof Node) {
+            $target->addQuery($value);
         }
         return $this;
     }
@@ -52,11 +52,11 @@ class AnyOf extends Node
      * Rule used to filter returned
      * intervals.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter): static
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Filter::create($filter));
+        return $this->addProperty('filter', Filter::create($value));
     }
 }

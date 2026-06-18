@@ -25,12 +25,12 @@ class GeoDistance extends Node
      * Points which fall into this circle are considered to be matches.
      * The distance can be specified in various units.
      *
-     * @param string $distance
+     * @param string $value
      * @return static
      */
-    public function distance(string $distance): static
+    public function distance(string $value): static
     {
-        return $this->addProperty('distance', $distance);
+        return $this->addProperty('distance', $value);
     }
 
     /**
@@ -50,36 +50,34 @@ class GeoDistance extends Node
      * How to compute the distance. Can either be arc (default) or
      * plane (faster, but inaccurate on long distances and close to the poles).
      *
-     * @param string $distanceType
+     * @param string $value
      * @return static
      */
-    public function distanceType(string $distanceType): static
+    public function distanceType(string $value): static
     {
-        return $this->addProperty('distance_type', $distanceType);
+        return $this->addProperty('distance_type', $value);
     }
 
     /**
      * Optional name field to identify the query.
      *
-     * @param string $_name
+     * @param string $value
      * @return static
-     * @SuppressWarnings(PHPMD.CamelCaseParameterName)
-     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
-    public function _name(string $_name): static
+    public function _name(string $value): static
     {
-        return $this->addProperty('_name', $_name);
+        return $this->addProperty('_name', $value);
     }
 
     /**
      * Set to IGNORE_MALFORMED to accept geo points with invalid latitude or longitude,
      * set to COERCE to additionally try and infer correct coordinates. Defaults to STRICT.
      *
-     * @param string $validationMethod
+     * @param string $value
      * @return static
      */
-    public function validationMethod(string $validationMethod): static
+    public function validationMethod(string $value): static
     {
-        return $this->addProperty('validation_method', $validationMethod);
+        return $this->addProperty('validation_method', $value);
     }
 }

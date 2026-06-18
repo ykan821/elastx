@@ -16,121 +16,121 @@ class Terms extends Node
     /**
      * Maximum number of term buckets to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size(int $size): static
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 
     /**
      * Sort order for term buckets.
      *
-     * @param mixed $order
+     * @param mixed $value
      * @return static
      */
-    public function order($order): static
+    public function order($value): static
     {
-        return $this->addProperty('order', $order);
+        return $this->addProperty('order', $value);
     }
 
     /**
      * Minimum document count for a term bucket to be returned.
      *
-     * @param int $minDocCount
+     * @param int $value
      * @return static
      */
-    public function minDocCount(int $minDocCount): static
+    public function minDocCount(int $value): static
     {
-        return $this->addProperty('min_doc_count', $minDocCount);
+        return $this->addProperty('min_doc_count', $value);
     }
 
     /**
      * Number of term buckets to return from each shard.
      *
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize(int $shardSize): static
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 
     /**
      * Whether to show document count error for each term.
      *
-     * @param bool $show
+     * @param bool $value
      * @return static
      */
-    public function showTermDocCountError(bool $show): static
+    public function showTermDocCountError(bool $value): static
     {
-        return $this->addProperty('show_term_doc_count_error', $show);
+        return $this->addProperty('show_term_doc_count_error', $value);
     }
 
     /**
      * Minimum document count for a term to be considered on each shard.
      *
-     * @param int $shardMinDocCount
+     * @param int $value
      * @return static
      */
-    public function shardMinDocCount(int $shardMinDocCount): static
+    public function shardMinDocCount(int $value): static
     {
-        return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
+        return $this->addProperty('shard_min_doc_count', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing): static
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
      * Collection mode for the aggregation (breadth_first or depth_first).
      *
-     * @param string $collectMode
+     * @param string $value
      * @return static
      */
-    public function collectMode(string $collectMode): static
+    public function collectMode(string $value): static
     {
-        return $this->addProperty('collect_mode', $collectMode);
+        return $this->addProperty('collect_mode', $value);
     }
 
     /**
      * Terms to include in the aggregation.
      *
-     * @param mixed $include
+     * @param mixed $value
      * @return static
      */
-    public function include($include): static
+    public function include($value): static
     {
-        return $this->addProperty('include', $include);
+        return $this->addProperty('include', $value);
     }
 
     /**
      * Terms to exclude from the aggregation.
      *
-     * @param mixed $exclude
+     * @param mixed $value
      * @return static
      */
-    public function exclude($exclude): static
+    public function exclude($value): static
     {
-        return $this->addProperty('exclude', $exclude);
+        return $this->addProperty('exclude', $value);
     }
 
     /**
      * Execution hint for the aggregation mechanism.
      *
-     * @param string $executionHint
+     * @param string $value
      * @return static
      */
-    public function executionHint(string $executionHint): static
+    public function executionHint(string $value): static
     {
-        return $this->addProperty('execution_hint', $executionHint);
+        return $this->addProperty('execution_hint', $value);
     }
 }

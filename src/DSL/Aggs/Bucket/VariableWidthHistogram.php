@@ -11,20 +11,20 @@ class VariableWidthHistogram extends Node
     protected string $_key = 'variable_width_histogram';
 
     /**
-     * @param int $buckets
+     * @param int $value
      * @return static
      */
-    public function buckets(int $buckets): static
+    public function buckets(int $value): static
     {
-        return $this->addProperty('buckets', $buckets);
+        return $this->addProperty('buckets', $value);
     }
 
     /**
-     * @param int $shardBuckets
+     * @param int $value
      * @return static
      */
-    public function shardBuckets(int $shardBuckets): static
+    public function shardBuckets(int $value): static
     {
-        return $this->addProperty('shard_buckets', $shardBuckets);
+        return $this->addProperty('shard_buckets', $value);
     }
 }

@@ -18,45 +18,45 @@ class Range extends Node
     /**
      * Greater than or equal to.
      *
-     * @param string|int|float|bool $gte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gte(string|int|float|bool $gte): static
+    public function gte(string|int|float|bool $value): static
     {
-        return $this->addProperty('gte', $gte);
+        return $this->addProperty('gte', $value);
     }
 
     /**
      * Greater than.
      *
-     * @param string|int|float|bool $gt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gt(string|int|float|bool $gt): static
+    public function gt(string|int|float|bool $value): static
     {
-        return $this->addProperty('gt', $gt);
+        return $this->addProperty('gt', $value);
     }
 
     /**
      * Less than or equal to.
      *
-     * @param string|int|float|bool $lte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lte(string|int|float|bool $lte): static
+    public function lte(string|int|float|bool $value): static
     {
-        return $this->addProperty('lte', $lte);
+        return $this->addProperty('lte', $value);
     }
 
     /**
      * Less than.
      *
-     * @param string|int|float|bool $lt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lt(string|int|float|bool $lt): static
+    public function lt(string|int|float|bool $value): static
     {
-        return $this->addProperty('lt', $lt);
+        return $this->addProperty('lt', $value);
     }
 
     /**
@@ -68,12 +68,12 @@ class Range extends Node
      *
      * If a format or date value is incomplete, the range query replaces any missing components with default values. See Missing date components.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format(string $format): static
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
@@ -86,22 +86,22 @@ class Range extends Node
      * WITHIN
      *    Matches documents with a range field value entirely within the query’s range.
      *
-     * @param string $relation
+     * @param string $value
      * @return static
      */
-    public function relation(string $relation): static
+    public function relation(string $value): static
     {
-        return $this->addProperty('relation', $relation);
+        return $this->addProperty('relation', $value);
     }
 
     /**
      * Coordinated Universal Time (UTC) offset or IANA time zone used to convert date values in the query to UTC.
      *
-     * @param string $timeZone
+     * @param string $value
      * @return static
      */
-    public function timeZone(string $timeZone): static
+    public function timeZone(string $value): static
     {
-        return $this->addProperty('time_zone', $timeZone);
+        return $this->addProperty('time_zone', $value);
     }
 }

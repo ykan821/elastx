@@ -16,11 +16,11 @@ class Parent_ extends Node
     /**
      * The child type that identifies the parent documents to aggregate on.
      *
-     * @param string $type
+     * @param string $value
      * @return static
      */
-    public function type(string $type): static
+    public function type(string $value): static
     {
-        return $this->addProperty('type', $type);
+        return $this->addProperty('type', $value);
     }
 }

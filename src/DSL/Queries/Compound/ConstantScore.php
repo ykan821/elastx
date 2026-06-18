@@ -17,11 +17,11 @@ class ConstantScore extends Node
     /**
      * Filter query you wish to run. Any returned documents must match this query.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function filter($query): static
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Query::create($query));
+        return $this->addProperty('filter', Query::create($value));
     }
 }

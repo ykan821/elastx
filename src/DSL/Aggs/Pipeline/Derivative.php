@@ -16,44 +16,44 @@ class Derivative extends Node
     /**
      * Path to the buckets to differentiate.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function bucketsPath(string $path): static
+    public function bucketsPath(string $value): static
     {
-        return $this->addProperty('buckets_path', $path);
+        return $this->addProperty('buckets_path', $value);
     }
 
     /**
      * Policy to apply when gaps are found in the data.
      *
-     * @param string $policy
+     * @param string $value
      * @return static
      */
-    public function gapPolicy(string $policy): static
+    public function gapPolicy(string $value): static
     {
-        return $this->addProperty('gap_policy', $policy);
+        return $this->addProperty('gap_policy', $value);
     }
 
     /**
      * Format for the output value.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format(string $format): static
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * The unit for the derivative when the histogram uses time units.
      *
-     * @param string $unit
+     * @param string $value
      * @return static
      */
-    public function unit(string $unit): static
+    public function unit(string $value): static
     {
-        return $this->addProperty('unit', $unit);
+        return $this->addProperty('unit', $value);
     }
 }

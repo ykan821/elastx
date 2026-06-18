@@ -18,44 +18,44 @@ class Exp extends Node
     /**
      * The point of origin used for calculating distance. Must be a number for numeric fields, date for date fields, and geo point for geo fields.
      *
-     * @param mixed $origin
+     * @param mixed $value
      * @return static
      */
-    public function origin($origin): static
+    public function origin($value): static
     {
-        return $this->addProperty('origin', $origin);
+        return $this->addProperty('origin', $value);
     }
 
     /**
      * Defines the distance from origin + offset at which the computed score will equal the decay parameter.
      *
-     * @param mixed $scale
+     * @param mixed $value
      * @return static
      */
-    public function scale($scale): static
+    public function scale($value): static
     {
-        return $this->addProperty('scale', $scale);
+        return $this->addProperty('scale', $value);
     }
 
     /**
      * If defined, the decay function will only compute for documents with a distance greater than this offset. Defaults to 0.
      *
-     * @param mixed $offset
+     * @param mixed $value
      * @return static
      */
-    public function offset($offset): static
+    public function offset($value): static
     {
-        return $this->addProperty('offset', $offset);
+        return $this->addProperty('offset', $value);
     }
 
     /**
      * Defines how documents are scored at the distance given at scale. Defaults to 0.5.
      *
-     * @param float $decay
+     * @param float $value
      * @return static
      */
-    public function decay(float $decay): static
+    public function decay(float $value): static
     {
-        return $this->addProperty('decay', $decay);
+        return $this->addProperty('decay', $value);
     }
 }

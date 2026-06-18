@@ -21,7 +21,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function avg($params)
+    public function avg($params): static
     {
         return $this->node(Avg::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -32,7 +32,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function sum($params)
+    public function sum($params): static
     {
         return $this->node(Sum::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -43,7 +43,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function min($params)
+    public function min($params): static
     {
         return $this->node(Min::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -54,7 +54,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function max($params)
+    public function max($params): static
     {
         return $this->node(Max::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -65,7 +65,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function cardinality($params)
+    public function cardinality($params): static
     {
         return $this->node(Cardinality::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -76,7 +76,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function valueCount($params)
+    public function valueCount($params): static
     {
         return $this->node(ValueCount::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -87,7 +87,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function stats($params)
+    public function stats($params): static
     {
         return $this->node(Stats::create(is_string($params) ? ['field' => $params] : $params));
     }
@@ -98,7 +98,7 @@ trait Metric
      * @param mixed $params
      * @return static
      */
-    public function extendedStats($params)
+    public function extendedStats($params): static
     {
         return $this->node(ExtendedStats::create(is_string($params) ? ['field' => $params] : $params));
     }

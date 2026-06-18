@@ -19,79 +19,79 @@ class FunctionScore extends Node
      * Controls how the computed scores from multiple functions are combined.
      * Options: multiply (default), sum, avg, first, max, min.
      *
-     * @param string $scoreMode
+     * @param string $value
      * @return static
      */
-    public function scoreMode(string $scoreMode): static
+    public function scoreMode(string $value): static
     {
-        return $this->addProperty('score_mode', $scoreMode);
+        return $this->addProperty('score_mode', $value);
     }
 
     /**
      * Defines how the newly computed function score is combined with the query score.
      * Options: multiply (default), replace, sum, avg, max, min.
      *
-     * @param string $boostMode
+     * @param string $value
      * @return static
      */
-    public function boostMode(string $boostMode): static
+    public function boostMode(string $value): static
     {
-        return $this->addProperty('boost_mode', $boostMode);
+        return $this->addProperty('boost_mode', $value);
     }
 
     /**
      * Excludes documents that do not meet the specified score threshold.
      *
-     * @param float $minScore
+     * @param float $value
      * @return static
      */
-    public function minScore(float $minScore): static
+    public function minScore(float $value): static
     {
-        return $this->addProperty('min_score', $minScore);
+        return $this->addProperty('min_score', $value);
     }
 
     /**
      * Restricts the new score to not exceed the specified limit. Defaults to FLT_MAX.
      *
-     * @param float $maxBoost
+     * @param float $value
      * @return static
      */
-    public function maxBoost(float $maxBoost): static
+    public function maxBoost(float $value): static
     {
-        return $this->addProperty('max_boost', $maxBoost);
+        return $this->addProperty('max_boost', $value);
     }
 
     /**
      * The query to be scored.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query): static
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 
     /**
      * Array of score functions to apply.
      *
-     * @param array<int, mixed> $functions
+     * @param array<int, mixed> $value
      * @return static
      */
-    public function functions(array $functions): static
+    public function functions(array $value): static
     {
-        return $this->addProperty('functions', $functions);
+        return $this->addProperty('functions', $value);
     }
 
     /**
      * Appends a score function to the functions array.
      *
-     * @param mixed $function
+     * @param mixed $value
      * @return static
      */
-    public function addFunction($function): static
+    public function addFunction($value): static
     {
-        return $this->addProperty('functions', Function_::create($function), true);
+        return $this->addProperty('functions', Function_::create($value), true);
     }
 
     /**
