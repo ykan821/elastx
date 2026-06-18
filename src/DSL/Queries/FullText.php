@@ -108,22 +108,22 @@ trait FullText
     /**
      * Add a query_string query.
      *
-     * @param mixed $queryString
+     * @param mixed $value
      * @return $this
      */
-    public function queryString($queryString): static
+    public function queryString($value): static
     {
-        return $this->addQuery(QueryString::create($queryString));
+        return $this->addQuery(QueryString::create($value));
     }
 
     /**
      * Add a simple_query_string query.
      *
-     * @param mixed $simpleQueryString
+     * @param mixed $value
      * @return $this
      */
-    public function simpleQueryString($simpleQueryString): static
+    public function simpleQueryString($value): static
     {
-        return $this->addQuery(SimpleQueryString::create($simpleQueryString));
+        return $this->addQuery(SimpleQueryString::create($value));
     }
 }

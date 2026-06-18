@@ -185,6 +185,8 @@ abstract class Node
     /**
      * Get the Elasticsearch type identifier.
      *
+     * @internal
+     *
      * @return string
      */
     public function key(): string
@@ -216,7 +218,7 @@ abstract class Node
      * @param bool $append
      * @return static
      */
-    public function addProperty($attribute, $value, $append = false): static
+    protected function addProperty($attribute, $value, $append = false): static
     {
         if ($append) {
             $this->_properties[$attribute][] = $value;

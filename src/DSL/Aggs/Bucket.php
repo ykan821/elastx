@@ -41,168 +41,168 @@ trait Bucket
     /**
      * Groups documents by field values into buckets.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function terms($params): static
+    public function terms($value): static
     {
-        return $this->node(Terms::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(Terms::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Defines a single bucket that limits documents matching a query.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter): static
+    public function filter($value): static
     {
         $instance = new Filter();
-        $instance->filter($filter);
+        $instance->filter($value);
         return $this->node($instance);
     }
 
     /**
      * Defines multiple buckets from multiple filters, one per filter expression.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function filters($params): static
+    public function filters($value): static
     {
-        return $this->node(Filters::create($params));
+        return $this->node(Filters::create($value));
     }
 
     /**
      * Groups documents into buckets based on combinations of filter expressions.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function adjacencyMatrix($params): static
+    public function adjacencyMatrix($value): static
     {
-        return $this->node(AdjacencyMatrix::create($params));
+        return $this->node(AdjacencyMatrix::create($value));
     }
 
     /**
      * Automatically determines bucket intervals for date fields based on document count.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function autoDateHistogram($params): static
+    public function autoDateHistogram($value): static
     {
-        return $this->node(AutoDateHistogram::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(AutoDateHistogram::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Extracts categories from text fields by tokenizing and grouping values.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function categorizeText($params): static
+    public function categorizeText($value): static
     {
-        return $this->node(CategorizeText::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(CategorizeText::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Creates composite buckets from multiple source values, supporting pagination.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function composite($params): static
+    public function composite($value): static
     {
-        return $this->node(Composite::create($params));
+        return $this->node(Composite::create($value));
     }
 
     /**
      * Groups documents into buckets by date interval (e.g. per day, per month).
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function dateHistogram($params): static
+    public function dateHistogram($value): static
     {
-        return $this->node(DateHistogram::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(DateHistogram::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into buckets by user-defined date ranges.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function dateRange($params): static
+    public function dateRange($value): static
     {
-        return $this->node(DateRange::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(DateRange::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Limits any child aggregations to a diversified sample of top-scoring documents.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function diversifiedSampler($params): static
+    public function diversifiedSampler($value): static
     {
-        return $this->node(DiversifiedSampler::create($params));
+        return $this->node(DiversifiedSampler::create($value));
     }
 
     /**
      * Finds frequently co-occurring item sets in array fields.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function frequentItemSets($params): static
+    public function frequentItemSets($value): static
     {
-        return $this->node(FrequentItemSets::create($params));
+        return $this->node(FrequentItemSets::create($value));
     }
 
     /**
      * Groups documents into buckets by distance ranges from a geo point.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function geoDistance($params): static
+    public function geoDistance($value): static
     {
-        return $this->node(GeoDistance::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(GeoDistance::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into grid cells using geohash prefixes.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function geoHashGrid($params): static
+    public function geoHashGrid($value): static
     {
-        return $this->node(GeoHashGrid::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(GeoHashGrid::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into grid cells using H3 hexagon indexes.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function geohexGrid($params): static
+    public function geohexGrid($value): static
     {
-        return $this->node(GeohexGrid::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(GeohexGrid::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into grid cells using geotile prefixes.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function geotileGrid($params): static
+    public function geotileGrid($value): static
     {
-        return $this->node(GeotileGrid::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(GeotileGrid::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
@@ -218,165 +218,165 @@ trait Bucket
     /**
      * Groups documents into buckets by numeric interval.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function histogram($params): static
+    public function histogram($value): static
     {
-        return $this->node(Histogram::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(Histogram::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into buckets by IP address prefix.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function ipPrefix($params): static
+    public function ipPrefix($value): static
     {
-        return $this->node(IpPrefix::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(IpPrefix::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into buckets by user-defined IP address ranges.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function ipRange($params): static
+    public function ipRange($value): static
     {
-        return $this->node(IpRange::create($params));
+        return $this->node(IpRange::create($value));
     }
 
     /**
      * Creates a single bucket for documents missing a field value.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function missing($params): static
+    public function missing($value): static
     {
-        return $this->node(Missing::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(Missing::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into buckets by multiple field term combinations.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function multiTerms($params): static
+    public function multiTerms($value): static
     {
-        return $this->node(MultiTerms::create($params));
+        return $this->node(MultiTerms::create($value));
     }
 
     /**
      * Aggregates on nested documents within a parent document.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function nested($params): static
+    public function nested($value): static
     {
-        return $this->node(Nested::create($params));
+        return $this->node(Nested::create($value));
     }
 
     /**
      * Aggregates on parent documents from a child document context in a join relation.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function parent($params): static
+    public function parent($value): static
     {
-        return $this->node(Parent_::create($params));
+        return $this->node(Parent_::create($value));
     }
 
     /**
      * Limits any child aggregations to a random sample of documents.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function randomSampler($params): static
+    public function randomSampler($value): static
     {
-        return $this->node(RandomSampler::create($params));
+        return $this->node(RandomSampler::create($value));
     }
 
     /**
      * Groups documents into buckets by user-defined numeric ranges.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function range($params): static
+    public function range($value): static
     {
-        return $this->node(Range::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(Range::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into buckets by rare field values with low document counts.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function rareTerms($params): static
+    public function rareTerms($value): static
     {
-        return $this->node(RareTerms::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(RareTerms::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Aggregates on parent documents from within a nested aggregation context.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function reverseNested($params = []): static
+    public function reverseNested($value = []): static
     {
-        return $this->node(ReverseNested::create($params));
+        return $this->node(ReverseNested::create($value));
     }
 
     /**
      * Finds field values that are unusually common in a subset compared to the whole index.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function significantTerms($params): static
+    public function significantTerms($value): static
     {
-        return $this->node(SignificantTerms::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(SignificantTerms::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Finds significant terms from text field content without needing a sub-field.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function significantText($params): static
+    public function significantText($value): static
     {
-        return $this->node(SignificantText::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(SignificantText::create(is_string($value) ? ['field' => $value] : $value));
     }
 
     /**
      * Groups documents into time series buckets for time-series data.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function timeSeries($params): static
+    public function timeSeries($value): static
     {
-        return $this->node(TimeSeries::create($params));
+        return $this->node(TimeSeries::create($value));
     }
 
     /**
      * Groups documents into dynamically sized histogram buckets based on data distribution.
      *
-     * @param mixed $params
+     * @param mixed $value
      * @return static
      */
-    public function variableWidthHistogram($params): static
+    public function variableWidthHistogram($value): static
     {
-        return $this->node(VariableWidthHistogram::create(is_string($params) ? ['field' => $params] : $params));
+        return $this->node(VariableWidthHistogram::create(is_string($value) ? ['field' => $value] : $value));
     }
 }

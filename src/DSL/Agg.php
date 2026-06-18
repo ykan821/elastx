@@ -35,7 +35,7 @@ class Agg
      *
      * @var array<string, Agg>
      */
-    protected array $subAggs = [];
+    protected array $_subAggs = [];
 
     /**
      * Properties for array-based aggregation definitions (raw DSL mode).
@@ -81,7 +81,7 @@ class Agg
      * @param Node $node
      * @return $this
      */
-    protected function node($node): static
+    protected function node(Node $node): static
     {
         $this->_node = $node;
         $this->_properties = null;
@@ -97,7 +97,7 @@ class Agg
      * @param string $value
      * @return $this
      */
-    public function alias($value): static
+    public function alias(string $value): static
     {
         $this->_alias = $value;
         return $this;
@@ -137,7 +137,7 @@ class Agg
             if ($alias !== null) {
                 $aggs->alias($alias);
             }
-            $this->subAggs[$alias ?? $aggs->getAlias()] = $aggs;
+            $this->_subAggs[$alias ?? $aggs->getAlias()] = $aggs;
             return $this;
         }
 
@@ -146,17 +146,17 @@ class Agg
             if ($alias !== null) {
                 $childAgg->alias($alias);
             }
-            $this->subAggs[$alias] = $childAgg;
+            $this->_subAggs[$alias] = $childAgg;
             return $this;
         }
 
-        if ($alias !== null && !isset($this->subAggs[$alias])) {
-            $this->subAggs[$alias] = new Agg();
-            $this->subAggs[$alias]->alias($alias);
+        if ($alias !== null && !isset($this->_subAggs[$alias])) {
+            $this->_subAggs[$alias] = new Agg();
+            $this->_subAggs[$alias]->alias($alias);
         }
 
         if ($aggs instanceof \Closure) {
-            $aggs($this->subAggs[$alias]);
+            $aggs($this->_subAggs[$alias]);
             return $this;
         }
 
@@ -197,7 +197,7 @@ class Agg
      *
      * @return array<string, mixed>
      */
-    public function toArray()
+    public function toArray(): array
     {
         if ($this->_properties !== null) {
             $resolved = $this->resolveProperties($this->_properties);
@@ -213,9 +213,9 @@ class Agg
             $inner[$this->_node->key()] = $this->_node->toArray();
         }
 
-        if (!empty($this->subAggs)) {
+        if (!empty($this->_subAggs)) {
             $inner['aggs'] = [];
-            foreach ($this->subAggs as $subAgg) {
+            foreach ($this->_subAggs as $subAgg) {
                 $inner['aggs'] += $subAgg->toArray();
             }
         }

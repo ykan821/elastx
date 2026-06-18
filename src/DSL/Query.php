@@ -118,12 +118,12 @@ class Query extends Node
     /**
      * Add a query clause to the query container.
      *
-     * @param mixed $value
+     * @param mixed $clause
      * @return $this
      */
-    public function addQuery($value): static
+    public function addQuery($clause): static
     {
-        $this->_queries[] = $value;
+        $this->_queries[] = $clause;
         return $this;
     }
 
@@ -135,7 +135,7 @@ class Query extends Node
      * @param mixed $default
      * @return $this
      */
-    public function when($condition, $query, $default = null): static
+    public function when(bool|callable $condition, $query, $default = null): static
     {
         $truthy = is_callable($condition) ? $condition() : $condition;
 

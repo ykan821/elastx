@@ -42,8 +42,6 @@ class AnyOf extends Node
         $target = $this->_properties['intervals'];
         if ($value instanceof \Closure) {
             $value($target);
-        } elseif ($value instanceof Node) {
-            $target->addQuery($value);
         }
         return $this;
     }
