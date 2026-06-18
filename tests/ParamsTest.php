@@ -317,6 +317,26 @@ JSON;
         $this->assertQuery($expectedJson, $query);
     }
 
+    public function testIndicesBoostChained()
+    {
+$expectedJson = <<<JSON
+{
+  "query": {
+    "match_all": {}
+  },
+  "indices_boost": [
+    { "index-1": 1.4 },
+    { "index-2": 1.2 }
+  ]
+}
+JSON;
+        $query = new Query();
+        $query->matchAll();
+        $query->indicesBoost(['index-1' => 1.4])
+              ->indicesBoost(['index-2' => 1.2]);
+        $this->assertQuery($expectedJson, $query);
+    }
+
     public function testChainingParamsAndQuery()
     {
 $expectedJson = <<<JSON

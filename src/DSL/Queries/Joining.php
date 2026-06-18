@@ -73,11 +73,11 @@ trait Joining
     /**
      * Add a parent_id query.
      *
-     * @param mixed $parentId
+     * @param mixed $value
      * @return $this
      */
-    public function parentId($parentId): static
+    public function parentId($value): static
     {
-        return $this->addQuery(ParentId::create($parentId));
+        return $this->addQuery(ParentId::create($value));
     }
 }

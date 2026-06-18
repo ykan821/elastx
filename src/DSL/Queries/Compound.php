@@ -25,14 +25,14 @@ trait Compound
      *
      * @example $query->bool(function (Boolean $b) { $b->must(function (Query $q) { $q->match('title', 'test') }) })
      *
-     * @param callable|Boolean|array<string, mixed> $bool
+     * @param callable|Boolean|array<string, mixed> $value
      * @return $this
      */
-    public function bool($bool): static
+    public function bool($value): static
     {
-        if (is_array($bool)) {
+        if (is_array($value)) {
             $boolean = new Boolean();
-            foreach ($bool as $clause => $val) {
+            foreach ($value as $clause => $val) {
                 $method = $clause === 'must_not' ? 'mustNot' : $clause;
                 if ($val instanceof \Closure || $val instanceof Query) {
                     $boolean->$method($val);
@@ -42,20 +42,20 @@ trait Compound
             }
             return $this->addQuery($boolean);
         }
-        return $this->addQuery(Boolean::create($bool));
+        return $this->addQuery(Boolean::create($value));
     }
 
     /**
      * Add a boosting query.
      *
-     * @param callable|Boosting|array<string, mixed> $boosting
+     * @param callable|Boosting|array<string, mixed> $value
      * @return $this
      */
-    public function boosting($boosting): static
+    public function boosting($value): static
     {
-        if (is_array($boosting)) {
+        if (is_array($value)) {
             $b = new Boosting();
-            foreach ($boosting as $key => $val) {
+            foreach ($value as $key => $val) {
                 if (($key === 'positive' || $key === 'negative')
                     && ($val instanceof \Closure || $val instanceof Query)) {
                     $b->$key($val);
@@ -65,20 +65,20 @@ trait Compound
             }
             return $this->addQuery($b);
         }
-        return $this->addQuery(Boosting::create($boosting));
+        return $this->addQuery(Boosting::create($value));
     }
 
     /**
      * Add a constant_score query.
      *
-     * @param callable|ConstantScore|array<string, mixed> $constantScore
+     * @param callable|ConstantScore|array<string, mixed> $value
      * @return $this
      */
-    public function constantScore($constantScore): static
+    public function constantScore($value): static
     {
-        if (is_array($constantScore)) {
+        if (is_array($value)) {
             $cs = new ConstantScore();
-            foreach ($constantScore as $key => $val) {
+            foreach ($value as $key => $val) {
                 if ($key === 'filter' && ($val instanceof \Closure || $val instanceof Query)) {
                     $cs->filter($val);
                 } else {
@@ -87,20 +87,20 @@ trait Compound
             }
             return $this->addQuery($cs);
         }
-        return $this->addQuery(ConstantScore::create($constantScore));
+        return $this->addQuery(ConstantScore::create($value));
     }
 
     /**
      * Add a dis_max query.
      *
-     * @param callable|DisjunctionMax|array<string, mixed> $disMax
+     * @param callable|DisjunctionMax|array<string, mixed> $value
      * @return $this
      */
-    public function disMax($disMax): static
+    public function disMax($value): static
     {
-        if (is_array($disMax)) {
+        if (is_array($value)) {
             $dm = new DisjunctionMax();
-            foreach ($disMax as $key => $val) {
+            foreach ($value as $key => $val) {
                 if ($key === 'queries' && ($val instanceof \Closure || $val instanceof Query)) {
                     $dm->queries($val);
                 } else {
@@ -109,17 +109,17 @@ trait Compound
             }
             return $this->addQuery($dm);
         }
-        return $this->addQuery(DisjunctionMax::create($disMax));
+        return $this->addQuery(DisjunctionMax::create($value));
     }
 
     /**
      * Add a function_score query.
      *
-     * @param mixed $functionScore
+     * @param mixed $value
      * @return $this
      */
-    public function functionScore($functionScore): static
+    public function functionScore($value): static
     {
-        return $this->addQuery(FunctionScore::create($functionScore));
+        return $this->addQuery(FunctionScore::create($value));
     }
 }

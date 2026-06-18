@@ -31,12 +31,12 @@ trait Param
      * Defines the maximum number of documents to return.
      * Defaults to 10.
      *
-     * @param int $size
+     * @param int $value
      * @return $this
      */
-    public function size($size): static
+    public function size($value): static
     {
-        $this->_params['size'] = $size;
+        $this->_params['size'] = $value;
         return $this;
     }
 
@@ -44,12 +44,12 @@ trait Param
      * The starting document offset.
      * Defaults to 0.
      *
-     * @param int $from
+     * @param int $value
      * @return $this
      */
-    public function from($from): static
+    public function from($value): static
     {
-        $this->_params['from'] = $from;
+        $this->_params['from'] = $value;
         return $this;
     }
 
@@ -57,12 +57,12 @@ trait Param
      * Specifies the period of time to wait for
      * a response from each shard.
      *
-     * @param string $timeout
+     * @param string $value
      * @return $this
      */
-    public function timeout($timeout): static
+    public function timeout($value): static
     {
-        $this->_params['timeout'] = $timeout;
+        $this->_params['timeout'] = $value;
         return $this;
     }
 
@@ -70,12 +70,12 @@ trait Param
      * Minimum relevance score required for a document
      * to be included in the result set.
      *
-     * @param float $minScore
+     * @param float $value
      * @return $this
      */
-    public function minScore($minScore): static
+    public function minScore($value): static
     {
-        $this->_params['min_score'] = $minScore;
+        $this->_params['min_score'] = $value;
         return $this;
     }
 
@@ -83,12 +83,12 @@ trait Param
      * Maximum number of documents to collect for
      * each shard, upon reaching which the query execution will terminate early.
      *
-     * @param int $terminateAfter
+     * @param int $value
      * @return $this
      */
-    public function terminateAfter($terminateAfter): static
+    public function terminateAfter($value): static
     {
-        $this->_params['terminate_after'] = $terminateAfter;
+        $this->_params['terminate_after'] = $value;
         return $this;
     }
 
@@ -96,12 +96,12 @@ trait Param
      * If true, returns detailed information about
      * score computation as part of a hit.
      *
-     * @param bool $explain
+     * @param bool $value
      * @return $this
      */
-    public function explain($explain): static
+    public function explain($value): static
     {
-        $this->_params['explain'] = $explain;
+        $this->_params['explain'] = $value;
         return $this;
     }
 
@@ -109,24 +109,24 @@ trait Param
      * If true, returns document version as part
      * of a hit.
      *
-     * @param bool $version
+     * @param bool $value
      * @return $this
      */
-    public function version($version): static
+    public function version($value): static
     {
-        $this->_params['version'] = $version;
+        $this->_params['version'] = $value;
         return $this;
     }
 
     /**
      * If true, the query is profiled.
      *
-     * @param bool $profile
+     * @param bool $value
      * @return $this
      */
-    public function profile($profile): static
+    public function profile($value): static
     {
-        $this->_params['profile'] = $profile;
+        $this->_params['profile'] = $value;
         return $this;
     }
 
@@ -134,12 +134,12 @@ trait Param
      * Number of hits matching the query to count
      * accurately. Defaults to 10,000.
      *
-     * @param bool|int $trackTotalHits
+     * @param bool|int $value
      * @return $this
      */
-    public function trackTotalHits($trackTotalHits): static
+    public function trackTotalHits($value): static
     {
-        $this->_params['track_total_hits'] = $trackTotalHits;
+        $this->_params['track_total_hits'] = $value;
         return $this;
     }
 
@@ -147,24 +147,26 @@ trait Param
      * If true, returns sequence number and primary
      * term of the last modification of each hit.
      *
-     * @param bool $seqNoPrimaryTerm
+     * @param bool $value
      * @return $this
      */
-    public function seqNoPrimaryTerm($seqNoPrimaryTerm): static
+    public function seqNoPrimaryTerm($value): static
     {
-        $this->_params['seq_no_primary_term'] = $seqNoPrimaryTerm;
+        $this->_params['seq_no_primary_term'] = $value;
         return $this;
     }
 
     /**
-     * Sorts the response by the given criteria.
+     * Sorts the response by the given criteria. Appends to the sort list;
+     * multiple calls chain together.
      *
-     * - sort('price', 'asc') — field + order, supports chaining
-     * - sort([['price' => 'asc']]) — raw ES array format
+     * - sort('price', 'asc') — field + order
+     * - sort('price', ['order' => 'asc', 'mode' => 'avg']) — field + options
      * - sort('_score') — field without direction
+     * - sort([['price' => 'asc'], ['age' => 'desc']]) — raw ES list, each spec appended
      *
      * @param string|array<int, mixed> $field
-     * @param string|null $order
+     * @param string|array<string, mixed>|null $order
      * @return $this
      */
     public function sort($field, $order = null): static
@@ -172,7 +174,9 @@ trait Param
         if ($order !== null) {
             $this->_params['sort'][] = [$field => $order];
         } elseif (is_array($field)) {
-            $this->_params['sort'] = $field;
+            foreach ($field as $spec) {
+                $this->_params['sort'][] = $spec;
+            }
         } else {
             $this->_params['sort'][] = $field;
         }
@@ -183,24 +187,24 @@ trait Param
      * Indicates which source fields are returned
      * for the search hits.
      *
-     * @param array<int, string>|string $source
+     * @param array<int, string>|string $value
      * @return $this
      */
-    public function source($source): static
+    public function source($value): static
     {
-        $this->_params['_source'] = $source;
+        $this->_params['_source'] = $value;
         return $this;
     }
 
     /**
      * Sort values used to paginate results.
      *
-     * @param array<int, mixed> $searchAfter
+     * @param array<int, mixed> $value
      * @return $this
      */
-    public function searchAfter($searchAfter): static
+    public function searchAfter($value): static
     {
-        $this->_params['search_after'] = $searchAfter;
+        $this->_params['search_after'] = $value;
         return $this;
     }
 
@@ -208,37 +212,37 @@ trait Param
      * Controls which stored fields are returned
      * as part of a hit.
      *
-     * @param array<int, string> $storedFields
+     * @param array<int, string> $value
      * @return $this
      */
-    public function storedFields($storedFields): static
+    public function storedFields($value): static
     {
-        $this->_params['stored_fields'] = $storedFields;
+        $this->_params['stored_fields'] = $value;
         return $this;
     }
 
     /**
      * Returns docvalue fields as part of a hit.
      *
-     * @param array<int, mixed> $docvalueFields
+     * @param array<int, mixed> $value
      * @return $this
      */
-    public function docvalueFields($docvalueFields): static
+    public function docvalueFields($value): static
     {
-        $this->_params['docvalue_fields'] = $docvalueFields;
+        $this->_params['docvalue_fields'] = $value;
         return $this;
     }
 
     /**
-     * Boosts the _score of documents from
-     * specified indices.
+     * Boosts the _score of documents from specified indices.
+     * Appends to the indices_boost list; multiple calls chain together.
      *
-     * @param array<string, float> $indicesBoost
+     * @param array<string, float> $value
      * @return $this
      */
-    public function indicesBoost($indicesBoost): static
+    public function indicesBoost($value): static
     {
-        $this->_params['indices_boost'] = [$indicesBoost];
+        $this->_params['indices_boost'][] = $value;
         return $this;
     }
 
@@ -246,12 +250,12 @@ trait Param
      * If true, compute and return _score even when
      * sorting on a field. Defaults to false.
      *
-     * @param bool $trackScores
+     * @param bool $value
      * @return $this
      */
-    public function trackScores($trackScores): static
+    public function trackScores($value): static
     {
-        $this->_params['track_scores'] = $trackScores;
+        $this->_params['track_scores'] = $value;
         return $this;
     }
 
@@ -259,24 +263,24 @@ trait Param
      * Returns values from fields in the search response.
      * Supports field alias fields and array fields.
      *
-     * @param array<int, mixed> $fields
+     * @param array<int, mixed> $value
      * @return $this
      */
-    public function fields($fields): static
+    public function fields($value): static
     {
-        $this->_params['fields'] = $fields;
+        $this->_params['fields'] = $value;
         return $this;
     }
 
     /**
      * Limits the search to a point in time (PIT).
      *
-     * @param array<string, mixed> $pit
+     * @param array<string, mixed> $value
      * @return $this
      */
-    public function pit($pit): static
+    public function pit($value): static
     {
-        $this->_params['pit'] = $pit;
+        $this->_params['pit'] = $value;
         return $this;
     }
 
@@ -284,36 +288,36 @@ trait Param
      * Filter applied after query and aggregation execution.
      * Accepts a closure, array, or Query object.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return $this
      */
-    public function postFilter($filter): static
+    public function postFilter($value): static
     {
-        $this->_params['post_filter'] = Query::create($filter);
+        $this->_params['post_filter'] = Query::create($value);
         return $this;
     }
 
     /**
      * Collapse search results by field value.
      *
-     * @param mixed $collapse
+     * @param mixed $value
      * @return $this
      */
-    public function collapse($collapse): static
+    public function collapse($value): static
     {
-        $this->_params['collapse'] = Params\Collapse::create($collapse);
+        $this->_params['collapse'] = Params\Collapse::create($value);
         return $this;
     }
 
     /**
      * Rescore the top documents with a secondary query.
      *
-     * @param mixed $rescore
+     * @param mixed $value
      * @return $this
      */
-    public function rescore($rescore): static
+    public function rescore($value): static
     {
-        $this->_params['rescore'] = Params\Rescore::create($rescore);
+        $this->_params['rescore'] = Params\Rescore::create($value);
         return $this;
     }
 
@@ -321,12 +325,12 @@ trait Param
      * Highlight search matches in field values.
      * Supports chaining — fields are merged across calls.
      *
-     * @param mixed $highlight
+     * @param mixed $value
      * @return $this
      */
-    public function highlight($highlight): static
+    public function highlight($value): static
     {
-        $new = Params\Highlight::create($highlight);
+        $new = Params\Highlight::create($value);
 
         if (isset($this->_params['highlight']) && $this->_params['highlight'] instanceof Params\Highlight) {
             // Merge new fields into existing highlight
@@ -338,9 +342,9 @@ trait Param
             }
             // Merge other properties (pre_tags, post_tags, etc) — last wins
             if (is_array($new->_properties)) {
-                foreach ($new->_properties as $key => $value) {
+                foreach ($new->_properties as $key => $val) {
                     if ($key !== 'fields') {
-                        $existing->addProperty($key, $value);
+                        $existing->addProperty($key, $val);
                     }
                 }
             }
@@ -354,36 +358,36 @@ trait Param
     /**
      * Search suggestions based on term, completion, or phrase.
      *
-     * @param mixed $suggest
+     * @param mixed $value
      * @return $this
      */
-    public function suggest($suggest): static
+    public function suggest($value): static
     {
-        $this->_params['suggest'] = Params\Suggest::create($suggest);
+        $this->_params['suggest'] = Params\Suggest::create($value);
         return $this;
     }
 
     /**
      * Returns script evaluation values for each hit.
      *
-     * @param array<string, mixed> $scriptFields
+     * @param array<string, mixed> $value
      * @return $this
      */
-    public function scriptFields($scriptFields): static
+    public function scriptFields($value): static
     {
-        $this->_params['script_fields'] = $scriptFields;
+        $this->_params['script_fields'] = $value;
         return $this;
     }
 
     /**
      * Runtime field definitions used in the search request.
      *
-     * @param array<string, mixed> $runtimeMappings
+     * @param array<string, mixed> $value
      * @return $this
      */
-    public function runtimeMappings($runtimeMappings): static
+    public function runtimeMappings($value): static
     {
-        $this->_params['runtime_mappings'] = $runtimeMappings;
+        $this->_params['runtime_mappings'] = $value;
         return $this;
     }
 

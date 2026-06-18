@@ -60,15 +60,15 @@ trait TermLevel
     /**
      * Returns documents based on their IDs. This query uses document IDs stored in the _id field.
      *
-     * @param mixed $ids
+     * @param mixed $value
      * @return $this
      */
-    public function ids($ids): static
+    public function ids($value): static
     {
-        if (is_array($ids) && !isset($ids['values'])) {
-            $ids = ['values' => $ids];
+        if (is_array($value) && !isset($value['values'])) {
+            $value = ['values' => $value];
         }
-        return $this->addQuery(IDs::create($ids));
+        return $this->addQuery(IDs::create($value));
     }
 
     /**

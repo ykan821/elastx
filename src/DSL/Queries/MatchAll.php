@@ -15,12 +15,12 @@ trait MatchAll
     /**
      * Add a match_all query.
      *
-     * @param mixed $matchAll
+     * @param mixed $value
      * @return $this
      */
-    public function matchAll($matchAll = null): static
+    public function matchAll($value = null): static
     {
-        return $this->addQuery(QMatchAll::create($matchAll));
+        return $this->addQuery(QMatchAll::create($value));
     }
 
     /**

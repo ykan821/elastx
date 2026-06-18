@@ -75,48 +75,48 @@ class Function_ extends Node
      * Uses a numeric field value to influence the score.
      *
      * @param mixed $field
-     * @param mixed $fieldValueFactor
+     * @param mixed $value
      * @return static
      */
-    public function fieldValueFactor($field, $fieldValueFactor = null): static
+    public function fieldValueFactor($field, $value = null): static
     {
-        return $this->addProperty('field_value_factor', FieldValueFactor::create($field, $fieldValueFactor));
+        return $this->addProperty('field_value_factor', FieldValueFactor::create($field, $value));
     }
 
     /**
      * Scores documents using normal (Gaussian) decay based on distance from an origin point.
      *
      * @param mixed $field
-     * @param mixed $gauss
+     * @param mixed $value
      * @return static
      */
-    public function gauss($field, $gauss = null): static
+    public function gauss($field, $value = null): static
     {
-        return $this->addProperty('gauss', Gauss::create($field, $gauss));
+        return $this->addProperty('gauss', Gauss::create($field, $value));
     }
 
     /**
      * Scores documents using linear decay based on distance from an origin point.
      *
      * @param mixed $field
-     * @param mixed $linear
+     * @param mixed $value
      * @return static
      */
-    public function linear($field, $linear = null): static
+    public function linear($field, $value = null): static
     {
-        return $this->addProperty('linear', Linear::create($field, $linear));
+        return $this->addProperty('linear', Linear::create($field, $value));
     }
 
     /**
      * Scores documents using exponential decay based on distance from an origin point.
      *
      * @param mixed $field
-     * @param mixed $exp
+     * @param mixed $value
      * @return static
      */
-    public function exp($field, $exp = null): static
+    public function exp($field, $value = null): static
     {
-        return $this->addProperty('exp', Exp::create($field, $exp));
+        return $this->addProperty('exp', Exp::create($field, $value));
     }
 
     /**
