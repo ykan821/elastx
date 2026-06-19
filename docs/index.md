@@ -116,17 +116,27 @@ while (count($results->docs()) > 0) {
 ProductIndex::query()->clear($scrollId);
 ```
 
-## Cursor
+## Chunk / Cursor
 
-Cursor 把 scroll 封装成 PHP 生成器：
+把 scroll 封装成 PHP 生成器，scroll 自动清理。
+
+**chunk** 按批遍历，每次 yield 一个 Results（含 docs/hits/total 等）：
 
 ```php
-foreach (ProductIndex::query()->cursor() as $results) {
+foreach (ProductIndex::query()->chunk() as $results) {
     foreach ($results->docs() as $doc) {
         // 处理
     }
 }
-// scroll 自动清理
+```
+
+**cursor** 逐条遍历，每次 yield 一个完整 hit（_id/_score/_source）：
+
+```php
+foreach (ProductIndex::query()->cursor() as $hit) {
+    $doc = $hit['_source'];
+    $id  = $hit['_id'];
+}
 ```
 
 ## 文档 CRUD

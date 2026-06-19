@@ -379,7 +379,7 @@ class IndexTest extends TestCase
         $index->query()->clear($results);
     }
 
-    public function testCursorYieldsResultsBatches()
+    public function testChunkYieldsResultsBatches()
     {
         $client = $this->createMock(TestClient::class);
 
@@ -417,7 +417,7 @@ class IndexTest extends TestCase
 
         $index = $this->createIndex('products');
         $batches = [];
-        foreach ($index->query()->matchAll()->cursor('1m') as $results) {
+        foreach ($index->query()->matchAll()->chunk('1m') as $results) {
             $this->assertInstanceOf(Results::class, $results);
             $batches[] = $results;
         }
@@ -426,6 +426,55 @@ class IndexTest extends TestCase
         $this->assertCount(2, $batches);
         $this->assertEquals(['1', '2'], $batches[0]->ids());
         $this->assertEquals(['3'], $batches[1]->ids());
+    }
+
+    public function testCursorYieldsIndividualHits()
+    {
+        $client = $this->createMock(TestClient::class);
+
+        $client->method('search')->willReturn(new ArrayResponse([
+            '_scroll_id' => 'scroll1',
+            'hits' => [
+                'total' => ['value' => 3],
+                'hits' => [
+                    ['_id' => '1', '_source' => ['id' => 1]],
+                    ['_id' => '2', '_source' => ['id' => 2]],
+                ],
+            ],
+        ]));
+
+        $callCount = 0;
+        $client->method('scroll')->willReturnCallback(function () use (&$callCount) {
+            $callCount++;
+            if ($callCount === 1) {
+                return new ArrayResponse([
+                    '_scroll_id' => 'scroll2',
+                    'hits' => [
+                        'total' => ['value' => 3],
+                        'hits' => [['_id' => '3', '_source' => ['id' => 3]]],
+                    ],
+                ]);
+            }
+            return new ArrayResponse([
+                '_scroll_id' => 'scroll3',
+                'hits' => ['total' => ['value' => 3], 'hits' => []],
+            ]);
+        });
+
+        $client->method('clearScroll');
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $hits = [];
+        foreach ($index->query()->matchAll()->cursor('1m') as $hit) {
+            $hits[] = $hit;
+        }
+
+        // 3 docs flattened across 2 batches, each yielded as a raw hit
+        $this->assertCount(3, $hits);
+        $this->assertSame('1', $hits[0]['_id']);
+        $this->assertSame(['id' => 1], $hits[0]['_source']);
+        $this->assertSame('3', $hits[2]['_id']);
     }
 
     public function testNameReturnsIndexName()

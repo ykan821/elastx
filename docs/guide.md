@@ -160,7 +160,7 @@ public function index(Request $request)
 }
 ```
 
-> 条件用 `if` 逐个判断，只有传了值才加查询。`should()` 实现 OR 搜索。深分页场景用 `cursor()` 替代 `paginate()`。
+> 条件用 `if` 逐个判断，只有传了值才加查询。`should()` 实现 OR 搜索。深分页场景用 `chunk()`（按批）或 `cursor()`（逐条）替代 `paginate()`。
 
 运营还要导出筛选结果到 Excel。ES 默认 `max_result_window = 10000`，`from/size` 翻不到后面的数据，用 `cursor()` 基于 scroll 遍历：
 
@@ -169,8 +169,8 @@ public function export(array $filters)
 {
     $search = static::searchOrders($filters)->sort('created_at', 'desc');
 
-    foreach ($search->cursor() as $batch) {
-        foreach ($batch->docs() as $doc) {
+    foreach ($search->chunk() as $results) {
+        foreach ($results->docs() as $doc) {
             // 写入 Excel
         }
     }

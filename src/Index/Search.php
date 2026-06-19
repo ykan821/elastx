@@ -210,12 +210,13 @@ class Search
     }
 
     /**
-     * Return a generator that yields Results batches via scroll.
+     * Lazily yield Results batches via scroll. Each yielded Results is one
+     * scroll batch; the scroll context is cleared when iteration ends.
      *
-     * @param string $duration
-     * @return \Generator
+     * @param string $duration scroll keep-alive
+     * @return \Generator<int, Results, mixed, void>
      */
-    public function cursor(string $duration = '5m'): \Generator
+    public function chunk(string $duration = '5m'): \Generator
     {
         $results = $this->scroll(null, $duration);
 
@@ -226,6 +227,24 @@ class Search
             }
         } finally {
             $this->clear($results);
+        }
+    }
+
+    /**
+     * Lazily yield individual search hits, flattened across scroll batches.
+     *
+     * Each value is a raw ES hit (_id, _score, _source, ...) — the same shape
+     * as Results::hits() entries. Reuses chunk()'s scroll cleanup.
+     *
+     * @param string $duration scroll keep-alive
+     * @return \Generator<int, array<string, mixed>, mixed, void>
+     */
+    public function cursor(string $duration = '5m'): \Generator
+    {
+        foreach ($this->chunk($duration) as $results) {
+            foreach ($results->hits() as $hit) {
+                yield $hit;
+            }
         }
     }
 
