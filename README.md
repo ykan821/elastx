@@ -178,11 +178,17 @@ $results->lastPage();
 $results->items();
 $results->toPaginator();  // 转为框架分页器（需注册 Paginator Resolver）
 
-// 游标遍历（大批量导出）
-foreach (ProductIndex::query()->cursor() as $batch) {
-    foreach ($batch->docs() as $doc) {
+// 分批遍历（大批量导出/批处理，每次 yield 一个 Results）
+foreach (ProductIndex::query()->chunk() as $results) {
+    foreach ($results->docs() as $doc) {
         // ...
     }
+}
+
+// 逐条遍历（导出/逐条加工，每次 yield 一个 hit：_id/_score/_source）
+foreach (ProductIndex::query()->cursor() as $hit) {
+    $doc = $hit['_source'];
+    // ...
 }
 ```
 
