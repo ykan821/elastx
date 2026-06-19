@@ -50,12 +50,12 @@ abstract class Index
      * Register an Elasticsearch client. Optionally name the connection.
      *
      * @param ClientInterface $client
-     * @param string $name connection name, defaults to 'default'
+     * @param string $connection connection name, defaults to 'default'
      * @return void
      */
-    public static function setClient(ClientInterface $client, string $name = 'default'): void
+    public static function setClient(ClientInterface $client, string $connection = 'default'): void
     {
-        ClientManager::set($client, $name);
+        ClientManager::set($client, $connection);
     }
 
     /**

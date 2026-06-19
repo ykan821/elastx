@@ -37,7 +37,7 @@ class Rebuild
     private bool $allowEmpty = false;
 
     /**
-     * @var callable|\Iterator<int, array<string, mixed>>|null
+     * @var callable|iterable<int, array<string, mixed>>|null
      */
     private $dataSource;
 
@@ -90,10 +90,10 @@ class Rebuild
      * Set a custom data source. Accepts a callable or iterable.
      * Defaults to Index::source() when not set.
      *
-     * @param callable|\Iterator<int, array<string, mixed>> $source
+     * @param callable|iterable<int, array<string, mixed>> $source
      * @return $this
      */
-    public function source($source): static
+    public function source(callable|iterable $source): static
     {
         $this->dataSource = $source;
         return $this;
@@ -212,16 +212,16 @@ class Rebuild
 
         EventDispatcher::dispatch(new Event('rebuild.run.before', $name));
 
-        $newName = $this->createIndex();
+        $newIndex = $this->createIndex();
 
         try {
-            $this->import($newName, $context);
+            $this->import($newIndex, $context);
         } catch (\Throwable $e) {
-            $client->delete(['index' => $newName]);
+            $client->delete(['index' => $newIndex]);
             throw $e;
         }
 
-        $client->refresh(['index' => $newName]);
+        $client->refresh(['index' => $newIndex]);
 
         $oldIndex = null;
 
@@ -232,25 +232,25 @@ class Rebuild
             foreach ($oldIndices as $idx) {
                 $actions[] = ['remove' => ['index' => $idx, 'alias' => $name]];
             }
-            $actions[] = ['add' => ['index' => $newName, 'alias' => $name]];
+            $actions[] = ['add' => ['index' => $newIndex, 'alias' => $name]];
             $client->updateAliases(['body' => ['actions' => $actions]]);
         } elseif ($client->exists(['index' => $name])->asBool()) {
-            $client->delete(['index' => $newName]);
+            $client->delete(['index' => $newIndex]);
             throw new RuntimeException(
                 "Index [{$name}] is a real index, not an alias. "
                 . "Rebuild requires an alias to swap atomically. "
                 . "Delete the index manually or convert it to alias mode before running rebuild."
             );
         } else {
-            $client->putAlias(['index' => $newName, 'name' => $name]);
+            $client->putAlias(['index' => $newIndex, 'name' => $name]);
         }
 
         $e = new Event('rebuild.run.after', $name);
-        $e->newIndex = $newName;
+        $e->newIndex = $newIndex;
         $e->oldIndex = $oldIndex;
         EventDispatcher::dispatch($e);
 
-        return ['newIndex' => $newName, 'oldIndex' => $oldIndex];
+        return ['newIndex' => $newIndex, 'oldIndex' => $oldIndex];
     }
 
     /**
@@ -340,28 +340,28 @@ class Rebuild
      */
     protected function createIndex(): string
     {
-        $newName = $this->index->rebuildName();
+        $newIndex = $this->index->rebuildName();
         $mappings = $this->index->mappings();
         $settings = $this->index->settings();
 
         $this->index->getClient()->indices()->create([
-            'index' => $newName,
+            'index' => $newIndex,
             'body' => [
                 'mappings' => empty($mappings) ? new stdClass() : $mappings,
                 'settings' => empty($settings) ? new stdClass() : $settings,
             ],
         ]);
 
-        return $newName;
+        return $newIndex;
     }
 
     /**
      * Import data into the target index.
      *
-     * @param string $newName
+     * @param string $newIndex
      * @param array<string, mixed> $context
      */
-    protected function import(string $newName, array $context): void
+    protected function import(string $newIndex, array $context): void
     {
         if ($this->dataSource !== null) {
             $items = is_callable($this->dataSource) ? ($this->dataSource)($context) : $this->dataSource;
@@ -369,7 +369,7 @@ class Rebuild
             $items = $this->index->source($context);
         }
 
-        $bulk = (new Bulk($this->index))->target($newName)->batchSize($this->batchSize);
+        $bulk = (new Bulk($this->index))->target($newIndex)->batchSize($this->batchSize);
         if ($this->errorHandler) {
             $bulk->onError($this->errorHandler);
         }
@@ -388,7 +388,7 @@ class Rebuild
 
         if ($count === 0 && !$this->allowEmpty) {
             throw new RuntimeException(
-                "Rebuild imported 0 documents for index [{$newName}]. "
+                "Rebuild imported 0 documents for index [{$newIndex}]. "
                 . "Call allowEmpty() if this is intentional."
             );
         }

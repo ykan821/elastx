@@ -154,10 +154,10 @@ class Doc
      *
      * If $id is null or empty, ES auto-generates an id.
      *
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return array<string, mixed>
      */
-    public function index(array $document): array
+    public function index(array $data): array
     {
         $params = [
             'index' => $this->index->name(),
@@ -167,7 +167,7 @@ class Doc
             $params['id'] = $this->id;
         }
 
-        $params['body'] = $document;
+        $params['body'] = $data;
 
         if ($this->refresh !== null) {
             $params['refresh'] = $this->refresh;
@@ -181,12 +181,12 @@ class Doc
     /**
      * Alias for index(). Create or overwrite the document.
      *
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return array<string, mixed>
      */
-    public function save(array $document): array
+    public function save(array $data): array
     {
-        return $this->index($document);
+        return $this->index($data);
     }
 
     /**
@@ -195,10 +195,10 @@ class Doc
      * If $id is null or empty, ES auto-generates an id (always a create, since
      * auto-generated ids are unique).
      *
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return array<string, mixed>
      */
-    public function create(array $document): array
+    public function create(array $data): array
     {
         $params = [
             'index' => $this->index->name(),
@@ -208,7 +208,7 @@ class Doc
             $params['id'] = $this->id;
         }
 
-        $params['body'] = $document;
+        $params['body'] = $data;
         $params['op_type'] = 'create';
 
         if ($this->refresh !== null) {
