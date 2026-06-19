@@ -242,9 +242,7 @@ class Search
     public function cursor(string $duration = '5m'): \Generator
     {
         foreach ($this->chunk($duration) as $results) {
-            foreach ($results->hits() as $hit) {
-                yield $hit;
-            }
+            yield from $results->hits();
         }
     }
 
