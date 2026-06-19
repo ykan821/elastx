@@ -111,17 +111,17 @@ class Bulk
      * Queue an index (create/overwrite) action.
      *
      * @param string|int|null $id document ID, or null to let ES auto-generate
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return $this
      */
-    public function index(string|int|null $id, array $document): static
+    public function index(string|int|null $id, array $data): static
     {
         $action = ['index' => ['_index' => $this->resolveIndex()]];
         if ($id !== null && $id !== '') {
             $action['index']['_id'] = $id;
         }
         $this->body[] = $action;
-        $this->body[] = $document;
+        $this->body[] = $data;
         $this->afterPush();
 
         return $this;
@@ -131,25 +131,25 @@ class Bulk
      * Alias for index(). Queue a save (create/overwrite) action.
      *
      * @param string|int|null $id
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return $this
      */
-    public function save(string|int|null $id, array $document): static
+    public function save(string|int|null $id, array $data): static
     {
-        return $this->index($id, $document);
+        return $this->index($id, $data);
     }
 
     /**
      * Queue a create action (fail if document already exists).
      *
      * @param string|int $id
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return $this
      */
-    public function create(string|int $id, array $document): static
+    public function create(string|int $id, array $data): static
     {
         $this->body[] = ['create' => ['_index' => $this->resolveIndex(), '_id' => $id]];
-        $this->body[] = $document;
+        $this->body[] = $data;
         $this->afterPush();
 
         return $this;

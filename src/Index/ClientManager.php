@@ -21,12 +21,12 @@ class ClientManager
      * Register an Elasticsearch client. Optionally name the connection.
      *
      * @param ClientInterface $client
-     * @param string $name connection name, defaults to 'default'
+     * @param string $connection connection name, defaults to 'default'
      * @return void
      */
-    public static function set(ClientInterface $client, string $name = 'default'): void
+    public static function set(ClientInterface $client, string $connection = 'default'): void
     {
-        self::$clients[$name] = $client;
+        self::$clients[$connection] = $client;
     }
 
     /**

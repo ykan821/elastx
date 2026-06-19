@@ -47,7 +47,7 @@ PSR-5 规范。
 - [x] **移除 Index::insert()**：等价功能由 Doc::save() 覆盖
 - [x] **实例入口**：新增 on()/newQuery()/newDoc()/setConnection()/getConnection()，query()/doc() 委托实例方法
 - [x] **测试 mock 污染修复**：所有测试文件补 tearDown 清理静态状态
-- [ ] **命名参数一致性**：公开方法参数名是 API 的一部分，全库审查确保命名统一（如 connection/name/client 不混用）
+- [x] **命名参数一致性**：公开方法参数名是 API 的一部分，全库审查确保命名统一（如 connection/name/client 不混用）
 - [x] **PHP 8 现代化（Index 层）**：全 12 文件 strict_types + 构造器提升 + readonly + 属性/返回/参数类型 + 联合类型；callable 属性（resolver / errorHandler / dataSource）因 PHP 禁止 callable 作属性类型，保留 docblock
 - [x] **PHP 8 现代化（DSL 层）**：Node/Query/Agg + 122 leaf 类全部完成。strict_types 全 151 文件；4 原子属性类型同步全 leaf；leaf 参数类型对照 ES docblock 完成；`$_properties` 三模式统一为 `?array`（新增 `$_raw` 承接整体透传，null 保留为合法空态）；`toJson` 加 `:string` + false 检查；`toArray` 因多态返回（array/stdClass/null）不强加 PHP 返回类型
 - [ ] **Rebuild 异常处理**：run() 改为 try-catch + releaseLock 分离，releaseLock 不吞任何异常，forceUnlock 单独处理 404（文档不存在 vs 索引不存在的 404 需区分）；isLocked() 只吞 404 不吞其他 ClientResponseException；rebuild 失败优先抛原始异常；ensureLockIndex() replicas=0 在多节点集群有风险需注释说明
