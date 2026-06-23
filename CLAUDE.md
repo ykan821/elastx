@@ -50,13 +50,13 @@ PSR-5 规范。
 - [x] **命名参数一致性**：公开方法参数名是 API 的一部分，全库审查确保命名统一（如 connection/name/client 不混用）
 - [x] **PHP 8 现代化（Index 层）**：全 12 文件 strict_types + 构造器提升 + readonly + 属性/返回/参数类型 + 联合类型；callable 属性（resolver / errorHandler / dataSource）因 PHP 禁止 callable 作属性类型，保留 docblock
 - [x] **PHP 8 现代化（DSL 层）**：Node/Query/Agg + 122 leaf 类全部完成。strict_types 全 151 文件；4 原子属性类型同步全 leaf；leaf 参数类型对照 ES docblock 完成；`$_properties` 三模式统一为 `?array`（新增 `$_raw` 承接整体透传，null 保留为合法空态）；`toJson` 加 `:string` + false 检查；`toArray` 因多态返回（array/stdClass/null）不强加 PHP 返回类型
-- [ ] **Rebuild 异常处理**：run() 改为 try-catch + releaseLock 分离，releaseLock 不吞任何异常，forceUnlock 单独处理 404（文档不存在 vs 索引不存在的 404 需区分）；isLocked() 只吞 404 不吞其他 ClientResponseException；rebuild 失败优先抛原始异常；ensureLockIndex() replicas=0 在多节点集群有风险需注释说明
+- [x] **Rebuild 异常处理**：run() 分离 try-catch（失败优先抛原始异常，成功后释放锁失败抛 RuntimeException 说明 rebuild 已完成）；releaseLock 只吞 404；forceUnlock 独立实现吞 404；isLocked 只在 404 返回 false、其他 ES 错误传播
 - [x] **$client 抽到 Registry 类**：拆为 ClientManager / EventDispatcher / Pagination，Index 不再持有静态状态
 - [x] **Node 构造函数重构**：拆分为 fromKeyValue/fromClosure/fromArrayField/fromScalar
 - [x] **Bulk/Rebuild onError 设计**：Bulk 加 onError(callback) 默认 throw，Rebuild 删 skipErrors 加 onError，删 rebuild.import.failed 事件
 - [ ] **补核心路径的边界测试**：scroll、bulk 分批、rebuild 失败回滚
 - [ ] **搭建集成测试基建**：`ELASTICKIT_TEST_HOST` 驱动，随机索引名隔离
-- [ ] **cursor/chunk API 重构**：现 `cursor()` 返回批次（Results）命名不准。拆为 `chunk($duration): Generator<Results>`（按批，即现 cursor 改名）+ `cursor($duration): Generator`（逐条 doc，内部扁平化 chunk、复用其 finally clear）；保留 `scroll()/next()/clear()` 作低层原语。待定：单条 yield 完整 hit（带 _id/_score）还是只 _source；底层未来可换 PIT+search_after（上层签名不变）
+- [x] **cursor/chunk API 重构**：`chunk($duration): Generator<Results>` 按批 yield Results；`cursor($duration): Generator` 逐条 yield 完整 hit（_id/_score/_source，yield from chunk 的 hits、复用其 finally clear）；保留 `scroll()/next()/clear()` 作低层原语。底层未来可换 PIT+search_after（上层签名不变）
 
 ## 测试
 
