@@ -716,4 +716,114 @@ class RebuildTest extends TestCase
 
         $this->assertStringStartsWith('products_', $result['newIndex']);
     }
+
+    public function testRunThrowsWhenReleaseLockFailsAfterSuccess()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturnCallback(function ($params) {
+            if (($params['index'] ?? '') === '.ek_locks') {
+                return new BoolResponse(true);
+            }
+            return new BoolResponse(false);
+        });
+        $indices->method('existsAlias')->willReturn(new BoolResponse(false));
+        $indices->method('putAlias')->willReturn(new ArrayResponse(['acknowledged' => true]));
+
+        $response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn(503);
+        $releaseException = new \Elastic\Elasticsearch\Exception\ClientResponseException();
+        $releaseException->setResponse($response);
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        // 成功路径释放锁时抛 503
+        $client->method('delete')->willThrowException($releaseException);
+        $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
+        Index::setClient($client);
+
+        $index = new class extends Index {
+            public function __construct()
+            {
+                $this->name = 'products';
+            }
+
+            public function source(array $context = []): iterable
+            {
+                yield 1 => ['title' => 'A'];
+            }
+        };
+
+        try {
+            (new Rebuild($index))->run();
+            $this->fail('Expected RuntimeException when lock release fails after success');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('succeeded but the lock could not be released', $e->getMessage());
+            $this->assertStringContainsString('forceUnlock', $e->getMessage());
+            $this->assertSame($releaseException, $e->getPrevious());
+        }
+    }
+
+    public function testRunPreservesOriginalExceptionWhenReleaseFails()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('create')->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $indices->method('exists')->willReturn(new BoolResponse(true));
+        $indices->method('delete')->willReturn(new ArrayResponse(['acknowledged' => true]));
+
+        $response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn(503);
+        $releaseException = new \Elastic\Elasticsearch\Exception\ClientResponseException();
+        $releaseException->setResponse($response);
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
+        // 释放锁也失败：503
+        $client->method('delete')->willThrowException($releaseException);
+        // bulk 导入失败 → doRun 抛异常
+        $client->method('bulk')->willReturn(new ArrayResponse(['items' => [], 'errors' => true]));
+        Index::setClient($client);
+
+        $index = new class extends Index {
+            public function __construct()
+            {
+                $this->name = 'products';
+            }
+
+            public function source(array $context = []): iterable
+            {
+                yield 1 => ['title' => 'A'];
+            }
+        };
+
+        try {
+            (new Rebuild($index))->run();
+            $this->fail('Expected original import exception');
+        } catch (\Throwable $e) {
+            // ⑤：必须抛出 doRun 的原始异常，而非释放锁的 503 ClientResponseException
+            $this->assertInstanceOf(\RuntimeException::class, $e);
+            $this->assertStringContainsString('Bulk request has errors', $e->getMessage());
+            $this->assertStringNotContainsString('succeeded but the lock', $e->getMessage());
+            $this->assertNotSame($releaseException, $e);
+        }
+    }
+
+    public function testIsLockedThrowsOnServerError()
+    {
+        $response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn(503);
+        $exception = new \Elastic\Elasticsearch\Exception\ClientResponseException();
+        $exception->setResponse($response);
+
+        $client = $this->createMock(TestClient::class);
+        $client->method('exists')->willThrowException($exception);
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+
+        $this->expectException(\Elastic\Elasticsearch\Exception\ClientResponseException::class);
+        (new Rebuild($index))->isLocked();
+    }
 }
