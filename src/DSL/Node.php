@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ElasticKit\DSL;
 
 use Closure;
+use InvalidArgumentException;
+use stdClass;
 
 /**
  * Abstract base class for DSL nodes (query types, params).
@@ -93,7 +95,7 @@ abstract class Node
         } elseif (is_scalar($field)) {
             $this->fromScalar($field);
         } elseif (is_array($field)) {
-            $this->_properties = $field;
+            $this->fromArrayProperties($field);
         }
     }
 
@@ -112,6 +114,12 @@ abstract class Node
             $this->_properties = [];
         } elseif (is_array($value)) {
             $this->_properties = $value;
+        } else {
+            throw new InvalidArgumentException(sprintf(
+                '%s does not accept %s as a field value; use a clause key, closure, scalar, or array.',
+                static::class,
+                get_debug_type($value)
+            ));
         }
         if ($this->_fieldKeyed) {
             $this->field($field);
@@ -145,6 +153,19 @@ abstract class Node
             }
             break;
         }
+    }
+
+    /**
+     * Initialize from an array of properties.
+     *
+     * Default: store as-is. Override to route specific keys through
+     * clause accumulators (addClause) instead of raw addProperty.
+     *
+     * @param array<string, mixed> $field
+     */
+    protected function fromArrayProperties(array $field): void
+    {
+        $this->_properties = $field;
     }
 
     /**
@@ -256,16 +277,16 @@ abstract class Node
     {
         foreach ($properties as $key => $property) {
             if ($property instanceof Query) {
-                $properties[$key] = $property->toArray()['query'];
+                $properties[$key] = $property->toArray()['query'] ?? null;
             } elseif ($property instanceof Node) {
                 $properties[$key] = $property->toArray();
             } elseif ($property instanceof Closure) {
-                $properties[$key] = Query::create($property)->toArray()['query'];
+                $properties[$key] = Query::create($property)->toArray()['query'] ?? null;
             } elseif (is_array($property)) {
                 $properties[$key] = $this->resolveProperties($property);
             }
         }
-        return $properties;
+        return array_filter($properties, fn ($v) => $v !== null);
     }
 
     /**
@@ -289,7 +310,11 @@ abstract class Node
                 }
             }
         } else {
-            $properties = $this->_properties === null ? null : $this->resolveProperties($this->_properties);
+            if (empty($this->_properties)) {
+                $properties = $this->_fieldKeyed ? null : new stdClass();
+            } else {
+                $properties = $this->resolveProperties($this->_properties);
+            }
         }
 
         if ($this->_fieldKeyed) {

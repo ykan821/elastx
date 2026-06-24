@@ -218,27 +218,25 @@ class Query extends Node
         $dsl = $this->_properties !== null ? $this->resolveProperties($this->_properties) : [];
 
         $query = $this->buildQuery();
-        if (!empty($query)) {
+        if ($this->_multi || !empty($query)) {
             $dsl['query'] = $query;
         }
 
         $dsl = $this->buildAggs($dsl);
         $dsl = $this->buildParams($dsl);
 
-        return array_filter($dsl, function ($v) {
-            return $v !== [];
-        });
+        return array_filter($dsl, fn ($v) => $v !== null);
     }
 
     /**
      * Build the query clause array from stored query clauses.
      *
-     * @return array<int|string, mixed>|object
+     * @return array<int|string, mixed>
      */
-    private function buildQuery(): array|object
+    private function buildQuery(): array
     {
         if (empty($this->_queries)) {
-            return $this->_multi ? (object)[] : [];
+            return [];
         }
 
         // Flatten nested Query instances
@@ -253,25 +251,46 @@ class Query extends Node
             }
         }
 
-        $clauses = [];
-        foreach ($flat as $query) {
-            if ($query instanceof Node) {
-                $clauses[] = [$query->key() => $query->toArray()];
-            } elseif (is_array($query)) {
-                foreach ($query as $field => $item) {
-                    if ($item instanceof Node) {
-                        $item = $item->toArray();
-                    }
-                    $clauses[] = [$field => $item];
-                }
-            }
-        }
+        $clauses = $this->buildClauses($flat);
 
         if ($this->_multi) {
             return $clauses;
         }
 
         return $this->mergeClauses($clauses);
+    }
+
+    /**
+     * Build clause entries from flattened queries, skipping nodes that
+     * serialize to null/[] (e.g. an empty bool built dynamically).
+     *
+     * @param array<int, mixed> $flat
+     * @return array<int, array<string, mixed>>
+     */
+    private function buildClauses(array $flat): array
+    {
+        $clauses = [];
+        foreach ($flat as $query) {
+            if ($query instanceof Node) {
+                $body = $query->toArray();
+                if ($body === null) {
+                    continue;
+                }
+                $clauses[] = [$query->key() => $body];
+            } elseif (is_array($query)) {
+                foreach ($query as $field => $item) {
+                    if ($item instanceof Node) {
+                        $item = $item->toArray();
+                    }
+                    if ($item === null) {
+                        continue;
+                    }
+                    $clauses[] = [$field => $item];
+                }
+            }
+        }
+
+        return $clauses;
     }
 
     /**

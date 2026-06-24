@@ -240,6 +240,28 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
+    public function testSpanOrArrayForm()
+    {
+$exampleJson = <<<JSON
+{
+  "query": {
+    "span_or": {
+      "clauses": [
+        { "span_term": { "field": "value1" } },
+        { "span_term": { "field": "value2" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->spanOr(['clauses' => function (Query $query) {
+            $query->spanTerm('field', 'value1');
+            $query->spanTerm('field', 'value2');
+        }]);
+        $this->assertQuery($exampleJson, $query);
+    }
+
     public function testSpanTerm()
     {
         $exampleJson = <<<'JSON'

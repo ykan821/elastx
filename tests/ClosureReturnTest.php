@@ -58,13 +58,13 @@ class ClosureReturnTest extends DslTestCase
         $this->assertQuery('{"query":{"match":{"title":null}}}', $query);
     }
 
-    public function testQueryEmptyClosureProducesEmptyQuery()
+    public function testEmptyMustClosureKeepsEmptyArray()
     {
         $query = new Query();
         $query->bool(['must' => function () {
         }]);
 
-        $this->assertQuery('{"query":{"bool":{"must":{}}}}', $query);
+        $this->assertQuery('{"query":{"bool":{"must":[]}}}', $query);
     }
 
     public function testBoolClosureReturnsNewQuery()

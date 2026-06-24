@@ -122,6 +122,26 @@ $results = ProductIndex::query()
 }
 ```
 
+### 子句追加（ClausesSupport）
+
+`bool` 查询的子句（must / should / filter / must_not）**累加追加**，并接受与叶子查询相同的 4 种输入形式：
+
+```php
+// 4 种输入形式等价，都产出一条 must
+$q->bool(fn ($b) => $b->must(fn ($q) => $q->term('status', 'published')));
+$q->bool(['must' => fn ($q) => $q->term('status', 'published')]);
+$q->bool('must', fn ($q) => $q->term('status', 'published'));
+
+// 子句累加（多次调用、列表形式都追加）
+$q->bool(fn ($b) => $b->must(...)->must(...));   // must: [q1, q2]
+$q->bool(['must' => [$q1, $q2]]);                // 同上
+
+// 对比：minimum_should_match 是单值属性，后调覆盖而非追加
+$q->bool(fn ($b) => $b->minimumShouldMatch(1)->minimumShouldMatch(3)); // 3
+```
+
+> `dis_max`、`span_or`、`span_near` 等其他数组子句容器同理（queries / clauses 累加）。
+
 ### 聚合
 
 ```php

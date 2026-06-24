@@ -141,6 +141,113 @@ JSON;
         $this->assertQuery($expectedJson, $query);
     }
 
+    public function testBoolArrayWithListAppendsMultipleClauses()
+    {
+$expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "A" } },
+        { "term": { "status": "published" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->bool(['must' => [
+            ['match' => ['title' => 'A']],
+            ['term' => ['status' => 'published']],
+        ]]);
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolDynamicBuildWithNoMatchingConditionsKeepsEmptyBool()
+    {
+        $conditions = [
+            ['active' => false, 'q' => ['match' => ['title' => 'A']]],
+        ];
+        $query = new Query();
+        $query->bool(function ($b) use ($conditions) {
+            foreach ($conditions as $c) {
+                if ($c['active']) {
+                    $b->must($c['q']);
+                }
+            }
+        });
+        $this->assertQuery('{"query":{"bool":{}}}', $query);
+    }
+
+    public function testBoolTwoArgWithClosure()
+    {
+$expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "test" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->bool(new Boolean('must', function (Query $q) {
+            $q->match('title', 'test');
+        }));
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolTwoArgWithQueryObject()
+    {
+$expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "term": { "status": "published" } }
+      ]
+    }
+  }
+}
+JSON;
+        $inner = new Query();
+        $inner->term('status', 'published');
+        $query = new Query();
+        $query->bool(new Boolean('must', $inner));
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolTraitTwoArgWithClosure()
+    {
+$expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "test" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->bool('must', function (Query $q) {
+            $q->match('title', 'test');
+        });
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolTwoArgRejectsUnknownClauseKey()
+    {
+        $inner = new Query();
+        $inner->term('status', 'published');
+
+        $this->expectException(\InvalidArgumentException::class);
+        new Boolean('unknown', $inner);
+    }
+
     public function testBoosting()
     {
         $expectedJson = <<<JSON

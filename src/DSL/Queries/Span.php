@@ -67,12 +67,13 @@ trait Span
     /**
      * Add a span_near query.
      *
+     * @param mixed $field
      * @param mixed $value
      * @return $this
      */
-    public function spanNear($value): static
+    public function spanNear($field = null, $value = null): static
     {
-        return $this->addQuery(SpanNear::create($value));
+        return $this->addQuery(SpanNear::create($field, $value));
     }
 
     /**
@@ -89,12 +90,13 @@ trait Span
     /**
      * Add a span_or query.
      *
+     * @param mixed $field
      * @param mixed $value
      * @return $this
      */
-    public function spanOr($value): static
+    public function spanOr($field = null, $value = null): static
     {
-        return $this->addQuery(SpanOr::create($value));
+        return $this->addQuery(SpanOr::create($field, $value));
     }
 
     /**

@@ -99,7 +99,7 @@ trait Pipeline
      * Unlike sibling pipeline methods, bucket_script.buckets_path must be a map
      * (variable => path), so a bare string is rejected.
      *
-     * @param array|callable|BucketScript $value
+     * @param array<string, mixed>|callable|BucketScript $value
      * @return static
      */
     public function bucketScript($value): static
