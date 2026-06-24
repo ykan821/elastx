@@ -570,8 +570,8 @@ JSON;
             ->when(true, function (Query $q) {
                 $q->term('status', 'published');
             })
-            ->match('content', 'guide');
-        $this->assertQuery('{"query":{"match":{"title":"elasticsearch"},"term":{"status":"published"},"match":{"content":"guide"}}}', $query);
+            ->exists('tags');
+        $this->assertQuery('{"query":{"match":{"title":"elasticsearch"},"term":{"status":"published"},"exists":{"field":"tags"}}}', $query);
     }
 
     public function testWhenWithArrayQuery()

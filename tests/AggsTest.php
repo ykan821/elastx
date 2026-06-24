@@ -1291,4 +1291,15 @@ JSON;
         $query->aggs('total', ['sum_bucket' => ['buckets_path' => 'monthly>sales']]);
         $this->assertQuery('{"query":{"match_all":{}},"aggs":{"total":{"sum_bucket":{"buckets_path":"monthly>sales"}}}}', $query);
     }
+
+    public function testBucketScriptRejectsStringShorthand()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('bucket_script.buckets_path must be a map');
+
+        $query = new Query();
+        $query->aggs('script', function ($a) {
+            $a->bucketScript('bare_string');
+        });
+    }
 }

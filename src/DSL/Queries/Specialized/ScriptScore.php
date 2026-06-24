@@ -44,6 +44,6 @@ class ScriptScore extends Node
      */
     public function minScore(float $value): static
     {
-        return $this->addProperty('min_score', Query::create($value));
+        return $this->addProperty('min_score', $value);
     }
 }

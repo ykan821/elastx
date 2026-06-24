@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ElasticKit\DSL\Aggs;
 
 use ElasticKit\DSL\Aggs\Pipeline\AvgBucket;
+use InvalidArgumentException;
 use ElasticKit\DSL\Aggs\Pipeline\BucketScript;
 use ElasticKit\DSL\Aggs\Pipeline\CumulativeSum;
 use ElasticKit\DSL\Aggs\Pipeline\Derivative;
@@ -95,11 +96,18 @@ trait Pipeline
     /**
      * Runs a custom script to compute values from multiple bucket metrics.
      *
-     * @param mixed $value
+     * Unlike sibling pipeline methods, bucket_script.buckets_path must be a map
+     * (variable => path), so a bare string is rejected.
+     *
+     * @param array|callable|BucketScript $value
      * @return static
      */
     public function bucketScript($value): static
     {
-        return $this->node(BucketScript::create(is_string($value) ? ['buckets_path' => $value] : $value));
+        if (is_string($value)) {
+            throw new InvalidArgumentException('bucketScript() requires an array or closure; bucket_script.buckets_path must be a map, so a bare string is not valid.');
+        }
+
+        return $this->node(BucketScript::create($value));
     }
 }

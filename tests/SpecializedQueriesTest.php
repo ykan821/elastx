@@ -202,7 +202,8 @@ $exampleJson = <<<JSON
       },
       "script": {
         "source": "doc['my-int'].value / 10 "
-      }
+      },
+      "min_score": 5.5
     }
   }
 }
@@ -215,6 +216,7 @@ JSON;
             $scriptScore->script(function (\ElasticKit\DSL\Queries\Script $script) {
                 $script->source('doc[\'my-int\'].value / 10 ');
             });
+            $scriptScore->minScore(5.5);
         });
         $this->assertQuery($exampleJson, $query);
     }

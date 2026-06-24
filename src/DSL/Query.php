@@ -6,6 +6,7 @@ namespace ElasticKit\DSL;
 
 use BadMethodCallException;
 use Closure;
+use RuntimeException;
 use ElasticKit\DSL\Queries\Compound;
 use ElasticKit\DSL\Queries\FullText;
 use ElasticKit\DSL\Queries\Geo;
@@ -269,10 +270,29 @@ class Query extends Node
         if ($this->_multi) {
             return $clauses;
         }
-        if (empty($clauses)) {
-            return [];
+
+        return $this->mergeClauses($clauses);
+    }
+
+    /**
+     * Merge per-clause arrays, throwing on duplicate keys instead of silently overwriting.
+     *
+     * @param array<int, array<string, mixed>> $clauses
+     * @return array<string, mixed>
+     * @throws RuntimeException when two clauses share a key
+     */
+    private function mergeClauses(array $clauses): array
+    {
+        $merged = [];
+        foreach ($clauses as $clause) {
+            $clash = array_intersect_key($merged, $clause);
+            if ($clash) {
+                throw new RuntimeException(sprintf('Duplicate query clause key "%s".', implode('", "', array_keys($clash))));
+            }
+            $merged += $clause;
         }
-        return array_merge(...$clauses);
+
+        return $merged;
     }
 
     /**
