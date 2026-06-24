@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ElasticKit\Index;
 
+use RuntimeException;
 use stdClass;
 
 /**
@@ -51,22 +52,42 @@ class Manager
     }
 
     /**
-     * Delete the index. If the name is an alias, resolves to the backing index first.
+     * Delete the index.
      *
+     * Refuses by default when name() is an alias: deleting a backing index is
+     * destructive and irreversible. Pass resolveAlias=true to delete the backing
+     * index(es) the alias points to; use removeAlias() to drop the alias itself.
+     *
+     * @param bool $resolveAlias delete the backing index(es) when name() is an alias
      * @return array<string, mixed>
+     * @throws RuntimeException when name() is an alias and resolveAlias is false
      */
-    public function delete(): array
+    public function delete(bool $resolveAlias = false): array
     {
-        $indexName = $this->resolveIndexName();
+        $name = $this->index->name();
+        $indices = $this->index->getClient()->indices();
 
-        $e = new Event('manager.delete.before', $indexName);
+        $isAlias = $indices->existsAlias(['name' => $name])->asBool();
+
+        if ($isAlias && !$resolveAlias) {
+            throw new RuntimeException(sprintf(
+                'Index [%s] is an alias; pass resolveAlias=true to delete its backing index(es), or removeAlias() to drop the alias.',
+                $name
+            ));
+        }
+
+        $target = $name;
+        if ($isAlias) {
+            $aliases = $indices->getAlias(['name' => $name])->asArray();
+            $target = implode(',', array_keys($aliases));
+        }
+
+        $e = new Event('manager.delete.before', $target);
         EventDispatcher::dispatch($e);
 
-        $response = $this->index->getClient()->indices()->delete([
-            'index' => $indexName,
-        ])->asArray();
+        $response = $indices->delete(['index' => $target])->asArray();
 
-        $e = new Event('manager.delete.after', $indexName);
+        $e = new Event('manager.delete.after', $target);
         $e->response = $response;
         EventDispatcher::dispatch($e);
 

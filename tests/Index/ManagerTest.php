@@ -84,6 +84,57 @@ class ManagerTest extends TestCase
         $this->assertTrue($result['acknowledged']);
     }
 
+    public function testDeleteThrowsOnAliasWithoutResolve()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('existsAlias')->willReturn(new BoolResponse(true));
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        Index::setClient($client);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('is an alias');
+        (new Manager($this->createIndex('products')))->delete();
+    }
+
+    public function testDeleteResolvesAliasToBackingIndex()
+    {
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('existsAlias')->willReturn(new BoolResponse(true));
+        $indices->method('getAlias')->willReturn(new ArrayResponse([
+            'products_v1' => ['aliases' => ['products' => []]],
+        ]));
+        $indices->expects($this->once())->method('delete')
+            ->with(['index' => 'products_v1'])
+            ->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        Index::setClient($client);
+
+        $result = (new Manager($this->createIndex('products')))->delete(resolveAlias: true);
+
+        $this->assertTrue($result['acknowledged']);
+    }
+
+    public function testDeleteResolvesAliasToAllBackingIndices()
+    {
+        // 别名指向多个 backing index 时一次性删除，而非只删第一个（原 array_key_first 隐患）
+        $indices = $this->createMock(TestIndices::class);
+        $indices->method('existsAlias')->willReturn(new BoolResponse(true));
+        $indices->method('getAlias')->willReturn(new ArrayResponse([
+            'products_v1' => ['aliases' => ['products' => []]],
+            'products_v2' => ['aliases' => ['products' => []]],
+        ]));
+        $indices->expects($this->once())->method('delete')
+            ->with(['index' => 'products_v1,products_v2'])
+            ->willReturn(new ArrayResponse(['acknowledged' => true]));
+        $client = $this->createMock(TestClient::class);
+        $client->method('indices')->willReturn($indices);
+        Index::setClient($client);
+
+        (new Manager($this->createIndex('products')))->delete(resolveAlias: true);
+    }
+
     public function testExistsReturnsTrue()
     {
         $this->mockIndices('exists', ['index' => 'products'], true);
