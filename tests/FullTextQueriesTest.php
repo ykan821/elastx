@@ -2,7 +2,6 @@
 
 use Tests\DslTestCase;
 use ElasticKit\DSL\Query;
-use ElasticKit\DSL\Queries\Compound\Boolean;
 use ElasticKit\DSL\Queries\FullText\CombinedFields;
 use ElasticKit\DSL\Queries\FullText\Intervals;
 use ElasticKit\DSL\Queries\FullText\MatchBoolPrefix;
@@ -65,6 +64,46 @@ JSON;
             });
         });
         $this->assertQuery($exampleJson, $query);
+    }
+
+    public function testIntervalsPreservesInheritedProperties()
+    {
+        // 继承自 Node 的 boost() 等方法此前被 Intervals::toArray() 静默丢弃，
+        // toArray 不应再绕过 $_properties。
+        $exampleJson = <<<JSON
+{
+  "query": {
+    "intervals" : {
+      "my_text" : {
+        "match" : {
+          "query" : "salty"
+        },
+        "boost" : 2.0
+      }
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->match(['query' => 'salty']);
+            $intervals->boost(2.0);
+        });
+        $this->assertQuery($exampleJson, $query);
+    }
+
+    public function testIntervalsThrowsOnDuplicateRuleKey()
+    {
+        // 字段节点只接受单个 rule，两个 match 不应静默合并（后者覆盖前者），应抛异常。
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->match(['query' => 'foo']);
+            $intervals->match(['query' => 'bar']);
+        });
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Duplicate interval clause key "match"');
+        $query->toArray();
     }
 
     public function testIntervals2()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
+use RuntimeException;
 
 /**
  * Returns documents based on the order and proximity of matching terms.
@@ -135,9 +136,10 @@ class Intervals extends Node
             }
         }
         if (!$this->_multi) {
-            $properties = array_reduce($resolved, function ($carry, $item) {
-                return array_merge($carry, $item);
-            }, []);
+            $properties = $this->mergeUnique($resolved);
+            if (!empty($this->_properties)) {
+                $properties = $this->mergeUnique([$properties, $this->resolveProperties($this->_properties)]);
+            }
         } else {
             $properties = $resolved;
         }
@@ -146,5 +148,25 @@ class Intervals extends Node
             return [$this->_field => $properties];
         }
         return $properties;
+    }
+
+    /**
+     * Merge clause arrays, throwing on duplicate keys instead of silently overwriting.
+     *
+     * @param array<int, array<string, mixed>> $clauses
+     * @return array<string, mixed>
+     * @throws RuntimeException when two clauses share a key
+     */
+    private function mergeUnique(array $clauses): array
+    {
+        $merged = [];
+        foreach ($clauses as $clause) {
+            $clash = array_intersect_key($merged, $clause);
+            if ($clash) {
+                throw new RuntimeException(sprintf('Duplicate interval clause key "%s".', implode('", "', array_keys($clash))));
+            }
+            $merged += $clause;
+        }
+        return $merged;
     }
 }
