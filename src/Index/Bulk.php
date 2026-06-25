@@ -147,13 +147,17 @@ class Bulk
     /**
      * Queue a create action (fail if document already exists).
      *
-     * @param string|int $id
+     * @param string|int|null $id document ID, or null/'' to let ES auto-generate
      * @param array<string, mixed> $data
      * @return $this
      */
-    public function create(string|int $id, array $data): static
+    public function create(string|int|null $id, array $data): static
     {
-        $this->body[] = ['create' => ['_index' => $this->resolveIndex(), '_id' => $id]];
+        $action = ['create' => ['_index' => $this->resolveIndex()]];
+        if ($id !== null && $id !== '') {
+            $action['create']['_id'] = $id;
+        }
+        $this->body[] = $action;
         $this->body[] = $data;
         $this->afterPush();
 

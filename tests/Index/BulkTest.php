@@ -65,6 +65,24 @@ class BulkTest extends TestCase
         (new Bulk($index))->create('1', ['title' => 'foo'])->execute();
     }
 
+    public function testCreateActionWithoutIdOmitsId()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->expects($this->once())
+            ->method('bulk')
+            ->with([
+                'body' => [
+                    ['create' => ['_index' => 'products']], // no _id → ES auto-generates
+                    ['title' => 'foo'],
+                ],
+            ])
+            ->willReturn(new ArrayResponse(['errors' => false, 'items' => []]));
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        (new Bulk($index))->create(null, ['title' => 'foo'])->execute();
+    }
+
     public function testUpdateAction()
     {
         $client = $this->createMock(TestClient::class);
