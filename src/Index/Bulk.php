@@ -104,7 +104,8 @@ class Bulk
     }
 
     /**
-     * Set retry_on_conflict for all update actions in this batch.
+     * Set retry_on_conflict for all subsequent update actions. Persists across
+     * flush() calls (it's a setting, not per-batch).
      *
      * @param int $count
      * @return $this
@@ -267,10 +268,10 @@ class Bulk
             }
         }
 
-        // Success, or the handler consumed the batch.
+        // Success, or the handler consumed the batch. Only the buffer is reset;
+        // retryOnConflict persists across flushes (it's a setting, like target()).
         $this->body = [];
         $this->docCount = 0;
-        $this->retryOnConflict = 0;
 
         return $response;
     }

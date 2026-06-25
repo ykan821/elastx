@@ -207,17 +207,17 @@ class BulkTest extends TestCase
             ->flush(['refresh' => 'wait_for', 'timeout' => '5s']);
     }
 
-    public function testExecuteClearsBodyAndRetryOnConflict()
+    public function testFlushClearsBodyButPersistsRetryOnConflict()
     {
         $callCount = 0;
         $client = $this->createMock(TestClient::class);
         $client->method('bulk')->willReturnCallback(function ($params) use (&$callCount) {
             $callCount++;
+            // retryOnConflict persists across flushes (setting); refresh is per-call
+            $this->assertSame(3, $params['body'][0]['update']['retry_on_conflict']);
             if ($callCount === 1) {
-                $this->assertEquals(3, $params['body'][0]['update']['retry_on_conflict']);
-                $this->assertEquals('wait_for', $params['refresh']);
+                $this->assertSame('wait_for', $params['refresh']);
             } else {
-                $this->assertArrayNotHasKey('retry_on_conflict', $params['body'][0]['update']);
                 $this->assertArrayNotHasKey('refresh', $params);
             }
             return new ArrayResponse(['errors' => false, 'items' => []]);

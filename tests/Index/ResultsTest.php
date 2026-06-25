@@ -158,6 +158,16 @@ class ResultsTest extends TestCase
         $this->assertEquals(1, $results->lastPage());
     }
 
+    public function testLastPageWithZeroPerPageDoesNotCrash()
+    {
+        $results = new Results($this->makeResponse([
+            'hits' => ['total' => ['value' => 50, 'relation' => 'eq'], 'hits' => []],
+        ]));
+        $results->paginate(1, 0);
+
+        $this->assertEquals(1, $results->lastPage()); // guarded, no DivisionByZeroError
+    }
+
     public function testItemsReturnsDocs()
     {
         $results = new Results($this->makeResponse([

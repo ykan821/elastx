@@ -204,6 +204,10 @@ class Results
      */
     public function lastPage(): int
     {
+        if ($this->perPage < 1) {
+            return 1;
+        }
+
         return (int) ceil($this->total() / $this->perPage) ?: 1;
     }
 

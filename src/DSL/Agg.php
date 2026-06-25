@@ -235,7 +235,7 @@ class Agg
      * @param int $depth
      * @return string
      */
-    public function toJson(int $flags = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT, int $depth = 512): string
+    public function toJson(int $flags = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION, int $depth = 512): string
     {
         $json = json_encode($this->toArray(), $flags, $depth);
 
