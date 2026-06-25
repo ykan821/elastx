@@ -14,12 +14,13 @@ class Composite extends Node
     protected string $_key = 'composite';
 
     /**
-     * List of source definitions used to build composite buckets.
+     * Set the whole sources list. Each element is {name: {type: config}} where
+     * type is one of: terms, histogram, date_histogram, geotile_grid.
      *
-     * @param mixed $value
+     * @param array<int, array<string, mixed>> $value
      * @return static
      */
-    public function sources($value): static
+    public function sources(array $value): static
     {
         return $this->addProperty('sources', $value);
     }
