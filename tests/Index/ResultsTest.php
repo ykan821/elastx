@@ -89,23 +89,6 @@ class ResultsTest extends TestCase
         $this->assertNull($results->scrollId());
     }
 
-    public function testHasMoreScrollWithHits()
-    {
-        $results = new Results($this->makeResponse([
-            'hits' => [
-                'total' => ['value' => 1, 'relation' => 'eq'],
-                'hits' => [['_source' => ['title' => 'foo']]],
-            ],
-        ]));
-        $this->assertTrue($results->hasMore());
-    }
-
-    public function testHasMoreScrollEmpty()
-    {
-        $results = new Results($this->makeResponse());
-        $this->assertFalse($results->hasMore());
-    }
-
     public function testTotalRelationEq()
     {
         $results = new Results($this->makeResponse([

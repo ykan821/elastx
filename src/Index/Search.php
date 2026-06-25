@@ -223,7 +223,7 @@ class Search
         $results = $this->scroll(null, $duration);
 
         try {
-            while ($results->hasMore()) {
+            while (! $results->isEmpty()) {
                 yield $results;
                 $results = $this->next($results, $duration);
             }

@@ -138,13 +138,16 @@ class Results
     }
 
     /**
-     * Return whether the current batch contains hits.
+     * Whether the current result set has no hits.
+     *
+     * For scroll loops: `while (! $results->isEmpty())`. For pagination
+     * "has a next page", use `page() < lastPage()` instead.
      *
      * @return bool
      */
-    public function hasMore(): bool
+    public function isEmpty(): bool
     {
-        return !empty($this->response['hits']['hits']);
+        return empty($this->response['hits']['hits']);
     }
 
     /**
@@ -219,16 +222,6 @@ class Results
     public function items(): array
     {
         return $this->docs();
-    }
-
-    /**
-     * Return whether the result set is empty.
-     *
-     * @return bool
-     */
-    public function isEmpty(): bool
-    {
-        return empty($this->response['hits']['hits']);
     }
 
     /**
