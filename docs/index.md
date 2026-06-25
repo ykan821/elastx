@@ -163,38 +163,56 @@ $doc->update(['price' => 39.99], true);     // 文档不存在时自动创建
 
 ## 批量操作
 
+Bulk 是一个缓冲区:`index()/create()/update()/delete()` 只入队,**`flush()` 才发送**。
+
 ```php
 use ElasticKit\Index\Bulk;
 
 $bulk = new Bulk(new ProductIndex());
-$bulk->batchSize(500);
 $bulk->index(1, ['title' => 'Product A']);
 $bulk->index(2, ['title' => 'Product B']);
 $bulk->delete(3);
-$bulk->execute(); // 执行所有操作，执行后清空状态
+$bulk->flush(); // 发送并清空缓冲
+```
+
+`batchSize(N)` 开启**自动 flush**:缓冲达到 N 时自动发送(默认 0 = 关闭,纯缓冲)。大导入用它避免一次性堆积内存;循环结束后**仍需 `flush()` 发送尾部**:
+
+```php
+$bulk = (new Bulk(new ProductIndex()))->batchSize(500);
+foreach ($docs as $id => $doc) {
+    $bulk->index($id, $doc);   // 满 500 自动 flush
+}
+$bulk->flush();                 // 尾部(< 500 那批)
 ```
 
 ### 错误处理
 
-`execute()` 默认在响应包含错误时抛出 `RuntimeException`。使用 `onError()` 自定义处理。回调接收 ES 原始响应，不抛出则继续，抛出则中断：
+`flush()` 默认在响应包含错误时抛出 `RuntimeException`。用 `onError()` 自定义处理——回调收到三样原材料,自行决定:
+
+- `$response` — ES 原始响应(`items[]` 带逐条 status/error)
+- `$body` — 完整原始批次(含成功项,native ES 格式)
+- `$newbulk` — 一个新的、绑定同索引+目标 的 Bulk,用于重投失败项
+
+回调内**不抛(返回)→ 视为已处理,本批清空、继续;抛出 → 中断、本批保留**给调用方。
 
 ```php
-$bulk = new Bulk(new ProductIndex());
+// 不设 onError → 有错误就抛 RuntimeException
+$bulk->flush();
 
-// 不设 onError → 有错误就抛异常
-$bulk->execute();
-
-// 设 onError → 回调内不抛则继续，抛则中断
-$bulk->onError(function (array $response) {
-    $failures = count(array_filter($response['items'], fn($i) => isset($i['index']['error'])));
-    if ($failures > 100) {
-        throw new RuntimeException("失败超过阈值: {$failures}");
+// 设 onError → 自行处理失败项(可重投)
+$bulk->onError(function (array $response, array $body, Bulk $newbulk) {
+    // items[k] ↔ 第 k 个 action;把失败的挑出来重投(此处为纯 index 批次的简易对齐)
+    foreach ($response['items'] as $i => $item) {
+        $meta = $item[array_key_first($item)];
+        if (($meta['status'] ?? 200) >= 400) {
+            $newbulk->index($meta['_id'], $body[$i * 2 + 1]);
+        }
     }
-    Log::warning("部分失败: {$failures} 条");
-})->execute();
+    $newbulk->flush();
+})->flush();
 ```
 
-> `batchSize` 自动 flush 时的错误同样走 `onError`，不会丢失。
+> `batchSize` 自动 flush 触发的错误同样走 `onError`。
 
 ## 零停机重建
 
@@ -277,8 +295,9 @@ $rebuild->run(['after' => '2024-01-01']);
 Rebuild 内部使用 Bulk 执行导入，`onError()` 用法与 [批量操作 > 错误处理](#错误处理) 一致：
 
 ```php
-$rebuild->onError(function (array $response) {
+$rebuild->onError(function (array $response, array $body, Bulk $newbulk) {
     Log::warning("重建导入错误", $response);
+    // 需要重投失败项时用 $body + $newbulk,见「批量操作 > 错误处理」
 })->run();
 ```
 
@@ -371,8 +390,8 @@ Index::setClient($client);
 | `search.query.after` | `$dsl`, `$response`, `$duration`, `$action` |
 | `search.scroll.before` | `$action`, `$scrollId` |
 | `search.scroll.after` | `$action`, `$scrollId`, `$response`, `$duration` |
-| `bulk.execute.before` | `$actions` |
-| `bulk.execute.after` | `$actions`, `$response`, `$duration` |
+| `bulk.flush.before` | `$actions` |
+| `bulk.flush.after` | `$actions`, `$response`, `$duration` |
 | `manager.create.before` | |
 | `manager.create.after` | `$response` |
 | `manager.delete.before` | |

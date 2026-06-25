@@ -42,7 +42,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        $result = (new Bulk($index))->index('1', ['title' => 'foo'])->execute();
+        $result = (new Bulk($index))->index('1', ['title' => 'foo'])->flush();
 
         $this->assertFalse($result['errors']);
     }
@@ -62,7 +62,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        (new Bulk($index))->create('1', ['title' => 'foo'])->execute();
+        (new Bulk($index))->create('1', ['title' => 'foo'])->flush();
     }
 
     public function testCreateActionWithoutIdOmitsId()
@@ -80,7 +80,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        (new Bulk($index))->create(null, ['title' => 'foo'])->execute();
+        (new Bulk($index))->create(null, ['title' => 'foo'])->flush();
     }
 
     public function testUpdateAction()
@@ -98,7 +98,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        (new Bulk($index))->update('1', ['title' => 'updated'])->execute();
+        (new Bulk($index))->update('1', ['title' => 'updated'])->flush();
     }
 
     public function testUpdateWithoutUpsert()
@@ -116,7 +116,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        (new Bulk($index))->update('1', ['title' => 'updated'], false)->execute();
+        (new Bulk($index))->update('1', ['title' => 'updated'], false)->flush();
     }
 
     public function testUpdateWithRetryOnConflict()
@@ -140,7 +140,7 @@ class BulkTest extends TestCase
             ->retryOnConflict(3)
             ->update('1', ['title' => 'updated'])
             ->update('2', ['title' => 'bar'])
-            ->execute();
+            ->flush();
     }
 
     public function testDeleteAction()
@@ -157,7 +157,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        (new Bulk($index))->delete('1')->execute();
+        (new Bulk($index))->delete('1')->flush();
     }
 
     public function testMixedActions()
@@ -182,7 +182,7 @@ class BulkTest extends TestCase
             ->index('1', ['title' => 'foo'])
             ->update('2', ['title' => 'bar'])
             ->delete('3')
-            ->execute();
+            ->flush();
     }
 
     public function testExecuteWithOptions()
@@ -204,7 +204,7 @@ class BulkTest extends TestCase
         $index = $this->createIndex('products');
         (new Bulk($index))
             ->index('1', ['title' => 'foo'])
-            ->execute(['refresh' => 'wait_for', 'timeout' => '5s']);
+            ->flush(['refresh' => 'wait_for', 'timeout' => '5s']);
     }
 
     public function testExecuteClearsBodyAndRetryOnConflict()
@@ -227,8 +227,8 @@ class BulkTest extends TestCase
         $index = $this->createIndex('products');
         $bulk = new Bulk($index);
 
-        $bulk->retryOnConflict(3)->update('1', ['title' => 'first'])->execute(['refresh' => 'wait_for']);
-        $bulk->update('1', ['title' => 'second'])->execute();
+        $bulk->retryOnConflict(3)->update('1', ['title' => 'first'])->flush(['refresh' => 'wait_for']);
+        $bulk->update('1', ['title' => 'second'])->flush();
 
         $this->assertEquals(2, $callCount);
     }
@@ -248,7 +248,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        (new Bulk($index))->target('products_new')->index('1', ['title' => 'foo'])->execute();
+        (new Bulk($index))->target('products_new')->index('1', ['title' => 'foo'])->flush();
     }
 
     public function testAutoFlushTriggersExecute()
@@ -271,7 +271,7 @@ class BulkTest extends TestCase
         $this->assertEquals(1, $callCount);
 
         $bulk->index('3', ['title' => 'c']);
-        $bulk->execute();
+        $bulk->flush();
         $this->assertEquals(2, $callCount);
     }
 
@@ -282,7 +282,7 @@ class BulkTest extends TestCase
         Index::setClient($client);
 
         $index = $this->createIndex('products');
-        $result = (new Bulk($index))->execute();
+        $result = (new Bulk($index))->flush();
 
         $this->assertEquals([], $result);
     }
@@ -300,7 +300,7 @@ class BulkTest extends TestCase
 
         $index = $this->createIndex('products');
         $this->expectException(\RuntimeException::class);
-        (new Bulk($index))->index('1', ['title' => 'foo'])->execute();
+        (new Bulk($index))->index('1', ['title' => 'foo'])->flush();
     }
 
     public function testExecutePreservesBodyForRetryOnError()
@@ -322,13 +322,13 @@ class BulkTest extends TestCase
         $bulk = (new Bulk($index))->index('1', ['title' => 'foo']);
 
         try {
-            $bulk->execute();
+            $bulk->flush();
             $this->fail('Expected RuntimeException');
         } catch (\RuntimeException $e) {
             // body must survive the failure so the caller can retry
         }
 
-        $result = $bulk->execute();
+        $result = $bulk->flush();
         $this->assertFalse($result['errors']);
         $this->assertEquals(2, $callCount);
     }
@@ -353,7 +353,7 @@ class BulkTest extends TestCase
                 $captured['body'] = $body;
                 $captured['newbulk'] = $newbulk;
             });
-        $outer->index('1', ['title' => 'A'])->index('2', ['title' => 'B'])->execute();
+        $outer->index('1', ['title' => 'A'])->index('2', ['title' => 'B'])->flush();
 
         $this->assertTrue($captured['response']['errors']);              // raw ES response
         $this->assertSame('1', $captured['body'][0]['index']['_id']);   // full body, successes included
@@ -394,11 +394,11 @@ class BulkTest extends TestCase
                         $newbulk->index($item['index']['_id'], $body[$i * 2 + 1]);
                     }
                 }
-                $newbulk->execute();
+                $newbulk->flush();
             })
             ->index('1', ['title' => 'A'])
             ->index('2', ['title' => 'B'])
-            ->execute();
+            ->flush();
 
         $this->assertCount(2, $calls);                                      // original + retry
         $this->assertSame('products_new', $calls[1][0]['index']['_index']); // fresh bulk inherited target
@@ -408,7 +408,7 @@ class BulkTest extends TestCase
 
     public function testOnErrorFreshBulkHasNoHandlerSoItsErrorsThrow()
     {
-        // The fresh Bulk is bare (no handler): its own execute() throws on error
+        // The fresh Bulk is bare (no handler): its own flush() throws on error
         // rather than recursing back into the handler.
         $calls = 0;
         $client = $this->createMock(TestClient::class);
@@ -426,13 +426,13 @@ class BulkTest extends TestCase
             ->onError(function ($response, $body, $newbulk) use (&$threw) {
                 $newbulk->index('1', ['title' => 'retry']);
                 try {
-                    $newbulk->execute();
+                    $newbulk->flush();
                 } catch (\RuntimeException $e) {
                     $threw = true; // surfaced as exception, no recursion
                 }
             })
             ->index('1', ['title' => 'foo'])
-            ->execute();
+            ->flush();
 
         $this->assertTrue($threw);
         $this->assertEquals(2, $calls); // original + one retry attempt, no recursion
@@ -454,10 +454,10 @@ class BulkTest extends TestCase
                 // accept and drop
             })
             ->index('1', ['title' => 'foo']);
-        $bulk->execute();
+        $bulk->flush();
 
         $this->assertEquals(1, $callCount);
-        $this->assertEquals([], $bulk->execute()); // batch consumed by handler
+        $this->assertEquals([], $bulk->flush()); // batch consumed by handler
     }
 
     public function testOnErrorPreservesBatchWhenHandlerThrows()
@@ -478,14 +478,14 @@ class BulkTest extends TestCase
             ->index('1', ['title' => 'foo']);
 
         try {
-            $bulk->execute();
+            $bulk->flush();
             $this->fail('Expected exception');
         } catch (\RuntimeException $e) {
             $this->assertSame('handler aborted', $e->getMessage());
         }
 
         try {
-            $bulk->execute(); // batch preserved → re-sent
+            $bulk->flush(); // batch preserved → re-sent
         } catch (\RuntimeException $e) {
             // still failing, still preserved
         }
@@ -511,7 +511,7 @@ class BulkTest extends TestCase
                 $received = $response;
             })
             ->index('1', ['title' => 'foo'])
-            ->execute();
+            ->flush();
 
         $this->assertEquals($errorResponse, $received);
     }

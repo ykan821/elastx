@@ -14,7 +14,7 @@ namespace ElasticKit\Index;
  * @property array<string, mixed>|null $response ES API response (all after events)
  * @property float|null $duration Execution time in seconds (all after events)
  * @property string|null $scrollId Scroll context ID (search.scroll events)
- * @property array<int, mixed>|null $actions Bulk action lines (bulk.execute events)
+ * @property array<int, mixed>|null $actions Bulk action lines (bulk.flush events)
  * @property string|null $newIndex New backing index name (rebuild.run.after)
  * @property string|null $oldIndex Previous backing index name (rebuild.run.after)
  */

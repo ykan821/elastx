@@ -245,7 +245,7 @@ class SyncEsJob
             $bulk->index($id, $doc);
         }
 
-        $bulk->execute();
+        $bulk->flush();
         $job->delete();
     }
 }

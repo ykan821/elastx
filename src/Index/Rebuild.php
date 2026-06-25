@@ -436,6 +436,6 @@ class Rebuild
             );
         }
 
-        $bulk->execute();
+        $bulk->flush();
     }
 }

@@ -236,7 +236,7 @@ $bulk->batchSize(500)
     ->index(2, ['title' => 'B', 'price' => 20])
     ->update(3, ['price' => 15])
     ->delete(4)
-    ->execute();
+    ->flush();
 ```
 
 ### 索引管理

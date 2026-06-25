@@ -204,7 +204,7 @@ class EventTest extends TestCase
     public function testBulkExecutePassesActions()
     {
         $actions = null;
-        EventDispatcher::listen('bulk.execute.before', function (Event $e) use (&$actions) {
+        EventDispatcher::listen('bulk.flush.before', function (Event $e) use (&$actions) {
             $actions = $e->actions;
         });
 
@@ -215,7 +215,7 @@ class EventTest extends TestCase
         $index = $this->createIndex();
         $bulk = new \ElasticKit\Index\Bulk($index);
         $bulk->index(1, ['title' => 'test']);
-        $bulk->execute();
+        $bulk->flush();
 
         $this->assertIsArray($actions);
         $this->assertCount(2, $actions);

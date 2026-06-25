@@ -28,6 +28,9 @@ class Bulk
     private ?string $targetIndex = null;
 
     /**
+     * Auto-flush threshold (0 = disabled). When set, the buffer is flushed
+     * automatically inside the enqueue methods once docCount reaches it.
+     *
      * @var int
      */
     private int $batchSize = 0;
@@ -56,7 +59,7 @@ class Bulk
      */
     public function target(string $indexName): static
     {
-        if (strpos($indexName, '.') === 0) {
+        if (str_starts_with($indexName, '.')) {
             throw new InvalidArgumentException("System index names (starting with '.') are not allowed: {$indexName}");
         }
 
@@ -66,7 +69,8 @@ class Bulk
     }
 
     /**
-     * Auto-execute when doc count reaches this batch size.
+     * Auto-flush threshold: flush automatically once docCount reaches $size.
+     * Off by default (0). When off, the buffer only sends on an explicit flush().
      *
      * @param int $size
      * @return $this
@@ -87,7 +91,7 @@ class Bulk
      * - $newbulk: a fresh Bulk bound to the same index and target, for re-send.
      *
      * Extract the failures from $body using $response (items[k] matches the k-th
-     * action), re-enqueue them on $newbulk, and call $newbulk->execute() to retry.
+     * action), re-enqueue them on $newbulk, and call $newbulk->flush() to retry.
      * Return to consume this batch (cleared), or throw to abort and leave it.
      *
      * @param callable $handler function (array $response, array $body, Bulk $newbulk): void
@@ -204,18 +208,19 @@ class Bulk
     }
 
     /**
-     * Execute all queued actions and return the raw ES response.
+     * Flush all queued actions to ES and return the raw response.
      *
      * On success the queue is cleared. On error: with an onError handler the
      * batch is handed off (response, the full body, and a fresh Bulk) and cleared
      * on return; without a handler a RuntimeException is thrown and the batch is
-     * preserved for the caller to retry.
+     * preserved for the caller to retry. Call this at the end of a batch to flush
+     * the remainder — batchSize() auto-flushes full batches during enqueue.
      *
      * @param array<string, mixed> $options top-level bulk API params (refresh, timeout, etc)
      * @return array<string, mixed>
      * @throws \RuntimeException when the response has errors and no handler swallowed them
      */
-    public function execute(array $options = []): array
+    public function flush(array $options = []): array
     {
         if (empty($this->body)) {
             return [];
@@ -224,7 +229,7 @@ class Bulk
         $indexName = $this->resolveIndex();
         $actions = $this->body;
 
-        $e = new Event('bulk.execute.before', $indexName);
+        $e = new Event('bulk.flush.before', $indexName);
         $e->actions = $actions;
         EventDispatcher::dispatch($e);
 
@@ -234,7 +239,7 @@ class Bulk
         )->asArray();
         $duration = microtime(true) - $start;
 
-        $e = new Event('bulk.execute.after', $indexName);
+        $e = new Event('bulk.flush.after', $indexName);
         $e->actions = $actions;
         $e->response = $response;
         $e->duration = $duration;
@@ -288,7 +293,7 @@ class Bulk
         $this->docCount++;
 
         if ($this->batchSize > 0 && $this->docCount >= $this->batchSize) {
-            $this->execute();
+            $this->flush();
         }
     }
 }
