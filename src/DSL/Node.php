@@ -15,6 +15,8 @@ use stdClass;
  */
 abstract class Node
 {
+    use DeepClone;
+
     /**
      * Properties owned by a node. Either an array of attributes, or null when
      * the node carries no properties (empty construction / empty closure,

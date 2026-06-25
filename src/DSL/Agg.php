@@ -19,6 +19,7 @@ class Agg
     use Bucket;
     use Metric;
     use Pipeline;
+    use DeepClone;
 
     /**
      * The aggregation type node.
