@@ -654,4 +654,39 @@ JSON;
         });
         $this->assertQuery($exampleJson, $query);
     }
+
+    public function testAllOfFilter()
+    {
+        // all_of::filter() must wrap in a Filter rule like any_of::filter()
+        $exampleJson = <<<JSON
+{
+  "query": {
+    "intervals": {
+      "my_text": {
+        "all_of": {
+          "intervals": [
+            { "match": { "query": "hot water" } }
+          ],
+          "filter": {
+            "after": { "match": { "query": "cold porridge" } }
+          }
+        }
+      }
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->allOf(function (Intervals\AllOf $allOf) {
+                $allOf->addInterval(function (Intervals $i) {
+                    $i->match(['query' => 'hot water']);
+                });
+                $allOf->filter(function (Intervals\Filter $filter) {
+                    $filter->after(['match' => ['query' => 'cold porridge']]);
+                });
+            });
+        });
+        $this->assertQuery($exampleJson, $query);
+    }
 }

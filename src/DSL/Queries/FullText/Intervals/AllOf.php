@@ -81,6 +81,6 @@ class AllOf extends Node
      */
     public function filter($value): static
     {
-        return $this->addProperty('filter', $value);
+        return $this->addProperty('filter', Filter::create($value));
     }
 }
