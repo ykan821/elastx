@@ -285,6 +285,195 @@ class BulkTest extends TestCase
         (new Bulk($index))->index('1', ['title' => 'foo'])->execute();
     }
 
+    public function testExecutePreservesBodyForRetryOnError()
+    {
+        $callCount = 0;
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturnCallback(function () use (&$callCount) {
+            $callCount++;
+            if ($callCount === 1) {
+                return new ArrayResponse(['errors' => true, 'items' => [
+                    ['index' => ['_id' => '1', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+                ]]);
+            }
+            return new ArrayResponse(['errors' => false, 'items' => []]);
+        });
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $bulk = (new Bulk($index))->index('1', ['title' => 'foo']);
+
+        try {
+            $bulk->execute();
+            $this->fail('Expected RuntimeException');
+        } catch (\RuntimeException $e) {
+            // body must survive the failure so the caller can retry
+        }
+
+        $result = $bulk->execute();
+        $this->assertFalse($result['errors']);
+        $this->assertEquals(2, $callCount);
+    }
+
+    public function testOnErrorReceivesResponseBodyAndFreshBulk()
+    {
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturn(new ArrayResponse([
+            'errors' => true,
+            'items' => [
+                ['index' => ['_id' => '1', 'status' => 201]],
+                ['index' => ['_id' => '2', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+            ],
+        ]));
+        Index::setClient($client);
+
+        $captured = [];
+        $outer = (new Bulk($this->createIndex('products')))
+            ->target('products_new')
+            ->onError(function ($response, $body, $newbulk) use (&$captured) {
+                $captured['response'] = $response;
+                $captured['body'] = $body;
+                $captured['newbulk'] = $newbulk;
+            });
+        $outer->index('1', ['title' => 'A'])->index('2', ['title' => 'B'])->execute();
+
+        $this->assertTrue($captured['response']['errors']);              // raw ES response
+        $this->assertSame('1', $captured['body'][0]['index']['_id']);   // full body, successes included
+        $this->assertSame(['title' => 'A'], $captured['body'][1]);
+        $this->assertSame('2', $captured['body'][2]['index']['_id']);
+        $this->assertInstanceOf(Bulk::class, $captured['newbulk']);     // fresh Bulk
+        $this->assertNotSame($outer, $captured['newbulk']);             // independent instance
+    }
+
+    public function testOnErrorRetriesFailuresViaFreshBulkOnSameTarget()
+    {
+        // Outer targets 'products_new'. Batch of 2: id=1 succeeds, id=2 fails.
+        $calls = [];
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturnCallback(function ($params) use (&$calls) {
+            $calls[] = $params['body'];
+            if (count($calls) === 1) {
+                return new ArrayResponse([
+                    'errors' => true,
+                    'items' => [
+                        ['index' => ['_id' => '1', 'status' => 201]],
+                        ['index' => ['_id' => '2', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+                    ],
+                ]);
+            }
+            return new ArrayResponse(['errors' => false, 'items' => []]);
+        });
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        (new Bulk($index))
+            ->target('products_new')
+            ->onError(function ($response, $body, $newbulk) {
+                // user extracts the failure (id=2) and re-sends it on the fresh bulk.
+                // items[k] ↔ k-th action; for an all-index batch, action k's data is body[2k+1].
+                foreach ($response['items'] as $i => $item) {
+                    if (($item['index']['status'] ?? 200) >= 400) {
+                        $newbulk->index($item['index']['_id'], $body[$i * 2 + 1]);
+                    }
+                }
+                $newbulk->execute();
+            })
+            ->index('1', ['title' => 'A'])
+            ->index('2', ['title' => 'B'])
+            ->execute();
+
+        $this->assertCount(2, $calls);                                      // original + retry
+        $this->assertSame('products_new', $calls[1][0]['index']['_index']); // fresh bulk inherited target
+        $this->assertSame('2', $calls[1][0]['index']['_id']);               // only the failure
+        $this->assertSame(['title' => 'B'], $calls[1][1]);                  // its data
+    }
+
+    public function testOnErrorFreshBulkHasNoHandlerSoItsErrorsThrow()
+    {
+        // The fresh Bulk is bare (no handler): its own execute() throws on error
+        // rather than recursing back into the handler.
+        $calls = 0;
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturnCallback(function () use (&$calls) {
+            $calls++;
+            return new ArrayResponse(['errors' => true, 'items' => [
+                ['index' => ['_id' => '1', 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]],
+            ]]);
+        });
+        Index::setClient($client);
+
+        $threw = false;
+        $index = $this->createIndex('products');
+        (new Bulk($index))
+            ->onError(function ($response, $body, $newbulk) use (&$threw) {
+                $newbulk->index('1', ['title' => 'retry']);
+                try {
+                    $newbulk->execute();
+                } catch (\RuntimeException $e) {
+                    $threw = true; // surfaced as exception, no recursion
+                }
+            })
+            ->index('1', ['title' => 'foo'])
+            ->execute();
+
+        $this->assertTrue($threw);
+        $this->assertEquals(2, $calls); // original + one retry attempt, no recursion
+    }
+
+    public function testOnErrorClearsBatchWhenHandlerReturns()
+    {
+        $callCount = 0;
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturnCallback(function () use (&$callCount) {
+            $callCount++;
+            return new ArrayResponse(['errors' => true, 'items' => []]);
+        });
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $bulk = (new Bulk($index))
+            ->onError(function ($response, $body, $newbulk) {
+                // accept and drop
+            })
+            ->index('1', ['title' => 'foo']);
+        $bulk->execute();
+
+        $this->assertEquals(1, $callCount);
+        $this->assertEquals([], $bulk->execute()); // batch consumed by handler
+    }
+
+    public function testOnErrorPreservesBatchWhenHandlerThrows()
+    {
+        $callCount = 0;
+        $client = $this->createMock(TestClient::class);
+        $client->method('bulk')->willReturnCallback(function () use (&$callCount) {
+            $callCount++;
+            return new ArrayResponse(['errors' => true, 'items' => []]);
+        });
+        Index::setClient($client);
+
+        $index = $this->createIndex('products');
+        $bulk = (new Bulk($index))
+            ->onError(function ($response, $body, $newbulk) {
+                throw new \RuntimeException('handler aborted');
+            })
+            ->index('1', ['title' => 'foo']);
+
+        try {
+            $bulk->execute();
+            $this->fail('Expected exception');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('handler aborted', $e->getMessage());
+        }
+
+        try {
+            $bulk->execute(); // batch preserved → re-sent
+        } catch (\RuntimeException $e) {
+            // still failing, still preserved
+        }
+        $this->assertEquals(2, $callCount);
+    }
+
     public function testExecuteCallsOnError()
     {
         $client = $this->createMock(TestClient::class);

@@ -63,11 +63,13 @@ class Rebuild
     /**
      * Set a callback to handle bulk import errors.
      *
-     * The callback receives the raw ES response. To continue the rebuild, simply
-     * return without throwing. To abort, throw an exception from the callback.
-     * Without an error handler, import errors cause the rebuild to abort.
+     * Forwards to Bulk::onError(): the callback receives the raw ES response, the
+     * full batch body, and a fresh Bulk bound to the new backing index. Extract
+     * the failures from $body via $response and re-import them on the Bulk, or
+     * return to drop them and continue, or throw to abort (the new index is then
+     * deleted). Without a handler, any import error aborts the rebuild.
      *
-     * @param callable $handler function (array $response): void
+     * @param callable $handler function (array $response, array $body, Bulk $newbulk): void
      * @return $this
      */
     public function onError(callable $handler): static

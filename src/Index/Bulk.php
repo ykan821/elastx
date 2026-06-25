@@ -81,11 +81,16 @@ class Bulk
     /**
      * Set a callback to handle bulk errors.
      *
-     * The callback receives the raw ES response. To continue execution, simply
-     * return without throwing. To abort, throw an exception from the callback.
-     * Without an error handler, execute() throws RuntimeException on errors.
+     * On error the callback receives three tools and decides what to do:
+     * - $response: the raw ES response (items[] carry per-item status/error);
+     * - $body: the full original batch in native ES format (successes included);
+     * - $newbulk: a fresh Bulk bound to the same index and target, for re-send.
      *
-     * @param callable $handler function (array $response): void
+     * Extract the failures from $body using $response (items[k] matches the k-th
+     * action), re-enqueue them on $newbulk, and call $newbulk->execute() to retry.
+     * Return to consume this batch (cleared), or throw to abort and leave it.
+     *
+     * @param callable $handler function (array $response, array $body, Bulk $newbulk): void
      * @return $this
      */
     public function onError(callable $handler): static
@@ -197,8 +202,14 @@ class Bulk
     /**
      * Execute all queued actions and return the raw ES response.
      *
+     * On success the queue is cleared. On error: with an onError handler the
+     * batch is handed off (response, the full body, and a fresh Bulk) and cleared
+     * on return; without a handler a RuntimeException is thrown and the batch is
+     * preserved for the caller to retry.
+     *
      * @param array<string, mixed> $options top-level bulk API params (refresh, timeout, etc)
      * @return array<string, mixed>
+     * @throws \RuntimeException when the response has errors and no handler swallowed them
      */
     public function execute(array $options = []): array
     {
@@ -219,10 +230,6 @@ class Bulk
         )->asArray();
         $duration = microtime(true) - $start;
 
-        $this->body = [];
-        $this->docCount = 0;
-        $this->retryOnConflict = 0;
-
         $e = new Event('bulk.execute.after', $indexName);
         $e->actions = $actions;
         $e->response = $response;
@@ -231,7 +238,12 @@ class Bulk
 
         if (!empty($response['errors'])) {
             if ($this->errorHandler) {
-                ($this->errorHandler)($response);
+                // Hand the caller the raw materials: the response, the full body,
+                // and a fresh Bulk on the same index/target. The caller extracts
+                // the failures and re-sends them however it likes.
+                $newbulk = new Bulk($this->index);
+                $newbulk->targetIndex = $this->targetIndex;
+                ($this->errorHandler)($response, $actions, $newbulk);
             } else {
                 $json = json_encode($response, JSON_UNESCAPED_UNICODE);
                 // json_encode() can return false on malformed payloads; guard required
@@ -245,6 +257,11 @@ class Bulk
                 throw new RuntimeException("Bulk request has errors: {$json}");
             }
         }
+
+        // Success, or the handler consumed the batch.
+        $this->body = [];
+        $this->docCount = 0;
+        $this->retryOnConflict = 0;
 
         return $response;
     }
