@@ -191,13 +191,4 @@ class Highlight extends Node
     {
         return $this->addProperty('fragmenter', $value);
     }
-
-    public function toArray()
-    {
-        $result = parent::toArray();
-        if (isset($result['highlight_query']) && $result['highlight_query'] instanceof Query) {
-            $result['highlight_query'] = $result['highlight_query']->toArray()['query'] ?? new stdClass();
-        }
-        return $result;
-    }
 }

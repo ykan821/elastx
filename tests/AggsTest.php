@@ -8,7 +8,7 @@ use ElasticKit\DSL\Aggs\Bucket\GeoDistance;
 
 class AggsTest extends DslTestCase
 {
-    public function testTermsregation()
+    public function testTermsAggregation()
     {
 $expectedJson = <<<JSON
 {

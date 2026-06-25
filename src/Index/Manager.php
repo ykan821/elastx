@@ -125,9 +125,11 @@ class Manager
      */
     public function putMapping(): array
     {
+        $mappings = $this->index->mappings();
+
         return $this->index->getClient()->indices()->putMapping([
             'index' => $this->index->name(),
-            'body' => $this->index->mappings(),
+            'body' => empty($mappings) ? new stdClass() : $mappings,
         ])->asArray();
     }
 

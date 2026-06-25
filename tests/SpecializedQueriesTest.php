@@ -69,7 +69,7 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
-    public function testMoreLikeThisWithQuery()
+    public function testPercolate()
     {
 $exampleJson = <<<JSON
 {

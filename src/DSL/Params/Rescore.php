@@ -6,7 +6,6 @@ namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Query;
 use ElasticKit\DSL\Node;
-use stdClass;
 
 /**
  * Rescores the top documents returned by a query using a secondary query.
@@ -75,14 +74,5 @@ class Rescore extends Node
     {
         $this->_properties['query']['score_mode'] = $value;
         return $this;
-    }
-
-    public function toArray()
-    {
-        $result = parent::toArray();
-        if (isset($result['query']['rescore_query']) && $result['query']['rescore_query'] instanceof Query) {
-            $result['query']['rescore_query'] = $result['query']['rescore_query']->toArray()['query'] ?? new stdClass();
-        }
-        return $result;
     }
 }

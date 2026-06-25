@@ -59,7 +59,7 @@ class Search
     {
         if (!method_exists($this->query, $method)) {
             throw new BadMethodCallException(
-                sprintf('Method %s does not exist on %s', $method, get_class($this->query))
+                sprintf('Method %s does not exist on %s (index: %s)', $method, get_class($this->query), $this->index->name())
             );
         }
 
@@ -112,7 +112,9 @@ class Search
         $response = $this->doCount();
 
         if (!isset($response['count'])) {
-            throw new RuntimeException('Missing "count" in Elasticsearch response.');
+            throw new RuntimeException(
+                sprintf('Missing "count" in Elasticsearch response for index [%s].', $this->index->name())
+            );
         }
 
         return $response['count'];

@@ -262,7 +262,7 @@ class Bulk
                     $json = '(unable to encode bulk response)';
                 }
                 if (strlen($json) > 4096) {
-                    $json = substr($json, 0, 4096) . '... [truncated]';
+                    $json = mb_strcut($json, 0, 4096) . '... [truncated]';
                 }
                 throw new RuntimeException("Bulk request has errors: {$json}");
             }

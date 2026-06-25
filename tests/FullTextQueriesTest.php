@@ -282,7 +282,7 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
-    public function testA()
+    public function testQueryStringCrossFields()
     {
         $exampleJson = <<<JSON
 {

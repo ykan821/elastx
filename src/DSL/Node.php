@@ -280,6 +280,8 @@ abstract class Node
         foreach ($properties as $key => $property) {
             if ($property instanceof Query) {
                 $properties[$key] = $property->toArray()['query'] ?? null;
+            } elseif ($property instanceof Agg) {
+                $properties[$key] = $property->toArray();
             } elseif ($property instanceof Node) {
                 $properties[$key] = $property->toArray();
             } elseif ($property instanceof Closure) {

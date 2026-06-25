@@ -135,23 +135,29 @@ class Agg
         }
 
         if ($aggs instanceof Agg) {
-            if ($alias !== null) {
-                $aggs->alias($alias);
+            $key = $alias ?? $aggs->getAlias();
+            if ($key === null || $key === '') {
+                throw new BadMethodCallException('aggs() requires a non-empty alias.');
             }
-            $this->_subAggs[$alias ?? $aggs->getAlias()] = $aggs;
+            $aggs->alias($key);
+            $this->_subAggs[$key] = $aggs;
             return $this;
+        }
+
+        if ($alias === null || $alias === '') {
+            throw new BadMethodCallException(
+                'aggs() requires a non-empty alias. Use aggs("name", $definition).'
+            );
         }
 
         if (is_array($aggs)) {
             $childAgg = Agg::create($aggs);
-            if ($alias !== null) {
-                $childAgg->alias($alias);
-            }
+            $childAgg->alias($alias);
             $this->_subAggs[$alias] = $childAgg;
             return $this;
         }
 
-        if ($alias !== null && !isset($this->_subAggs[$alias])) {
+        if (!isset($this->_subAggs[$alias])) {
             $this->_subAggs[$alias] = new Agg();
             $this->_subAggs[$alias]->alias($alias);
         }
@@ -161,13 +167,9 @@ class Agg
             return $this;
         }
 
-        if ($alias !== null) {
-            throw new BadMethodCallException(
-                sprintf('aggs() requires a second argument. Use aggs("%s", $definition) where $definition is a closure, array, or Agg instance.', $alias)
-            );
-        }
-
-        return $this;
+        throw new BadMethodCallException(
+            sprintf('aggs("%s", ...) requires a closure, array, or Agg instance as the definition.', $alias)
+        );
     }
 
     /**
@@ -180,14 +182,18 @@ class Agg
     {
         foreach ($properties as $key => $property) {
             if ($property instanceof Query) {
-                $properties[$key] = $property->toArray()['query'];
+                $properties[$key] = $property->toArray()['query'] ?? null;
             } elseif ($property instanceof Agg) {
                 $properties[$key] = $property->toArray();
             } elseif ($property instanceof Node) {
                 $properties[$key] = $property->toArray();
+            } elseif ($property instanceof \Closure) {
+                $properties[$key] = Query::create($property)->toArray()['query'] ?? null;
+            } elseif (is_array($property)) {
+                $properties[$key] = $this->resolveProperties($property);
             }
         }
-        return $properties;
+        return array_filter($properties, fn ($v) => $v !== null);
     }
 
     /**

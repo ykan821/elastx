@@ -131,14 +131,18 @@ class Query extends Node
     /**
      * Conditionally add a query clause.
      *
-     * @param bool|callable $condition
+     * $condition is a bool, or a Closure returning a bool. Bare values (e.g.
+     * strings) are treated as truthy values, NOT invoked — so when('count', …)
+     * does not call count().
+     *
+     * @param bool|\Closure $condition
      * @param mixed $query
      * @param mixed $default
      * @return $this
      */
-    public function when(bool|callable $condition, $query, $default = null): static
+    public function when(bool|\Closure $condition, $query, $default = null): static
     {
-        $truthy = is_callable($condition) ? $condition() : $condition;
+        $truthy = $condition instanceof \Closure ? $condition() : $condition;
 
         if ($truthy) {
             $this->addQuery(static::create($query));
@@ -170,23 +174,29 @@ class Query extends Node
         }
 
         if ($aggs instanceof Agg) {
-            if ($alias !== null) {
-                $aggs->alias($alias);
+            $key = $alias ?? $aggs->getAlias();
+            if ($key === null || $key === '') {
+                throw new BadMethodCallException('aggs() requires a non-empty alias.');
             }
-            $this->_aggregations[$alias ?? $aggs->getAlias()] = $aggs;
+            $aggs->alias($key);
+            $this->_aggregations[$key] = $aggs;
             return $this;
+        }
+
+        if ($alias === null || $alias === '') {
+            throw new BadMethodCallException(
+                'aggs() requires a non-empty alias. Use aggs("name", $definition).'
+            );
         }
 
         if (is_array($aggs)) {
             $childAgg = Agg::create($aggs);
-            if ($alias !== null) {
-                $childAgg->alias($alias);
-            }
+            $childAgg->alias($alias);
             $this->_aggregations[$alias] = $childAgg;
             return $this;
         }
 
-        if ($alias !== null && !isset($this->_aggregations[$alias])) {
+        if (!isset($this->_aggregations[$alias])) {
             $this->_aggregations[$alias] = new Agg();
             $this->_aggregations[$alias]->alias($alias);
         }
@@ -196,13 +206,9 @@ class Query extends Node
             return $this;
         }
 
-        if ($alias !== null) {
-            throw new BadMethodCallException(
-                sprintf('aggs() requires a second argument. Use aggs("%s", $definition) where $definition is a closure, array, or Agg instance.', $alias)
-            );
-        }
-
-        return $this;
+        throw new BadMethodCallException(
+            sprintf('aggs("%s", ...) requires a closure, array, or Agg instance as the definition.', $alias)
+        );
     }
 
     /**

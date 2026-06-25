@@ -6,7 +6,6 @@ namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Node;
 use ElasticKit\DSL\Query;
-use stdClass;
 
 /**
  * Performs a k-nearest neighbor (kNN) search on a dense_vector field.
@@ -96,14 +95,5 @@ class Knn extends Node
     public function rescoreVector(array $value): static
     {
         return $this->addProperty('rescore_vector', $value);
-    }
-
-    public function toArray()
-    {
-        $result = parent::toArray();
-        if (isset($result['filter']) && $result['filter'] instanceof Query) {
-            $result['filter'] = $result['filter']->toArray()['query'] ?? new stdClass();
-        }
-        return $result;
     }
 }
