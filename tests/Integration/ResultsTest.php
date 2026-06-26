@@ -1,11 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Tests\Integration;
+
 use PHPUnit\Framework\TestCase;
 use ElasticKit\Index\ClientManager;
-use ElasticKit\Index\Index;
 use ElasticKit\Index\Pagination;
 use ElasticKit\Index\Results;
 
+/**
+ * Results parsing — pure unit-style assertions on constructed ES response
+ * shapes (no ES connection needed). Lives in the integration suite alongside
+ * the search tests it relates to.
+ */
 class ResultsTest extends TestCase
 {
     protected function tearDown(): void

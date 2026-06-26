@@ -56,7 +56,6 @@ Tests run inside a Docker container and require these environment variables:
 
 ```bash
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite unit"
-docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite index"
 docker exec -e ELASTICKIT_TEST_HOST=https://elasticsearch:9200 $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite integration"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpstan analyse"
