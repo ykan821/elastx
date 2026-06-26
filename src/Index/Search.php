@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace ElasticKit\Index;
 
+use ElasticKit\Index\Support\Event;
+use ElasticKit\Index\Support\EventDispatcher;
+use ElasticKit\Index\Support\StatsSupport;
+use ElasticKit\Index\Support\Pagination;
 use BadMethodCallException;
 use ElasticKit\DSL\Query;
 use RuntimeException;

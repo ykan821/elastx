@@ -6,7 +6,7 @@ namespace Tests\Integration;
 
 use Elastic\Elasticsearch\ClientBuilder;
 use ElasticKit\DSL\Query;
-use ElasticKit\Index\ClientManager;
+use ElasticKit\Index\Support\ClientManager;
 use ElasticKit\Index\Index;
 use Tests\DslTestCase;
 

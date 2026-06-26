@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ElasticKit\Index;
+namespace ElasticKit\Index\Support;
 
 /**
  * Shortcut methods for common metric aggregations on Search.

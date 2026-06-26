@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ElasticKit\Index;
+namespace ElasticKit\Index\Support;
 
 /**
  * Lightweight event object carrying event name, index, and contextual data.

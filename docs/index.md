@@ -320,7 +320,7 @@ $manager = new Manager(new ProductIndex());
 ### 事件
 
 ```php
-use ElasticKit\Index\Event;
+use ElasticKit\Index\Support\Event;
 
 Index::listen('search.query.after', function (Event $e) {
     Log::info("{$e->name} on {$e->index}", ['duration' => $e->duration]);

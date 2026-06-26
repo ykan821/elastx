@@ -283,7 +283,7 @@ $result = (new Rebuild(new ProductIndex()))
 ### 事件监听
 
 ```php
-use ElasticKit\Index\Event;
+use ElasticKit\Index\Support\Event;
 
 ProductIndex::listen('search.query.after', function (Event $e) {
     Log::info("Search on {$e->index}", [

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Integration\Index;
 
 use ElasticKit\Index\Bulk;
-use ElasticKit\Index\Event;
-use ElasticKit\Index\EventDispatcher;
+use ElasticKit\Index\Support\Event;
+use ElasticKit\Index\Support\EventDispatcher;
 use Tests\Integration\IntegrationTestCase;
 
 class EventContractTest extends IntegrationTestCase

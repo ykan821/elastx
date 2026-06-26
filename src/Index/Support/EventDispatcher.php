@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ElasticKit\Index;
+namespace ElasticKit\Index\Support;
 
 /**
  * Event dispatcher for index operations.

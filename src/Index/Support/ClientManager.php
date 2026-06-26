@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ElasticKit\Index;
+namespace ElasticKit\Index\Support;
 
 use Elastic\Elasticsearch\ClientInterface;
 use RuntimeException;

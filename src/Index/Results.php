@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ElasticKit\Index;
 
+use ElasticKit\Index\Support\Pagination;
 use RuntimeException;
 
 /**

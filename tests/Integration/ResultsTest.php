@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use ElasticKit\Index\ClientManager;
-use ElasticKit\Index\Pagination;
+use ElasticKit\Index\Support\ClientManager;
+use ElasticKit\Index\Support\Pagination;
 use ElasticKit\Index\Results;
 
 /**
