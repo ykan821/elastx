@@ -4,9 +4,13 @@
     <testsuite name="unit">
       <directory>tests</directory>
       <exclude>tests/Index</exclude>
+      <exclude>tests/Integration</exclude>
     </testsuite>
     <testsuite name="index">
       <directory>tests/Index</directory>
+    </testsuite>
+    <testsuite name="integration">
+      <directory>tests/Integration</directory>
     </testsuite>
   </testsuites>
 </phpunit>
