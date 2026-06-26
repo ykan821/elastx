@@ -109,7 +109,7 @@ abstract class Index
      */
     public function name(): string
     {
-        if (empty($this->name)) {
+        if (!isset($this->name) || $this->name === '') {
             throw new RuntimeException(
                 sprintf('Index $name is not set in %s', static::class)
             );

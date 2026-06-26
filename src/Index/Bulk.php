@@ -55,10 +55,14 @@ class Bulk
      *
      * @param string $indexName
      * @return $this
-     * @throws \InvalidArgumentException if indexName starts with a dot (system index)
+     * @throws \InvalidArgumentException if indexName is empty or starts with a dot (system index)
      */
     public function target(string $indexName): static
     {
+        if ($indexName === '') {
+            throw new InvalidArgumentException('Target index name must not be empty.');
+        }
+
         if (str_starts_with($indexName, '.')) {
             throw new InvalidArgumentException("System index names (starting with '.') are not allowed: {$indexName}");
         }

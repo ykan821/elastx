@@ -9,7 +9,7 @@ use ElasticKit\DSL\Node;
 /**
  * Returns hits that only fall within a polygon of points.
  *
- * Deprecated in 7.12. Use geo_shape instead where polygons are defined in GeoJSON or Well-Known Text (WKT).
+ * @deprecated Deprecated in ES 7.12. Use geo_shape instead, where polygons are defined in GeoJSON or Well-Known Text (WKT).
  */
 class GeoPolygon extends Node
 {

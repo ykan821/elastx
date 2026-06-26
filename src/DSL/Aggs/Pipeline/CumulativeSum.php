@@ -25,6 +25,17 @@ class CumulativeSum extends Node
     }
 
     /**
+     * Policy to apply when gaps are found in the data.
+     *
+     * @param string $value
+     * @return static
+     */
+    public function gapPolicy(string $value): static
+    {
+        return $this->addProperty('gap_policy', $value);
+    }
+
+    /**
      * Format for the output value.
      *
      * @param string $value
