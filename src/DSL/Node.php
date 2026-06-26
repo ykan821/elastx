@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ElasticKit\DSL;
 
+use ArgumentCountError;
+use BadMethodCallException;
 use Closure;
 use InvalidArgumentException;
 use stdClass;
@@ -12,6 +14,7 @@ use stdClass;
  * Abstract base class for DSL nodes (query types, params).
  *
  * @phpstan-consistent-constructor
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) the DSL base accumulates many thin accessors
  */
 abstract class Node
 {
@@ -361,5 +364,23 @@ abstract class Node
     public function boost($value): static
     {
         return $this->addProperty('boost', $value);
+    }
+
+    /**
+     * Low-frequency, universally-applicable ES fields that need not be declared
+     * on every node: _name (named query, returned in matched_queries).
+     *
+     * @param array<int, mixed> $args
+     */
+    public function __call(string $name, array $args): static
+    {
+        if ($name === '_name') {
+            if (!isset($args[0])) {
+                throw new ArgumentCountError(sprintf('%s::_name() expects exactly 1 argument', static::class));
+            }
+            return $this->addProperty('_name', $args[0]);
+        }
+
+        throw new BadMethodCallException(sprintf('Method %s::%s does not exist', static::class, $name));
     }
 }

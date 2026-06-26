@@ -59,17 +59,6 @@ class GeoDistance extends Node
     }
 
     /**
-     * Optional name field to identify the query.
-     *
-     * @param string $value
-     * @return static
-     */
-    public function _name(string $value): static
-    {
-        return $this->addProperty('_name', $value);
-    }
-
-    /**
      * Set to IGNORE_MALFORMED to accept geo points with invalid latitude or longitude,
      * set to COERCE to additionally try and infer correct coordinates. Defaults to STRICT.
      *
