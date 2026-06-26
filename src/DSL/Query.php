@@ -131,9 +131,7 @@ class Query extends Node
     /**
      * Conditionally add a query clause.
      *
-     * $condition is a bool, or a Closure returning a bool. Bare values (e.g.
-     * strings) are treated as truthy values, NOT invoked — so when('count', …)
-     * does not call count().
+     * $condition is a bool, or a Closure returning a bool.
      *
      * @param bool|\Closure $condition
      * @param mixed $query
