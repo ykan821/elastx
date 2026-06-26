@@ -68,8 +68,8 @@ JSON;
 
     public function testIntervalsPreservesInheritedProperties()
     {
-        // 继承自 Node 的 boost() 等方法此前被 Intervals::toArray() 静默丢弃，
-        // toArray 不应再绕过 $_properties。
+        // boost() and other Node-inherited methods were previously dropped silently
+        // by Intervals::toArray(); toArray must no longer bypass $_properties.
         $exampleJson = <<<JSON
 {
   "query": {
@@ -94,7 +94,7 @@ JSON;
 
     public function testIntervalsThrowsOnDuplicateRuleKey()
     {
-        // 字段节点只接受单个 rule，两个 match 不应静默合并（后者覆盖前者），应抛异常。
+        // A field node accepts a single rule; two match calls must not be silently merged (second overwriting first) — it must throw.
         $query = new Query();
         $query->intervals('my_text', function (Intervals $intervals) {
             $intervals->match(['query' => 'foo']);

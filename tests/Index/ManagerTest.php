@@ -118,7 +118,7 @@ class ManagerTest extends TestCase
 
     public function testDeleteResolvesAliasToAllBackingIndices()
     {
-        // 别名指向多个 backing index 时一次性删除，而非只删第一个（原 array_key_first 隐患）
+        // An alias pointing at multiple backing indices must be deleted in one shot, not just the first (the former array_key_first pitfall).
         $indices = $this->createMock(TestIndices::class);
         $indices->method('existsAlias')->willReturn(new BoolResponse(true));
         $indices->method('getAlias')->willReturn(new ArrayResponse([

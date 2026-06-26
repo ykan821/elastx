@@ -2,13 +2,13 @@
 
 ## [8.0.0-beta.4] - 2026-06-07
 
-### 新增
+### Added
 
-- DSL 查询构建器，支持多态参数（字符串/数组/闭包/对象）
-- 全量查询类型覆盖：TermLevel、FullText、Compound、Geo、Joining、Span、Shape、Specialized
-- 聚合支持：Bucket、Metric、Pipeline 三大类
-- 搜索参数：sort、highlight、rescore、collapse、suggest、post_filter、knn 等
-- Index 层：CRUD、分页、游标遍历、批量写入（Bulk）、零停机重建（Rebuild）
-- 事件系统：搜索、批量操作、重建各阶段的事件监听
-- OOP 风格：每个查询/聚合类型独立 Node 类，支持链式调用和增量构建
-- 原生 DSL 透传：未覆盖的 ES 特性直接传数组
+- DSL query builder with polymorphic parameters (string/array/closure/object)
+- Full query-type coverage: TermLevel, FullText, Compound, Geo, Joining, Span, Shape, Specialized
+- Aggregations: Bucket, Metric, and Pipeline categories
+- Search parameters: sort, highlight, rescore, collapse, suggest, post_filter, knn, etc.
+- Index layer: CRUD, pagination, cursor iteration, bulk writes (Bulk), zero-downtime rebuild (Rebuild)
+- Event system: listeners for each phase of search, bulk operations, and rebuild
+- OOP style: each query/aggregation type is a dedicated Node class, supporting chaining and incremental building
+- Raw DSL pass-through: uncovered ES features can be passed directly as arrays

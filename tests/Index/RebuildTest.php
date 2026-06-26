@@ -738,7 +738,7 @@ class RebuildTest extends TestCase
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
         $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
-        // 成功路径释放锁时抛 503
+        // Lock release throws 503 on the success path.
         $client->method('delete')->willThrowException($releaseException);
         $client->method('bulk')->willReturn(new ArrayResponse(['items' => []]));
         Index::setClient($client);
@@ -780,9 +780,9 @@ class RebuildTest extends TestCase
         $client = $this->createMock(TestClient::class);
         $client->method('indices')->willReturn($indices);
         $client->method('index')->willReturn(new ArrayResponse(['result' => 'created']));
-        // 释放锁也失败：503
+        // Lock release also fails: 503.
         $client->method('delete')->willThrowException($releaseException);
-        // bulk 导入失败 → doRun 抛异常
+        // Bulk import fails → doRun throws.
         $client->method('bulk')->willReturn(new ArrayResponse(['items' => [], 'errors' => true]));
         Index::setClient($client);
 
@@ -802,7 +802,7 @@ class RebuildTest extends TestCase
             (new Rebuild($index))->run();
             $this->fail('Expected original import exception');
         } catch (\Throwable $e) {
-            // ⑤：必须抛出 doRun 的原始异常，而非释放锁的 503 ClientResponseException
+            // ⑤: must throw doRun's original exception, not the 503 ClientResponseException from lock release.
             $this->assertInstanceOf(\RuntimeException::class, $e);
             $this->assertStringContainsString('Bulk request has errors', $e->getMessage());
             $this->assertStringNotContainsString('succeeded but the lock', $e->getMessage());

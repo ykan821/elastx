@@ -1,75 +1,58 @@
 # ElasticKit - Elasticsearch DSL Query Builder
 
-PHP Elasticsearch DSL 查询构建库。
+A PHP Elasticsearch DSL query builder library.
 
-> 本文件提交到仓库。本地环境变量放在 `CLAUDE.local.md`（已 gitignore），Claude Code 自动加载两者。
+> This file is committed to the repository. Local environment variables live in `CLAUDE.local.md` (gitignored); Claude Code loads both automatically.
 
-**版本管理：** a.b.c，a 对齐 ES 主版本，`^8` 即可。
+**Versioning:** a.b.c, where `a` tracks the ES major version. `^8` suffices.
 
-> master 对应 v8.x（ES 8.x，PHP 8.1+），7.x 分支独立维护（ES 7.x，PHP 7.2+）。两条线不互合并，CLAUDE.md 各分支独立维护。
+> `master` tracks v8.x (ES 8.x, PHP 8.1+); the 7.x branch is maintained separately (ES 7.x, PHP 7.2+). The two lines are never merged into each other; CLAUDE.md is maintained per branch.
 
-### 提交信息规范
+### Commit message conventions
 
-- **参数名锁定**：公开方法参数名是 API 的一部分（支持命名参数），minor 版本禁止重命名
+- **Parameter names are locked**: public method parameter names are part of the API (named arguments are supported); renaming is forbidden in minor versions
 
-[Conventional Commits](https://www.conventionalcommits.org/)，中文描述：`feat(query): 新增 knn 向量搜索`
+[Conventional Commits](https://www.conventionalcommits.org/), with an English description: `feat(query): add knn vector search`
 
-Scope 可选：dsl / index / agg / query / docs。Breaking change 加 `!` 后缀。
+Scope is optional: dsl / index / agg / query / docs. Append `!` for breaking changes.
 
-### Changelog 规范
+### Changelog conventions
 
-[Keep a Changelog](https://keepachangelog.com)，中文分类：
+[Keep a Changelog](https://keepachangelog.com), with English categories:
 
-- **新增** / **变更** / **弃用** / **移除** / **修复** / **安全**
-- 只记录对用户有影响的变更
-- 相关改动合并为一条
-- Breaking change 以 `**BC:**` 前缀标记
+- **Added** / **Changed** / **Deprecated** / **Removed** / **Fixed** / **Security**
+- Record only user-facing changes
+- Merge related changes into a single entry
+- Mark breaking changes with the `**BC:**` prefix
 
-### 发版流程
+### Release flow
 
-1. 跑全部测试
-2. 更新 CHANGELOG.md
-3. 提交并推送
-4. 确认版本号后打 tag 并推送
+1. Run the full test suite
+2. Update CHANGELOG.md
+3. Commit and push
+4. Confirm the version, then tag and push
 
-### PHPDoc 规范
+### PHPDoc conventions
 
-PSR-5 规范。
+Follow PSR-5.
 
-## 待办
+## TODO
 
-- [x] **clone query 后 try-finally 恢复**：first() / paginate() 等方法 clone query 后修改状态，需 try-finally 确保恢复
-- [x] **ClausesSupport API 统一**：must()/should()/filter() 等改为追加语义，移除 addXXX() 方法
-- [x] **hasMore() 确认无 bug**：scroll 场景 !empty(hits) 正确，分页应用 page()<lastPage()
-- [x] **Rebuild::rollback() 支持多索引别名**：遍历全部 backing index 移除别名，对齐 doRun() 写法
-- [x] **Index::$name 空验证**：name() 未设置时抛异常
-- [x] **拆分静态状态**：ClientManager / EventDispatcher / Pagination 从 Index 拆出，删 deprecated 代理
-- [x] **移除 Index::insert()**：等价功能由 Doc::save() 覆盖
-- [x] **实例入口**：新增 on()/newQuery()/newDoc()/setConnection()/getConnection()，query()/doc() 委托实例方法
-- [x] **测试 mock 污染修复**：所有测试文件补 tearDown 清理静态状态
-- [x] **命名参数一致性**：公开方法参数名是 API 的一部分，全库审查确保命名统一（如 connection/name/client 不混用）
-- [x] **PHP 8 现代化（Index 层）**：全 12 文件 strict_types + 构造器提升 + readonly + 属性/返回/参数类型 + 联合类型；callable 属性（resolver / errorHandler / dataSource）因 PHP 禁止 callable 作属性类型，保留 docblock
-- [x] **PHP 8 现代化（DSL 层）**：Node/Query/Agg + 122 leaf 类全部完成。strict_types 全 151 文件；4 原子属性类型同步全 leaf；leaf 参数类型对照 ES docblock 完成；`$_properties` 三模式统一为 `?array`（新增 `$_raw` 承接整体透传，null 保留为合法空态）；`toJson` 加 `:string` + false 检查；`toArray` 因多态返回（array/stdClass/null）不强加 PHP 返回类型
-- [x] **Rebuild 异常处理**：run() 分离 try-catch（失败优先抛原始异常，成功后释放锁失败抛 RuntimeException 说明 rebuild 已完成）；releaseLock 只吞 404；forceUnlock 独立实现吞 404；isLocked 只在 404 返回 false、其他 ES 错误传播
-- [x] **$client 抽到 Registry 类**：拆为 ClientManager / EventDispatcher / Pagination，Index 不再持有静态状态
-- [x] **Node 构造函数重构**：拆分为 fromKeyValue/fromClosure/fromArrayField/fromScalar
-- [x] **Bulk/Rebuild onError 设计**：Bulk 加 onError(callback) 默认 throw，Rebuild 删 skipErrors 加 onError，删 rebuild.import.failed 事件
-- [ ] **补核心路径的边界测试**：scroll、bulk 分批、rebuild 失败回滚
-- [ ] **搭建集成测试基建**：`ELASTICKIT_TEST_HOST` 驱动，随机索引名隔离
-- [x] **cursor/chunk API 重构**：`chunk($duration): Generator<Results>` 按批 yield Results；`cursor($duration): Generator` 逐条 yield 完整 hit（_id/_score/_source，yield from chunk 的 hits、复用其 finally clear）；保留 `scroll()/next()/clear()` 作低层原语。底层未来可换 PIT+search_after（上层签名不变）
+- [ ] **Add boundary tests for core paths**: scroll, bulk batching, rebuild failure rollback
+- [ ] **Set up integration test infrastructure**: driven by `ELASTICKIT_TEST_HOST`, with random index names for isolation
 
-## 测试
+## Tests
 
-测试在 Docker 容器中运行，需要设置以下环境变量：
+Tests run inside a Docker container and require these environment variables:
 
-| 变量 | 用途 |
+| Variable | Purpose |
 |---|---|
-| `PHP_CONTAINER` | Docker 容器名 |
-| `PROJECT_PATH` | 项目在容器内的路径 |
-| `PROXY_PORT` | HTTP 代理端口（推送用） |
-| `ELASTICKIT_TEST_HOST` | ES 集成测试地址（如 `https://localhost:9200`），不设置则跳过集成测试 |
+| `PHP_CONTAINER` | Docker container name |
+| `PROJECT_PATH` | Project path inside the container |
+| `PROXY_PORT` | HTTP proxy port (for pushing) |
+| `ELASTICKIT_TEST_HOST` | ES endpoint for integration tests (e.g. `https://localhost:9200`); integration tests are skipped when unset |
 
-## 推送代码前需要执行4件套
+## Pre-push checklist
 
 ```bash
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite unit"
@@ -80,6 +63,6 @@ docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpstan analyse
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpmd src text phpmd.xml"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --diff"
 
-# GitHub 不可达时走代理
+# Route through the proxy when GitHub is unreachable
 https_proxy=http://127.0.0.1:$PROXY_PORT http_proxy=http://127.0.0.1:$PROXY_PORT git push
 ```
