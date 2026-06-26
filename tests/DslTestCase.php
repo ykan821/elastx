@@ -19,16 +19,6 @@ abstract class DslTestCase extends TestCase
     protected static $esClient;
 
     /**
-     * @var string
-     */
-    protected static $esIndex = 'elastickit_test';
-
-    public static function setUpBeforeClass(): void
-    {
-        // Unit tests assert JSON only; ES connection lives in IntegrationTestCase.
-    }
-
-    /**
      * Assert Query produces the expected JSON structure.
      *
      * @param string $expectedJson
