@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Integration;
+namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use ElasticKit\Index\Support\ClientManager;

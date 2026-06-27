@@ -19,6 +19,7 @@ class SearchContractTest extends IntegrationTestCase
     {
         $doc = $this->makeIndex()->newQuery()->match('content', 'elasticsearch')->first();
         $this->assertIsArray($doc);
+        $this->assertContains($doc['title'], ['Elasticsearch Guide', 'PHP Development']);
     }
 
     public function testFirstEmpty(): void
@@ -53,7 +54,7 @@ class SearchContractTest extends IntegrationTestCase
     {
         $results = $this->makeIndex()->newQuery()->matchAll()->scroll(null, '1m');
         $this->assertNotEmpty($results->scrollId());
-        $this->assertFalse($results->isEmpty());
+        $this->assertGreaterThanOrEqual(1, count($results->hits()));
     }
 
     public function testChunk(): void

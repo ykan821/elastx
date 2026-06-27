@@ -162,43 +162,4 @@ abstract class DslTestCase extends TestCase
 
         $client->indices()->refresh(['index' => $index]);
     }
-
-    /**
-     * Ensure special field mappings (percolator, rank_feature, shape).
-     */
-    protected static function ensureSpecialFields(\Elastic\Elasticsearch\ClientInterface $client, string $index): void
-    {
-        $mapping = $client->indices()->getMapping(['index' => $index]);
-        $properties = $mapping[$index]['mappings']['properties'] ?? [];
-
-        $newFields = [];
-        if (!isset($properties['query'])) {
-            $newFields['query'] = ['type' => 'percolator'];
-        }
-        if (!isset($properties['pagerank'])) {
-            $newFields['pagerank'] = ['type' => 'rank_feature'];
-        }
-        if (!isset($properties['cartesian_shape'])) {
-            $newFields['cartesian_shape'] = ['type' => 'shape'];
-        }
-
-        if (!empty($newFields)) {
-            $client->indices()->putMapping([
-                'index' => $index,
-                'body'  => ['properties' => $newFields],
-            ]);
-
-            if (isset($newFields['query'])) {
-                $client->index([
-                    'index' => $index,
-                    'id'    => 'percolator_1',
-                    'body'  => [
-                        'query' => ['match' => ['title' => 'elasticsearch']],
-                    ],
-                ]);
-            }
-
-            $client->indices()->refresh(['index' => $index]);
-        }
-    }
 }
