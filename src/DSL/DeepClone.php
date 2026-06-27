@@ -17,10 +17,21 @@ use ReflectionClass;
  */
 trait DeepClone
 {
+    /** @var array<class-string, list<\ReflectionProperty>> */
+    private static array $cloneProperties = [];
+
     public function __clone(): void
     {
-        foreach ((new ReflectionClass($this))->getProperties() as $property) {
-            if ($property->isStatic() || !$property->isInitialized($this)) {
+        $class = static::class;
+        if (!isset(self::$cloneProperties[$class])) {
+            self::$cloneProperties[$class] = array_filter(
+                (new ReflectionClass($class))->getProperties(),
+                fn ($p) => !$p->isStatic()
+            );
+        }
+
+        foreach (self::$cloneProperties[$class] as $property) {
+            if (!$property->isInitialized($this)) {
                 continue;
             }
 

@@ -93,14 +93,7 @@ class Search
      */
     public function first(): ?array
     {
-        $saved = $this->query;
-        $this->query = clone $this->query;
-        $this->query->size(1)->from(0);
-        try {
-            $response = $this->doSearch('first');
-        } finally {
-            $this->query = $saved;
-        }
+        $response = $this->doSearch('first', ['body' => ['size' => 1, 'from' => 0]]);
 
         $docs = (new Results($response))->docs();
         return $docs[0] ?? null;
@@ -137,18 +130,12 @@ class Search
             return $this->doScroll($scrollId, $duration);
         }
 
-        $saved = $this->query;
-        $this->query = clone $this->query;
-
+        $extra = ['scroll' => $duration];
         if (!$this->query->hasParam('size')) {
-            $this->query->size(1000);
+            $extra['body'] = ['size' => 1000];
         }
 
-        try {
-            $response = $this->doSearch('scroll', ['scroll' => $duration]);
-        } finally {
-            $this->query = $saved;
-        }
+        $response = $this->doSearch('scroll', $extra);
 
         return new Results($response);
     }
@@ -276,15 +263,10 @@ class Search
             $perPage = $maxPerPage;
         }
 
-        $saved = $this->query;
-        $this->query = clone $this->query;
-        $this->query->from(($page - 1) * $perPage);
-        $this->query->size($perPage);
-        try {
-            $response = $this->doSearch('paginate');
-        } finally {
-            $this->query = $saved;
-        }
+        $response = $this->doSearch('paginate', ['body' => [
+            'from' => ($page - 1) * $perPage,
+            'size' => $perPage,
+        ]]);
 
         return (new Results($response))->paginate($page, $perPage);
     }
@@ -326,13 +308,18 @@ class Search
      * Execute an ES search call with before/after events.
      *
      * @param string $action calling method name (get, first, scroll, paginate)
-     * @param array<string, mixed> $extra extra request params (e.g. scroll)
+     * @param array<string, mixed> $extra extra request params (e.g. scroll); a 'body' key shallow-merges top-level scalar overrides (size, from) into the query body — nested keys (aggs, query) would replace, not merge
      * @return array<string, mixed>
      */
     protected function doSearch(string $action, array $extra = []): array
     {
         $indexName = $this->index->name();
-        $body = $this->query->toArray() ?: new stdClass();
+        $body = $this->query->toArray();
+        if (isset($extra['body'])) {
+            $body = array_merge($body, $extra['body']);
+            unset($extra['body']);
+        }
+        $body = $body ?: new stdClass();
 
         $e = new Event('search.query.before', $indexName);
         $e->dsl = $body;
