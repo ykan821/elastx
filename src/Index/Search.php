@@ -95,7 +95,7 @@ class Search
     {
         $saved = $this->query;
         $this->query = clone $this->query;
-        $this->query->size(1);
+        $this->query->size(1)->from(0);
         try {
             $response = $this->doSearch('first');
         } finally {

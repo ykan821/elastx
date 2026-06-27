@@ -177,6 +177,9 @@ class Query extends Node
                 throw new BadMethodCallException('aggs() requires a non-empty alias.');
             }
             $aggs->alias($key);
+            if (isset($this->_aggregations[$key])) {
+                throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $key));
+            }
             $this->_aggregations[$key] = $aggs;
             return $this;
         }
@@ -190,6 +193,9 @@ class Query extends Node
         if (is_array($aggs)) {
             $childAgg = Agg::create($aggs);
             $childAgg->alias($alias);
+            if (isset($this->_aggregations[$alias])) {
+                throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $alias));
+            }
             $this->_aggregations[$alias] = $childAgg;
             return $this;
         }
@@ -291,6 +297,11 @@ class Query extends Node
                     }
                     $clauses[] = [$field => $item];
                 }
+            } else {
+                throw new RuntimeException(sprintf(
+                    'Unsupported clause type %s; use a Node, array, or closure.',
+                    get_debug_type($query)
+                ));
             }
         }
 

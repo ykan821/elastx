@@ -317,7 +317,14 @@ trait Param
      */
     public function rescore($value): static
     {
-        $this->_params['rescore'] = Params\Rescore::create($value);
+        $item = Params\Rescore::create($value);
+        if (!array_key_exists('rescore', $this->_params)) {
+            $this->_params['rescore'] = $item;
+        } elseif (!is_array($this->_params['rescore'])) {
+            $this->_params['rescore'] = [$this->_params['rescore'], $item];
+        } else {
+            $this->_params['rescore'][] = $item;
+        }
         return $this;
     }
 
