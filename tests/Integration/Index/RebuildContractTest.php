@@ -82,4 +82,83 @@ class RebuildContractTest extends IntegrationTestCase
         $this->expectExceptionMessage('is a real index');
         (new Rebuild($index))->allowEmpty()->run();
     }
+
+    private function rebuildIndex(string $alias, bool $empty = false): Index
+    {
+        return new class($alias, $empty) extends Index {
+            private bool $empty;
+
+            public function __construct(string $alias, bool $empty)
+            {
+                $this->name = $alias;
+                $this->empty = $empty;
+            }
+
+            public function rebuildName(): string
+            {
+                return $this->name . '_' . bin2hex(random_bytes(2));
+            }
+
+            public function source(array $context = []): iterable
+            {
+                if ($this->empty) {
+                    return [];
+                }
+                yield 1 => ['title' => 'A'];
+            }
+        };
+    }
+
+    public function testRollback(): void
+    {
+        $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
+        $index = $this->rebuildIndex($alias);
+        $first = (new Rebuild($index))->run();
+        $second = (new Rebuild($index))->run();
+        $rolledBackFrom = (new Rebuild($index))->rollback($first['newIndex']);
+        $this->assertSame($second['newIndex'], $rolledBackFrom);
+    }
+
+    public function testClean(): void
+    {
+        $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
+        $index = $this->rebuildIndex($alias);
+        $result = (new Rebuild($index))->run();
+        (new Rebuild($index))->clean($result['newIndex']);
+        $this->assertFalse($index->getClient()->indices()->exists(['index' => $result['newIndex']])->asBool());
+    }
+
+    public function testForceUnlockIsIdempotent(): void
+    {
+        $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
+        $index = $this->rebuildIndex($alias);
+        // no lock held yet -> forceUnlock tolerates the 404
+        (new Rebuild($index))->forceUnlock();
+        $this->assertFalse((new Rebuild($index))->isLocked());
+    }
+
+    public function testIsLockedFalseAfterRun(): void
+    {
+        $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
+        $index = $this->rebuildIndex($alias);
+        (new Rebuild($index))->run();
+        $this->assertFalse((new Rebuild($index))->isLocked());
+    }
+
+    public function testEmptySourceThrowsWithoutAllowEmpty(): void
+    {
+        $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
+        $index = $this->rebuildIndex($alias, empty: true);
+        $this->expectException(\RuntimeException::class);
+        (new Rebuild($index))->run();
+    }
+
+    public function testAllowEmpty(): void
+    {
+        $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
+        $index = $this->rebuildIndex($alias, empty: true);
+        $result = (new Rebuild($index))->allowEmpty()->run();
+        $this->assertNotEmpty($result['newIndex']);
+        $this->assertNull($result['oldIndex']);
+    }
 }

@@ -78,4 +78,36 @@ class DocContractTest extends IntegrationTestCase
         $this->expectException(\RuntimeException::class);
         $this->makeIndex()->newDoc(null)->update(['title' => 'x']);
     }
+
+    public function testCreateSuccess(): void
+    {
+        $index = $this->makeIndex();
+        $index->newDoc('40')->create(['title' => 'fresh']);
+        $this->refreshIndex();
+        $this->assertSame('fresh', $index->newDoc('40')->source()['title']);
+    }
+
+    public function testSave(): void
+    {
+        $index = $this->makeIndex();
+        $index->newDoc('41')->save(['title' => 'saved']);
+        $this->refreshIndex();
+        $this->assertSame('saved', $index->newDoc('41')->source()['title']);
+    }
+
+    public function testRetryOnConflictChain(): void
+    {
+        $index = $this->makeIndex();
+        $index->newDoc('1')->retryOnConflict(3)->update(['price' => 77]);
+        $this->refreshIndex();
+        $this->assertEquals(77, $index->newDoc('1')->source()['price']);
+    }
+
+    public function testRefreshOption(): void
+    {
+        $index = $this->makeIndex();
+        $index->newDoc('42')->refresh('wait_for')->index(['title' => 'refreshed']);
+        // refresh=wait_for makes it searchable immediately
+        $this->assertSame('refreshed', $index->newDoc('42')->source()['title']);
+    }
 }

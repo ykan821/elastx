@@ -51,9 +51,65 @@ class ManagerContractTest extends IntegrationTestCase
 
     public function testDelete(): void
     {
-        $manager = new Manager($this->makeIndex());
+        $name = 'ek_mgr_' . bin2hex(random_bytes(4));
+        $index = new class($name) extends Index {
+            public function __construct(string $name)
+            {
+                $this->name = $name;
+            }
+        };
+        $manager = new Manager($index);
+        $manager->create();
         $this->assertTrue($manager->exists());
         $manager->delete();
         $this->assertFalse($manager->exists());
+    }
+
+    public function testCreate(): void
+    {
+        $name = 'ek_mgr_' . bin2hex(random_bytes(4));
+        $index = new class($name) extends Index {
+            public function __construct(string $name)
+            {
+                $this->name = $name;
+                $this->mappings = ['properties' => ['title' => ['type' => 'text']]];
+            }
+        };
+        $manager = new Manager($index);
+        $this->assertFalse($manager->exists());
+        $manager->create();
+        $this->assertTrue($manager->exists());
+    }
+
+    public function testGet(): void
+    {
+        $info = (new Manager($this->makeIndex()))->get();
+        $this->assertArrayHasKey($this->indexName, $info);
+        $this->assertArrayHasKey('mappings', $info[$this->indexName]);
+        $this->assertArrayHasKey('settings', $info[$this->indexName]);
+    }
+
+    public function testPutSettings(): void
+    {
+        $manager = new Manager($this->makeIndex());
+        $manager->putSettings(['index' => ['number_of_replicas' => 0]]);
+        $settings = $manager->getSettings();
+        $this->assertSame('0', $settings[$this->indexName]['settings']['index']['number_of_replicas'] ?? null);
+    }
+
+    public function testCloseAndOpen(): void
+    {
+        $name = 'ek_mgr_' . bin2hex(random_bytes(4));
+        $index = new class($name) extends Index {
+            public function __construct(string $name)
+            {
+                $this->name = $name;
+            }
+        };
+        $manager = new Manager($index);
+        $manager->create();
+        $manager->close();
+        $manager->open();
+        $this->assertTrue($manager->exists());
     }
 }

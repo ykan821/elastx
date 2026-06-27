@@ -68,4 +68,49 @@ class BulkContractTest extends IntegrationTestCase
             ->flush();
         $this->assertTrue($received['errors'] ?? false);
     }
+
+    public function testSaveIsAliasForIndex(): void
+    {
+        $index = $this->makeIndex();
+        (new Bulk($index))->save('30', ['title' => 'saved'])->flush();
+        $this->refreshIndex();
+        $this->assertTrue($index->newDoc('30')->exists());
+    }
+
+    public function testTargetWritesToTargetIndex(): void
+    {
+        $index = $this->makeIndex();
+        (new Bulk($index))->target($this->indexName)->index('31', ['title' => 'targeted'])->flush();
+        $this->refreshIndex();
+        $this->assertTrue($index->newDoc('31')->exists());
+    }
+
+    public function testEmptyFlushReturnsEmptyArray(): void
+    {
+        $result = (new Bulk($this->makeIndex()))->flush();
+        $this->assertSame([], $result);
+    }
+
+    public function testOnErrorCanResendFailures(): void
+    {
+        $index = $this->makeIndex();
+        // create on existing id '1' fails; onError re-sends as index() (overwrite)
+        $resendOk = false;
+        (new Bulk($index))
+            ->onError(function ($response, $body, $newbulk) use (&$resendOk) {
+                foreach ($response['items'] as $i => $item) {
+                    $meta = $item[array_key_first($item)];
+                    if (($meta['status'] ?? 200) >= 400) {
+                        $newbulk->index($meta['_id'], $body[$i * 2 + 1]);
+                    }
+                }
+                $newbulk->flush();
+                $resendOk = true;
+            })
+            ->create('1', ['title' => 'resend'])
+            ->flush();
+        $this->assertTrue($resendOk);
+        $this->refreshIndex();
+        $this->assertSame('resend', $index->newDoc('1')->source()['title']);
+    }
 }
