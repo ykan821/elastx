@@ -200,10 +200,12 @@ class Query extends Node
             return $this;
         }
 
-        if (!isset($this->_aggregations[$alias])) {
-            $this->_aggregations[$alias] = new Agg();
-            $this->_aggregations[$alias]->alias($alias);
+        if (isset($this->_aggregations[$alias])) {
+            throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $alias));
         }
+
+        $this->_aggregations[$alias] = new Agg();
+        $this->_aggregations[$alias]->alias($alias);
 
         if ($aggs instanceof \Closure) {
             $aggs($this->_aggregations[$alias]);

@@ -6,6 +6,7 @@ namespace ElasticKit\DSL;
 
 use BadMethodCallException;
 use ElasticKit\DSL\Aggs\Bucket;
+use RuntimeException;
 use ElasticKit\DSL\Aggs\Metric;
 use ElasticKit\DSL\Aggs\Pipeline;
 
@@ -140,6 +141,9 @@ class Agg
                 throw new BadMethodCallException('aggs() requires a non-empty alias.');
             }
             $aggs->alias($key);
+            if (isset($this->_subAggs[$key])) {
+                throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $key));
+            }
             $this->_subAggs[$key] = $aggs;
             return $this;
         }
@@ -153,14 +157,19 @@ class Agg
         if (is_array($aggs)) {
             $childAgg = Agg::create($aggs);
             $childAgg->alias($alias);
+            if (isset($this->_subAggs[$alias])) {
+                throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $alias));
+            }
             $this->_subAggs[$alias] = $childAgg;
             return $this;
         }
 
-        if (!isset($this->_subAggs[$alias])) {
-            $this->_subAggs[$alias] = new Agg();
-            $this->_subAggs[$alias]->alias($alias);
+        if (isset($this->_subAggs[$alias])) {
+            throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $alias));
         }
+
+        $this->_subAggs[$alias] = new Agg();
+        $this->_subAggs[$alias]->alias($alias);
 
         if ($aggs instanceof \Closure) {
             $aggs($this->_subAggs[$alias]);
