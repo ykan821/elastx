@@ -44,7 +44,7 @@ class Doc
     }
 
     /**
-     * Set retry_on_conflict for the next write operation.
+     * Set retry_on_conflict for subsequent write operations.
      *
      * @param int $count
      * @return $this
@@ -57,7 +57,7 @@ class Doc
     }
 
     /**
-     * Set refresh for the next write operation (true/false/wait_for).
+     * Set refresh for subsequent write operations (true/false/wait_for).
      *
      * @param string $value
      * @return $this
@@ -144,7 +144,6 @@ class Doc
             $params['refresh'] = $this->refresh;
         }
 
-        $this->resetOptions();
 
         return $this->index->getClient()->update($params)->asArray();
     }
@@ -173,7 +172,6 @@ class Doc
             $params['refresh'] = $this->refresh;
         }
 
-        $this->resetOptions();
 
         return $this->index->getClient()->index($params)->asArray();
     }
@@ -215,7 +213,6 @@ class Doc
             $params['refresh'] = $this->refresh;
         }
 
-        $this->resetOptions();
 
         return $this->index->getClient()->index($params)->asArray();
     }
@@ -238,7 +235,6 @@ class Doc
             $params['refresh'] = $this->refresh;
         }
 
-        $this->resetOptions();
 
         return $this->index->getClient()->delete($params)->asArray();
     }
@@ -263,14 +259,5 @@ class Doc
         }
 
         return $this->id;
-    }
-
-    /**
-     * Reset pending options after a write operation.
-     */
-    private function resetOptions(): void
-    {
-        $this->retryOnConflict = 0;
-        $this->refresh = null;
     }
 }
