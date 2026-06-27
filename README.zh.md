@@ -1,32 +1,32 @@
 # ElasticKit
 
-> [中文](README.zh.md) | English
+> 中文 | [English](README.md)
 
 [![Latest Version](https://img.shields.io/packagist/v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![Total Downloads](https://img.shields.io/packagist/dt/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![License](https://img.shields.io/packagist/l/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 
-A PHP Elasticsearch DSL query builder covering queries, aggregations, CRUD, bulk writes, and zero-downtime rebuilds.
+PHP Elasticsearch DSL 查询构建库，覆盖查询、聚合、CRUD、批量写入、零停机重建。
 
-## Installation
+## 安装
 
 ```
 composer require ykan/elastickit:^8
 ```
 
-> Requires PHP 8.1+ and Elasticsearch 8.x. The `elasticsearch-php` dependency is installed automatically.
+> 需要 PHP 8.1+、Elasticsearch 8.x。依赖 `elasticsearch-php` 自动安装。
 
-## Quick Start
+## 快速开始
 
 ```php
 use ElasticKit\Index\Index;
 
-// 1. Register the client
+// 1. 注册 Client
 $client = \Elastic\Elasticsearch\ClientBuilder::create()
     ->setHosts(['http://localhost:9200'])->build();
 Index::setClient($client);
 
-// 2. Define an index
+// 2. 定义索引
 class ProductIndex extends Index
 {
     protected string $name = 'products';
@@ -39,23 +39,23 @@ class ProductIndex extends Index
     ];
 }
 
-// 3. Search
+// 3. 搜索
 $results = ProductIndex::query()
     ->match('title', 'elasticsearch')
     ->get();
 
 $hits = $results->docs();   // [['title' => '...'], ...]
-$total = $results->total(); // total hits
+$total = $results->total(); // 命中总数
 ```
 
-## DSL Examples
+## DSL 示例
 
 <details>
-<summary>Expand</summary>
+<summary>展开查看</summary>
 
-### Polymorphic parameters
+### 多态参数
 
-The same method accepts four forms — string, array, closure, object:
+同一个方法支持字符串、数组、闭包、对象四种写法：
 
 ```php
 $q->term('status', 'published');                                     // string
@@ -64,9 +64,9 @@ $q->term(fn ($t) => $t->field('status')->value('published'));        // closure
 $q->term(Term::create('status', 'published'));                       // object
 ```
 
-### OOP style
+### OOP 风格
 
-Each query type is a dedicated Node class supporting chaining:
+每个查询类型都是独立的 Node 类，支持链式调用：
 
 ```php
 use ElasticKit\DSL\Query;
@@ -79,7 +79,7 @@ $bool = Boolean::create()
     ->must(Match_::create('title', 'elasticsearch'))
     ->filter(Term::create('status', 'published')->boost(1.5));
 
-// incremental build
+// 增量构建
 if ($filterByPrice) {
     $bool->filter(Range::create('price', [10, 100]));
 }
@@ -90,7 +90,7 @@ $query->toArray();  // ['query' => ['bool' => [...]]]
 $query->toJson();   // '{"query":{"bool":{...}}}'
 ```
 
-### Compound query
+### 复合查询
 
 ```php
 $results = ProductIndex::query()
@@ -98,7 +98,7 @@ $results = ProductIndex::query()
         'must'   => fn ($q) => $q->match('title', 'elasticsearch'),
         'filter' => fn ($q) => $q
             ->range('price', [10, 100])
-            ->when($status, fn ($q) => $q->term('status', $status))  // conditional filter
+            ->when($status, fn ($q) => $q->term('status', $status))  // 条件过滤
             ->term('status', 'published'),
     ])
     ->highlight('title')
@@ -124,27 +124,27 @@ $results = ProductIndex::query()
 }
 ```
 
-### Clause appending (ClausesSupport)
+### 子句追加（ClausesSupport）
 
-The clauses of a `bool` query (must / should / filter / must_not) **append**, and accept the same four input forms as leaf queries:
+`bool` 查询的子句（must / should / filter / must_not）**累加追加**，并接受与叶子查询相同的 4 种输入形式：
 
 ```php
-// all four forms are equivalent, each produces one must clause
+// 4 种输入形式等价，都产出一条 must
 $q->bool(fn ($b) => $b->must(fn ($q) => $q->term('status', 'published')));
 $q->bool(['must' => fn ($q) => $q->term('status', 'published')]);
 $q->bool('must', fn ($q) => $q->term('status', 'published'));
 
-// clauses accumulate (multiple calls and list form both append)
+// 子句累加（多次调用、列表形式都追加）
 $q->bool(fn ($b) => $b->must(...)->must(...));   // must: [q1, q2]
-$q->bool(['must' => [$q1, $q2]]);                // same
+$q->bool(['must' => [$q1, $q2]]);                // 同上
 
-// contrast: minimum_should_match is a single-value property; later calls overwrite instead of append
+// 对比：minimum_should_match 是单值属性，后调覆盖而非追加
 $q->bool(fn ($b) => $b->minimumShouldMatch(1)->minimumShouldMatch(3)); // 3
 ```
 
-> `dis_max`, `span_or`, `span_near` and other array-clause containers behave the same way (queries / clauses append).
+> `dis_max`、`span_or`、`span_near` 等其他数组子句容器同理（queries / clauses 累加）。
 
-### Aggregations
+### 聚合
 
 ```php
 $results = ProductIndex::query()
@@ -157,7 +157,7 @@ $results = ProductIndex::query()
 $aggs = $results->aggregations();
 ```
 
-### Nested query
+### 嵌套查询
 
 ```php
 $results = ProductIndex::query()
@@ -165,10 +165,10 @@ $results = ProductIndex::query()
     ->get();
 ```
 
-### Raw DSL pass-through
+### 原生 DSL 透传
 
 ```php
-// supports raw arrays with nested closures; query/aggs/parameters can be passed all at once
+// 支持原生数组嵌套闭包，query/aggs/参数可一次性传入
 $query = Query::create([
     'query' => [
         'bool' => [
@@ -183,38 +183,38 @@ $query = Query::create([
 
 </details>
 
-## Index Examples
+## Index 示例
 
 <details>
-<summary>Expand</summary>
+<summary>展开查看</summary>
 
-### Pagination & cursor
+### 分页与游标
 
 ```php
-// pagination
+// 分页
 $results = ProductIndex::query()
     ->match('title', 'elasticsearch')
     ->paginate($page, $perPage);
 
 $results->lastPage();
 $results->items();
-$results->toPaginator();  // convert to a framework paginator (requires registering a Paginator Resolver)
+$results->toPaginator();  // 转为框架分页器（需注册 Paginator Resolver）
 
-// batch iteration (large exports / batch processing; yields a Results per batch)
+// 分批遍历（大批量导出/批处理，每次 yield 一个 Results）
 foreach (ProductIndex::query()->chunk() as $results) {
     foreach ($results->docs() as $doc) {
         // ...
     }
 }
 
-// per-hit iteration (exports / per-row processing; yields one hit: _id/_score/_source)
+// 逐条遍历（导出/逐条加工，每次 yield 一个 hit：_id/_score/_source）
 foreach (ProductIndex::query()->cursor() as $hit) {
     $doc = $hit['_source'];
     // ...
 }
 ```
 
-### Document CRUD
+### 文档 CRUD
 
 ```php
 ProductIndex::doc(1)->save(['title' => 'Hello', 'price' => 99.9]);
@@ -226,7 +226,7 @@ $doc->update(['price' => 89.9]);
 $doc->delete();
 ```
 
-### Bulk operations
+### 批量操作
 
 ```php
 use ElasticKit\Index\Bulk;
@@ -241,25 +241,25 @@ $bulk->batchSize(500)
     ->flush();
 ```
 
-### Index management
+### 索引管理
 
 ```php
 use ElasticKit\Index\Manager;
 
 $manager = new Manager(new ProductIndex());
 
-$manager->create();       // create the index
+$manager->create();       // 创建索引
 $manager->exists();       // bool
-$manager->putMapping();   // update the mapping
-$manager->delete();       // delete the index
+$manager->putMapping();   // 更新 mapping
+$manager->delete();       // 删除索引
 ```
 
-### Zero-downtime rebuild
+### 零停机重建
 
 ```php
 use ElasticKit\Index\Rebuild;
 
-// 1. Define the data source in an Index subclass
+// 1. 在 Index 子类中定义数据源
 class ProductIndex extends Index
 {
     public function source(array $context = []): iterable
@@ -270,19 +270,19 @@ class ProductIndex extends Index
     }
 }
 
-// 2. Run the rebuild (creates a new index -> imports -> swaps the alias)
+// 2. 执行重建（自动创建新索引 → 导入 → 切换别名）
 $result = (new Rebuild(new ProductIndex()))
     ->batchSize(500)
     ->run();
 
 // $result = ['newIndex' => 'products_20260607_120000', 'oldIndex' => 'products_20260601_090000']
 
-// 3. Clean up old indices or roll back
+// 3. 清理旧索引或回滚
 (new Rebuild(new ProductIndex()))->clean($result['oldIndex']);
 (new Rebuild(new ProductIndex()))->rollback($result['oldIndex']);
 ```
 
-### Event listening
+### 事件监听
 
 ```php
 use ElasticKit\Index\Support\Event;
@@ -302,16 +302,16 @@ EventDispatcher::listen('search.*', function (Event $e) {
 
 </details>
 
-## Documentation
+## 文档
 
-- [Guide](docs/guide.md) — an e-commerce order scenario, the full flow from install to production
-- [Index docs](docs/index.md) — search, CRUD, bulk operations, zero-downtime rebuild, events
-- [Changelog](CHANGELOG.md)
-- [Elasticsearch official docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) — query types and parameter reference
+- [实践指南](docs/guide.zh.md)——电商订单场景，从安装到上线的完整流程
+- [Index 文档](docs/index.zh.md)——搜索、CRUD、批量操作、零停机重建、事件
+- [更新日志](CHANGELOG.md)
+- [Elasticsearch 官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html)——查询类型和参数参考
 
-## AI-assisted development
+## AI 辅助开发
 
-This project is developed with AI assistance; core paths and tests are human-reviewed.
+本项目使用 AI 辅助开发，核心路径和测试经人工审查。
 
 ## License
 
