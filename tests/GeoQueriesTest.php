@@ -14,7 +14,7 @@ class GeoQueriesTest extends DslTestCase
 {
     public function testGeoBoundingBox()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -60,7 +60,7 @@ JSON;
 
     public function testGeoDistance()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -101,7 +101,7 @@ JSON;
 
     public function testGeoGrid()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "geo_grid" :{
@@ -121,7 +121,7 @@ JSON;
 
     public function testGeoPolygon()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "bool": {

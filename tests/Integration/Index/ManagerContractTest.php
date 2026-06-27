@@ -18,7 +18,7 @@ class ManagerContractTest extends IntegrationTestCase
     public function testPutMapping(): void
     {
         $name = $this->indexName;
-        $index = new class($name) extends Index {
+        $index = new class ($name) extends Index {
             public function __construct(string $name)
             {
                 $this->name = $name;
@@ -52,7 +52,7 @@ class ManagerContractTest extends IntegrationTestCase
     public function testDelete(): void
     {
         $name = 'ek_mgr_' . bin2hex(random_bytes(4));
-        $index = new class($name) extends Index {
+        $index = new class ($name) extends Index {
             public function __construct(string $name)
             {
                 $this->name = $name;
@@ -68,7 +68,7 @@ class ManagerContractTest extends IntegrationTestCase
     public function testCreate(): void
     {
         $name = 'ek_mgr_' . bin2hex(random_bytes(4));
-        $index = new class($name) extends Index {
+        $index = new class ($name) extends Index {
             public function __construct(string $name)
             {
                 $this->name = $name;
@@ -100,7 +100,7 @@ class ManagerContractTest extends IntegrationTestCase
     public function testCloseAndOpen(): void
     {
         $name = 'ek_mgr_' . bin2hex(random_bytes(4));
-        $index = new class($name) extends Index {
+        $index = new class ($name) extends Index {
             public function __construct(string $name)
             {
                 $this->name = $name;

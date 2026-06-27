@@ -143,7 +143,7 @@ JSON;
 
     public function testBoolArrayWithListAppendsMultipleClauses()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -181,7 +181,7 @@ JSON;
 
     public function testBoolTwoArgWithClosure()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -201,7 +201,7 @@ JSON;
 
     public function testBoolTwoArgWithQueryObject()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -221,7 +221,7 @@ JSON;
 
     public function testBoolTraitTwoArgWithClosure()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "bool": {

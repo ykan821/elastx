@@ -242,7 +242,7 @@ JSON;
 
     public function testSpanOrArrayForm()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "span_or": {

@@ -9,7 +9,7 @@ class ShapeQueriesTest extends DslTestCase
 {
     public function testShape()
     {
-$exampleJson = <<<'JSON'
+        $exampleJson = <<<'JSON'
 {
   "query": {
     "shape": {

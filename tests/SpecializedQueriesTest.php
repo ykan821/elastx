@@ -15,7 +15,7 @@ class SpecializedQueriesTest extends DslTestCase
 {
     public function testDistanceFeature()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -47,7 +47,7 @@ JSON;
 
     public function testMoreLikeThis()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "more_like_this" : {
@@ -71,7 +71,7 @@ JSON;
 
     public function testPercolate()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "percolate": {
@@ -93,7 +93,7 @@ JSON;
 
     public function testRankFeature()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -155,7 +155,7 @@ JSON;
 
     public function testScript()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -193,7 +193,7 @@ JSON;
 
     public function testScriptScore()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "script_score": {
@@ -223,7 +223,7 @@ JSON;
 
     public function testWrapper()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "wrapper": {
@@ -241,7 +241,7 @@ JSON;
 
     public function testPinned()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "pinned": {

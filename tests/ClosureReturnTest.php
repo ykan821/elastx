@@ -2,7 +2,6 @@
 
 use Tests\DslTestCase;
 use ElasticKit\DSL\Query;
-use ElasticKit\DSL\Queries\FullText\Match_;
 
 class ClosureReturnTest extends DslTestCase
 {

@@ -13,7 +13,7 @@ class RebuildContractTest extends IntegrationTestCase
     public function testRunCreatesAlias(): void
     {
         $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
-        $index = new class($alias) extends Index {
+        $index = new class ($alias) extends Index {
             public function __construct(string $alias)
             {
                 $this->name = $alias;
@@ -38,7 +38,7 @@ class RebuildContractTest extends IntegrationTestCase
     public function testRunSwapsAlias(): void
     {
         $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
-        $index = new class($alias) extends Index {
+        $index = new class ($alias) extends Index {
             public function __construct(string $alias)
             {
                 $this->name = $alias;
@@ -66,7 +66,7 @@ class RebuildContractTest extends IntegrationTestCase
     {
         // $this->indexName is a real index created by setUp, not an alias
         $name = $this->indexName;
-        $index = new class($name) extends Index {
+        $index = new class ($name) extends Index {
             public function __construct(string $name)
             {
                 $this->name = $name;
@@ -85,7 +85,7 @@ class RebuildContractTest extends IntegrationTestCase
 
     private function rebuildIndex(string $alias, bool $empty = false): Index
     {
-        return new class($alias, $empty) extends Index {
+        return new class ($alias, $empty) extends Index {
             private bool $empty;
 
             public function __construct(string $alias, bool $empty)

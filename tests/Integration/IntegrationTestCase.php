@@ -80,7 +80,7 @@ abstract class IntegrationTestCase extends DslTestCase
     protected function makeIndex(): Index
     {
         $name = $this->indexName;
-        return new class($name) extends Index {
+        return new class ($name) extends Index {
             public function __construct(string $name)
             {
                 $this->name = $name;
