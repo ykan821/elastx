@@ -242,7 +242,7 @@ class Results
         $resolver = Pagination::getPaginatorResolver();
         if ($resolver === null) {
             throw new RuntimeException(
-                'Paginator resolver not registered. Call Index::setPaginatorResolver() first.'
+                'Paginator resolver not registered. Call Pagination::setPaginatorResolver() first.'
             );
         }
 
