@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace ElasticKit\DSL\Queries\Compound;
 
-use ElasticKit\DSL\Support\ClausesSupport;
 use ElasticKit\DSL\Node;
+use ElasticKit\DSL\Query;
+use ElasticKit\DSL\Support\ClausesSupport;
 
 /**
  * A query that matches documents matching boolean combinations of other queries. The bool query maps to Lucene BooleanQuery. It is built using one or more boolean clauses, each clause with a typed occurrence. The occurrence types are:
@@ -20,7 +21,7 @@ class Boolean extends Node
      * The clause (query) must appear in matching documents and will contribute to the score.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $value
+     * @param Query|\Closure|array<string, mixed> $value
      * @return static
      */
     public function must($value): static
@@ -32,7 +33,7 @@ class Boolean extends Node
      * The clause (query) should appear in the matching document.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $value
+     * @param Query|\Closure|array<string, mixed> $value
      * @return static
      */
     public function should($value): static
@@ -44,7 +45,7 @@ class Boolean extends Node
      * The clause (query) must appear in matching documents. However unlike must the score of the query will be ignored. Filter clauses are executed in filter context, meaning that scoring is ignored and clauses are considered for caching.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $value
+     * @param Query|\Closure|array<string, mixed> $value
      * @return static
      */
     public function filter($value): static
@@ -56,7 +57,7 @@ class Boolean extends Node
      * The clause (query) must not appear in the matching documents. Clauses are executed in filter context meaning that scoring is ignored and clauses are considered for caching. Because scoring is ignored, a score of 0 for all documents is returned.
      * Supports multiple calls to incrementally build the bool query.
      *
-     * @param mixed $value
+     * @param Query|\Closure|array<string, mixed> $value
      * @return static
      */
     public function mustNot($value): static

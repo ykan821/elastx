@@ -119,7 +119,7 @@ class Query extends Node
     /**
      * Add a query clause to the query container.
      *
-     * @param mixed $clause
+     * @param Query|\Closure|array<string, mixed>|Node $clause
      * @return $this
      */
     public function addQuery($clause): static
@@ -134,8 +134,8 @@ class Query extends Node
      * $condition is a bool, or a Closure returning a bool.
      *
      * @param bool|\Closure $condition
-     * @param mixed $query
-     * @param mixed $default
+     * @param Query|\Closure|array<string, mixed> $query
+     * @param Query|\Closure|array<string, mixed>|null $default
      * @return $this
      */
     public function when(bool|\Closure $condition, $query, $default = null): static

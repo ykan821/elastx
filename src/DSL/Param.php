@@ -22,7 +22,7 @@ trait Param
      * @param string $key
      * @return bool
      */
-    public function hasParam($key): bool
+    public function hasParam(string $key): bool
     {
         return array_key_exists($key, $this->_params);
     }
