@@ -2,12 +2,24 @@
 
 use Tests\DslTestCase;
 use ElasticKit\DSL\Query;
+use ElasticKit\DSL\Agg;
 use ElasticKit\DSL\Aggs\Bucket\Terms;
 use ElasticKit\DSL\Aggs\Bucket\Range;
 use ElasticKit\DSL\Aggs\Bucket\GeoDistance;
 
 class AggsTest extends DslTestCase
 {
+    public function testAggsAcceptsAggInstanceAsOnlyArgument()
+    {
+        $agg = (new Agg())->terms(['field' => 'status']);
+        $agg->alias('by_status');
+
+        $query = new Query();
+        $query->aggs($agg);
+
+        $this->assertQuery('{"aggs":{"by_status":{"terms":{"field":"status"}}}}', $query);
+    }
+
     public function testTermsAggregation()
     {
         $expectedJson = <<<JSON

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace ElasticKit\DSL;
 
-use BadMethodCallException;
 use ElasticKit\DSL\Aggs\Bucket;
-use RuntimeException;
 use ElasticKit\DSL\Aggs\Metric;
 use ElasticKit\DSL\Aggs\Pipeline;
+use ElasticKit\DSL\Support\RegistersAgg;
 
 /**
  * Aggregation container (independent, does not extend Node).
@@ -21,6 +20,7 @@ class Agg
     use Metric;
     use Pipeline;
     use DeepClone;
+    use RegistersAgg;
 
     /**
      * The aggregation type node.
@@ -125,60 +125,11 @@ class Agg
      *
      * @param string|Agg|array<string, mixed> $alias
      * @param callable|Agg|array<string, mixed>|null $aggs
-     * @return $this
-     * @throws \BadMethodCallException if called with a string alias and no definition
+     * @return static
      */
     public function aggs($alias, $aggs = null): static
     {
-        if ($aggs === null && !is_string($alias)) {
-            $aggs = $alias;
-            $alias = null;
-        }
-
-        if ($aggs instanceof Agg) {
-            $key = $alias ?? $aggs->getAlias();
-            if ($key === null || $key === '') {
-                throw new BadMethodCallException('aggs() requires a non-empty alias.');
-            }
-            $aggs->alias($key);
-            if (isset($this->_subAggs[$key])) {
-                throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $key));
-            }
-            $this->_subAggs[$key] = $aggs;
-            return $this;
-        }
-
-        if ($alias === null || $alias === '') {
-            throw new BadMethodCallException(
-                'aggs() requires a non-empty alias. Use aggs("name", $definition).'
-            );
-        }
-
-        if (is_array($aggs)) {
-            $childAgg = Agg::create($aggs);
-            $childAgg->alias($alias);
-            if (isset($this->_subAggs[$alias])) {
-                throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $alias));
-            }
-            $this->_subAggs[$alias] = $childAgg;
-            return $this;
-        }
-
-        if (isset($this->_subAggs[$alias])) {
-            throw new RuntimeException(sprintf('Duplicate aggregation alias "%s".', $alias));
-        }
-
-        $this->_subAggs[$alias] = new Agg();
-        $this->_subAggs[$alias]->alias($alias);
-
-        if ($aggs instanceof \Closure) {
-            $aggs($this->_subAggs[$alias]);
-            return $this;
-        }
-
-        throw new BadMethodCallException(
-            sprintf('aggs("%s", ...) requires a closure, array, or Agg instance as the definition.', $alias)
-        );
+        return $this->registerAgg($alias, $aggs, $this->_subAggs);
     }
 
     /**

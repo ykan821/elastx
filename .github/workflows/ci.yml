@@ -79,7 +79,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: PHPStan
-        run: vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse --memory-limit=256M
 
       - name: PHP-CS-Fixer
         run: PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --dry-run --diff
