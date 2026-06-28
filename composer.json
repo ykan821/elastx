@@ -30,10 +30,5 @@
             "name": "ykan",
             "email": "smykggi@gmail.com"
         }
-    ],
-    "scripts": {
-        "analyse": "phpstan analyse --memory-limit=256M",
-        "cs-check": "php-cs-fixer fix --dry-run --diff",
-        "cs-fix": "php-cs-fixer fix"
-    }
+    ]
 }

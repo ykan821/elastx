@@ -1,5 +1,34 @@
 # Changelog
 
+## [8.0.0-beta.5] - 2026-06-28
+
+### Added
+
+- `Index::$trackTotalHits` (int|bool, default `false`) — opt-in total-hit tracking per index; `true` counts every hit, an int caps the count, `false` omits it.
+- `Results::hasMorePages()` — next-page signal that works with or without a total (full-page heuristic when `track_total_hits` is false).
+- `PaginationTotalUnavailableException` (in `ElasticKit\Index\Exception`) — thrown by `Results::toPaginator()` when no total is available.
+
+### Changed
+
+- **BC:** `Index` now defaults `track_total_hits` to `false`, so Elasticsearch omits the hit total. `Results::total()`/`lastPage()` return `?int` (null when the total is unavailable), and `toPaginator()` throws unless the index sets `$trackTotalHits = true` (or a count cap). Set `protected int|bool $trackTotalHits = true;` on indexes that paginate.
+- `Results::isEmpty()` docblock now points to `hasMorePages()` for "has next page".
+
+### Fixed
+
+- `Node::toArray()` (and field-keyed overrides such as `Intervals`) throw `LogicException` when a field-keyed node has no field set, instead of an uncatchable typed-property `Error`.
+- `Agg` empty aggregation body serializes to `{}`, not `[]` (which Elasticsearch rejects).
+- `RangeSupport` rejects positional elements beyond the `[start, end]` shorthand instead of leaking them as numeric keys.
+- `SpanTerm::term()` emits Elasticsearch's `{value}` key (was `{term}`).
+- `Rebuild` alias-swap failures now delete the orphaned new index.
+
+### Deprecated
+
+- `DateHistogram::interval()` — Elasticsearch deprecated the bare `interval` key; use `calendarInterval()`/`fixedInterval()`.
+
+### Removed
+
+- Composer scripts (`analyse` / `cs-check` / `cs-fix`) — run the binaries via your Docker workflow instead.
+
 ## [8.0.0-beta.4] - 2026-06-07
 
 ### Added
