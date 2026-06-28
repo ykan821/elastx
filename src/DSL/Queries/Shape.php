@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
 use ElasticKit\DSL\Queries\Shape\Shape as QShape;
@@ -16,7 +18,7 @@ trait Shape
      * @param mixed $value
      * @return $this
      */
-    public function shape($field, $value = null)
+    public function shape($field, $value = null): static
     {
         return $this->addQuery(QShape::create($field, $value));
     }

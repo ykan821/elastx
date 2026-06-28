@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,104 +11,93 @@ use ElasticKit\DSL\Node;
  */
 class SignificantText extends Node
 {
-    protected $_key = 'significant_text';
-
-    /**
-     * The text field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'significant_text';
 
     /**
      * Maximum number of significant terms to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size($size)
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 
     /**
      * Number of candidate terms to return from each shard.
      *
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 
     /**
      * Minimum document count for a term to be returned.
      *
-     * @param int $minDocCount
+     * @param int $value
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $value): static
     {
-        return $this->addProperty('min_doc_count', $minDocCount);
+        return $this->addProperty('min_doc_count', $value);
     }
 
     /**
      * Minimum document count for a term to be considered on each shard.
      *
-     * @param int $shardMinDocCount
+     * @param int $value
      * @return static
      */
-    public function shardMinDocCount($shardMinDocCount)
+    public function shardMinDocCount(int $value): static
     {
-        return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
+        return $this->addProperty('shard_min_doc_count', $value);
     }
 
     /**
      * Terms to include in the aggregation.
      *
-     * @param mixed $include
+     * @param mixed $value
      * @return static
      */
-    public function include($include)
+    public function include($value): static
     {
-        return $this->addProperty('include', $include);
+        return $this->addProperty('include', $value);
     }
 
     /**
      * Terms to exclude from the aggregation.
      *
-     * @param mixed $exclude
+     * @param mixed $value
      * @return static
      */
-    public function exclude($exclude)
+    public function exclude($value): static
     {
-        return $this->addProperty('exclude', $exclude);
+        return $this->addProperty('exclude', $value);
     }
 
     /**
      * Query to filter the background document set for significance calculation.
      *
-     * @param mixed $backgroundFilter
+     * @param mixed $value
      * @return static
      */
-    public function backgroundFilter($backgroundFilter)
+    public function backgroundFilter($value): static
     {
-        return $this->addProperty('background_filter', $backgroundFilter);
+        return $this->addProperty('background_filter', $value);
     }
 
     /**
      * Whether to filter duplicate text before analysis.
      *
-     * @param bool $filter
+     * @param bool $value
      * @return static
      */
-    public function filterDuplicateText($filter)
+    public function filterDuplicateText(bool $value): static
     {
-        return $this->addProperty('filter_duplicate_text', $filter);
+        return $this->addProperty('filter_duplicate_text', $value);
     }
 }

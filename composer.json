@@ -30,15 +30,5 @@
             "name": "ykan",
             "email": "smykggi@gmail.com"
         }
-    ],
-    "scripts": {
-        "analyse": "phpstan analyse",
-        "cs-check": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --dry-run --diff",
-        "cs-fix": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix"
-    },
-    "config": {
-        "audit": {
-            "block-insecure": false
-        }
-    }
+    ]
 }

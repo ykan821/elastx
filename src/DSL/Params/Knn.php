@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Node;
 use ElasticKit\DSL\Query;
-use stdClass;
 
 /**
  * Performs a k-nearest neighbor (kNN) search on a dense_vector field.
@@ -13,117 +14,86 @@ use stdClass;
  */
 class Knn extends Node
 {
-    protected $_key = 'knn';
-
-    /**
-     * The vector field to search against.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'knn';
 
     /**
      * The query vector to search for.
      *
-     * @param array<int|float> $vector
+     * @param array<int|float> $value
      * @return static
      */
-    public function queryVector($vector)
+    public function queryVector(array $value): static
     {
-        return $this->addProperty('query_vector', $vector);
+        return $this->addProperty('query_vector', $value);
     }
 
     /**
      * Number of nearest neighbors to return as top hits.
      * Defaults to the search request's size.
      *
-     * @param int $k
+     * @param int $value
      * @return static
      */
-    public function k($k)
+    public function k(int $value): static
     {
-        return $this->addProperty('k', $k);
+        return $this->addProperty('k', $value);
     }
 
     /**
      * Number of candidates to evaluate per shard.
      * Defaults to max(k * 4, 50).
      *
-     * @param int $num
+     * @param int $value
      * @return static
      */
-    public function numCandidates($num)
+    public function numCandidates(int $value): static
     {
-        return $this->addProperty('num_candidates', $num);
+        return $this->addProperty('num_candidates', $value);
     }
 
     /**
      * Minimum similarity threshold for a vector to be
      * considered a match.
      *
-     * @param float $similarity
+     * @param float $value
      * @return static
      */
-    public function similarity($similarity)
+    public function similarity(float $value): static
     {
-        return $this->addProperty('similarity', $similarity);
+        return $this->addProperty('similarity', $value);
     }
 
     /**
-     * Boost value for the kNN score.
-     *
-     * @param float $boost
-     * @return static
-     */
-    public function boost($boost)
-    {
-        return $this->addProperty('boost', $boost);
-    }
-
-    /**
-     * (Optional) Pre-filter applied during kNN search. Accepts a closure,
+     * Pre-filter applied during kNN search. Accepts a closure,
      * array, or Query object.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter)
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Query::create($filter));
+        return $this->addProperty('filter', Query::create($value));
     }
 
     /**
-     * (Optional) Inner hits configuration for nested kNN search.
+     * Inner hits configuration for nested kNN search.
      *
-     * @param mixed $innerHits
+     * @param mixed $value
      * @return static
      */
-    public function innerHits($innerHits)
+    public function innerHits($value): static
     {
-        return $this->addProperty('inner_hits', $innerHits);
+        return $this->addProperty('inner_hits', $value);
     }
 
     /**
-     * (Optional) Rescore vector configuration for quantized vector rescoring.
+     * Rescore vector configuration for quantized vector rescoring.
      *
-     * @param array<string, mixed> $rescoreVector
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function rescoreVector($rescoreVector)
+    public function rescoreVector(array $value): static
     {
-        return $this->addProperty('rescore_vector', $rescoreVector);
-    }
-
-    public function toArray()
-    {
-        $result = parent::toArray();
-        if (isset($result['filter']) && $result['filter'] instanceof Query) {
-            $result['filter'] = $result['filter']->toArray()['query'] ?? new stdClass();
-        }
-        return $result;
+        return $this->addProperty('rescore_vector', $value);
     }
 }

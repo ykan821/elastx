@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
-use ElasticKit\DSL\Shared\RangeSupport;
+use ElasticKit\DSL\Support\RangeSupport;
 
 /**
  * The range rule matches terms that fall within a specified range of values.
@@ -13,73 +15,73 @@ class Range extends Node
 {
     use RangeSupport;
 
-    protected $_key = 'range';
+    protected string $_key = 'range';
 
     /**
-     * (Optional) Greater than or equal to the specified value.
+     * Greater than or equal to the specified value.
      *
-     * @param mixed $gte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gte($gte)
+    public function gte(string|int|float|bool $value): static
     {
-        return $this->addProperty('gte', $gte);
+        return $this->addProperty('gte', $value);
     }
 
     /**
-     * (Optional) Greater than the specified value.
+     * Greater than the specified value.
      *
-     * @param mixed $gt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gt($gt)
+    public function gt(string|int|float|bool $value): static
     {
-        return $this->addProperty('gt', $gt);
+        return $this->addProperty('gt', $value);
     }
 
     /**
-     * (Optional) Less than or equal to the specified value.
+     * Less than or equal to the specified value.
      *
-     * @param mixed $lte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lte($lte)
+    public function lte(string|int|float|bool $value): static
     {
-        return $this->addProperty('lte', $lte);
+        return $this->addProperty('lte', $value);
     }
 
     /**
-     * (Optional) Less than the specified value.
+     * Less than the specified value.
      *
-     * @param mixed $lt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lt($lt)
+    public function lt(string|int|float|bool $value): static
     {
-        return $this->addProperty('lt', $lt);
+        return $this->addProperty('lt', $value);
     }
 
     /**
      * Analyzer used to normalize the range values.
      * Defaults to the top-level field's analyzer.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
      * If specified, match intervals from this field rather
      * than the top-level field.
      *
-     * @param string $useField
+     * @param string $value
      * @return static
      */
-    public function useField($useField)
+    public function useField(string $value): static
     {
-        return $this->addProperty('use_field', $useField);
+        return $this->addProperty('use_field', $value);
     }
 }

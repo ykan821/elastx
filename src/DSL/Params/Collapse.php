@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Node;
@@ -11,7 +13,7 @@ use ElasticKit\DSL\Node;
  */
 class Collapse extends Node
 {
-    protected $_key = 'collapse';
+    protected string $_key = 'collapse';
 
     /**
      * Create an instance from various input formats.
@@ -23,7 +25,7 @@ class Collapse extends Node
      * @param mixed $value
      * @return static
      */
-    public static function create($field = null, $value = null)
+    public static function create($field = null, $value = null): static
     {
         if ($value === null && is_string($field)) {
             return (new static())->field($field);
@@ -32,24 +34,13 @@ class Collapse extends Node
     }
 
     /**
-     * The field to collapse the result set on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
-
-    /**
-     * (Optional) Expand each collapsed top hit with the inner_hits option.
+     * Expand each collapsed top hit with the inner_hits option.
      *
      * @param string $name
      * @param mixed $hits
      * @return static
      */
-    public function innerHits($name, $hits = null)
+    public function innerHits(string $name, $hits = null): static
     {
         return $this->addProperty('inner_hits', ['name' => $name] + (array)$hits);
     }
@@ -57,11 +48,11 @@ class Collapse extends Node
     /**
      * Maximum number of concurrent group searches.
      *
-     * @param int $max
+     * @param int $value
      * @return static
      */
-    public function maxConcurrentGroupSearches($max)
+    public function maxConcurrentGroupSearches(int $value): static
     {
-        return $this->addProperty('max_concurrent_group_searches', $max);
+        return $this->addProperty('max_concurrent_group_searches', $value);
     }
 }

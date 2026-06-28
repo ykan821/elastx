@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -10,38 +12,36 @@ use ElasticKit\DSL\Queries\FullText\Intervals;
  */
 class AnyOf extends Node
 {
-    protected $_key = 'any_of';
+    protected string $_key = 'any_of';
 
     /**
      * An array of rules to match.
      *
-     * @param mixed $intervals
+     * @param mixed $value
      * @return static
      */
-    public function intervals($intervals)
+    public function intervals($value): static
     {
-        $intervals = Intervals::create($intervals)
-            ->isPropertyField(false)
+        $value = Intervals::create($value)
+            ->fieldKeyed(false)
             ->multi(true);
-        return $this->addProperty('intervals', $intervals);
+        return $this->addProperty('intervals', $value);
     }
 
     /**
      * Append an interval rule. Supports multiple calls to incrementally build.
      *
-     * @param mixed $interval
+     * @param mixed $value
      * @return static
      */
-    public function addInterval($interval)
+    public function addInterval($value): static
     {
         if (!isset($this->_properties['intervals'])) {
-            $this->_properties['intervals'] = (new Intervals())->isPropertyField(false)->multi(true);
+            $this->_properties['intervals'] = (new Intervals())->fieldKeyed(false)->multi(true);
         }
         $target = $this->_properties['intervals'];
-        if ($interval instanceof \Closure) {
-            $interval($target);
-        } elseif ($interval instanceof Node) {
-            $target->addQuery($interval);
+        if ($value instanceof \Closure) {
+            $value($target);
         }
         return $this;
     }
@@ -50,11 +50,11 @@ class AnyOf extends Node
      * Rule used to filter returned
      * intervals.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter)
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Filter::create($filter));
+        return $this->addProperty('filter', Filter::create($value));
     }
 }

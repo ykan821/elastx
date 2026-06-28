@@ -7,7 +7,7 @@ class MatchAllTest extends DslTestCase
 {
     public function testMatchAll()
     {
-$exampleJson = <<<'JSON'
+        $exampleJson = <<<'JSON'
 {
     "query": {
         "match_all": {}
@@ -21,7 +21,7 @@ JSON;
 
     public function testMatchNone()
     {
-$exampleJson = <<<'JSON'
+        $exampleJson = <<<'JSON'
 {
     "query": {
         "match_none": {}

@@ -1,53 +1,53 @@
 # Index
 
-Index 是抽象基类。继承它定义索引，注册 ES Client，然后查询。
+Index is an abstract base class. Extend it to define an index, register an ES client, then query.
 
-## 配置
+## Configuration
 
 ```php
 use ElasticKit\Index\Index;
 
-// 创建官方 Client
+// create the official client
 $client = \Elastic\Elasticsearch\ClientBuilder::create()
     ->setHosts(['http://localhost:9200'])
     ->build();
 
-// 注册为默认连接
+// register as the default connection
 Index::setClient($client);
 
-// 多连接
+// multiple connections
 Index::setClient($mainClient, 'main');
 Index::setClient($logClient, 'logs');
 ```
 
-定义索引：
+Define an index:
 
 ```php
 class ProductIndex extends Index
 {
-    protected $name = 'products';       // 索引名（必填）
-    protected $mappings = [             // 索引 mappings
+    protected string $name = 'products';       // index name (required)
+    protected array $mappings = [             // index mappings
         'properties' => [
             'title'  => ['type' => 'text'],
             'price'  => ['type' => 'float'],
             'status' => ['type' => 'keyword'],
         ],
     ];
-    protected $settings = [             // 索引 settings
+    protected array $settings = [             // index settings
         'number_of_shards' => 1,
     ];
-    protected $connection = 'main';     // 连接名（默认 'default'）
+    protected string $connection = 'main';     // connection name (default 'default')
 
-    public function rebuildName(): string // 重建后的真实索引名（可重写自定义）
+    public function rebuildName(): string // the real index name after rebuild (override to customize)
     {
         return $this->name . '_' . date('Ymd_His');
     }
 }
 ```
 
-## 搜索
+## Search
 
-`query()` 返回新的 Search 实例。链式调用 DSL 方法，然后执行：
+`query()` returns a new Search instance. Chain DSL methods, then execute:
 
 ```php
 $results = ProductIndex::query()
@@ -56,149 +56,212 @@ $results = ProductIndex::query()
     ->size(20)
     ->get();
 
-$results->total();        // 命中数
-$results->docs();         // _source 数组
-$results->hits();         // 完整 hit 数组
-$results->aggregations(); // 聚合结果
+$results->total();        // hit count (null unless the index sets $trackTotalHits = true)
+$results->docs();         // array of _source
+$results->hits();         // full hit array
+$results->aggregations(); // aggregation results
 ```
 
 ```php
-// 仅返回第一条（内部设置 size=1）
+// return only the first (internally sets size=1)
 $doc = ProductIndex::query()->match('title', 'test')->first();
 
-// 不获取文档，只统计数量
+// don't fetch docs, just count
 $total = ProductIndex::query()->term('status', 'published')->count();
 
-// 聚合快捷方法（内部设置 size=0）
+// aggregation shortcuts (internally set size=0)
 $avg = ProductIndex::query()->avg('price');
 $max = ProductIndex::query()->max('price');
 $min = ProductIndex::query()->min('price');
 $sum = ProductIndex::query()->sum('price');
 ```
 
-## 分页
+## Pagination
 
 ```php
-// 手动分页
+use ElasticKit\Index\Support\Pagination;
+
+// manual pagination
 $results = ProductIndex::query()->paginate($page, $perPage);
 
-// 自动从请求解析
-Index::setPageResolver(function () {
+// auto-resolve from the request
+Pagination::setPageResolver(function () {
     return [request('page', 1), request('per_page', 20)];
 });
 $results = ProductIndex::query()->paginate();
 
-// 对接框架分页器
-Index::setPaginatorResolver(function ($results, $page, $perPage) {
+// wire up a framework paginator
+Pagination::setPaginatorResolver(function ($results, $page, $perPage) {
     return new LengthAwarePaginator($results->docs(), $results->total(), $perPage, $page);
 });
 $results->toPaginator();
 ```
 
+> **Total tracking is opt-in.** `Index` defaults `$trackTotalHits = false`, so Elasticsearch omits the hit total: `total()`/`lastPage()` return `null` and `toPaginator()` throws. For length-aware pagination, enable it on the index — `true` counts every hit, an int caps the count (e.g. 5000):
+>
+> ```php
+> class ProductIndex extends Index
+> {
+>     protected int|bool $trackTotalHits = true;
+> }
+> ```
+>
+> Otherwise use total-less pagination: `hasMorePages()` (full-page heuristic) or `chunk()` / `cursor()`. Deep pagination past 10,000 (`from + size > max_result_window`) is rejected by Elasticsearch — use `chunk()` (scroll) there.
+
 ## Scroll
 
-大数据集使用 scroll 分批获取：
+For large datasets, use scroll to fetch in batches:
 
 ```php
-// 首批（默认 size=1000）
+// first batch (default size=1000)
 $results = ProductIndex::query()->size(500)->scroll();
 $total = $results->total();
 $scrollId = $results->scrollId();
 
-// 继续获取
+// keep fetching
 while (count($results->docs()) > 0) {
-    // 处理 $results->docs()...
+    // process $results->docs()...
     $results = ProductIndex::query()->scroll($scrollId);
     $scrollId = $results->scrollId();
 }
 
-// 完成后清理
-ProductIndex::query()->clear($scrollId);
+// clear when done
+ProductIndex::query()->clear($results);
 ```
 
-## Cursor
+## Chunk / Cursor
 
-Cursor 把 scroll 封装成 PHP 生成器：
+Wraps scroll into a PHP generator; the scroll is cleared automatically.
+
+**chunk** iterates by batch, yielding a Results each time (with docs/hits/total etc.):
 
 ```php
-foreach (ProductIndex::query()->cursor() as $results) {
+foreach (ProductIndex::query()->chunk() as $results) {
     foreach ($results->docs() as $doc) {
-        // 处理
+        // process
     }
 }
-// scroll 自动清理
 ```
 
-## 文档 CRUD
+**cursor** iterates per hit, yielding one full hit each time (_id/_score/_source):
+
+```php
+foreach (ProductIndex::query()->cursor() as $hit) {
+    $doc = $hit['_source'];
+    $id  = $hit['_id'];
+}
+```
+
+## Document CRUD
 
 ```php
 $doc = ProductIndex::doc(1);
 
 $doc->create(['title' => 'New Product', 'price' => 29.99]);
-$doc->source();   // 获取 _source 数组
+$doc->source();   // get the _source array
 $doc->update(['price' => 39.99]);
 
-// 带冲突重试的更新
+// update with conflict retry
 $doc->retryOnConflict(3)->update(['price' => 39.99]);
 
 $doc->delete();
 ```
 
-`update()` 默认不使用 upsert 语义——文档不存在时会报错。传入 `true` 启用 upsert：
+`update()` does not use upsert semantics by default — it throws if the document doesn't exist. Pass `true` to enable upsert:
 
 ```php
-$doc->update(['price' => 39.99]);           // 文档不存在时报错
-$doc->update(['price' => 39.99], true);     // 文档不存在时自动创建
+$doc->update(['price' => 39.99]);           // throws if the document doesn't exist
+$doc->update(['price' => 39.99], true);     // creates it if it doesn't exist
 ```
 
-## 批量操作
+## Bulk operations
+
+Bulk is a buffer: `index()/create()/update()/delete()` only enqueue; **`flush()` is what sends**.
 
 ```php
 use ElasticKit\Index\Bulk;
 
 $bulk = new Bulk(new ProductIndex());
-$bulk->batchSize(500);
 $bulk->index(1, ['title' => 'Product A']);
 $bulk->index(2, ['title' => 'Product B']);
 $bulk->delete(3);
-$bulk->execute(); // 执行所有操作，执行后清空状态
+$bulk->flush(); // send and clear the buffer
 ```
 
-## 零停机重建
+`batchSize(N)` enables **auto-flush**: when the buffer reaches N it sends automatically (default 0 = off, pure buffering). Use it for large imports to avoid piling up memory; after the loop you **still need `flush()` to send the tail**:
 
-创建新索引 → 导入数据 → 切换别名。
+```php
+$bulk = (new Bulk(new ProductIndex()))->batchSize(500);
+foreach ($docs as $id => $doc) {
+    $bulk->index($id, $doc);   // auto-flushes at 500
+}
+$bulk->flush();                 // the tail (< 500)
+```
 
-`$name` 始终是应用面向的名称。应用不需要更改使用的名称——所有 CRUD、搜索、批量操作始终指向 `$name`。重建后，`$name` 变成别名，指向由 `rebuildName()` 生成的新索引。
+### Error handling
+
+`flush()` throws a `RuntimeException` by default when the response contains errors. Use `onError()` to customize — the callback receives three raw materials and decides what to do:
+
+- `$response` — the raw ES response (`items[]` carry per-item status/error)
+- `$body` — the full original batch (successes included, native ES format)
+- `$newbulk` — a fresh Bulk bound to the same index + target, for re-sending failures
+
+Inside the callback **don't throw (return) → treated as handled, this batch is cleared and we continue; throw → abort, this batch is preserved** for the caller.
+
+```php
+// no onError → throws RuntimeException on error
+$bulk->flush();
+
+// with onError → handle failures yourself (you can re-send)
+$bulk->onError(function (array $response, array $body, Bulk $newbulk) {
+    // items[k] ↔ the k-th action; pick out the failures and re-send (simple alignment for a pure-index batch)
+    foreach ($response['items'] as $i => $item) {
+        $meta = $item[array_key_first($item)];
+        if (($meta['status'] ?? 200) >= 400) {
+            $newbulk->index($meta['_id'], $body[$i * 2 + 1]);
+        }
+    }
+    $newbulk->flush();
+})->flush();
+```
+
+> Errors from a `batchSize` auto-flush also go through `onError`.
+
+## Zero-downtime rebuild
+
+Create a new index → import data → swap the alias.
+
+`$name` is always the application-facing name. The application never needs to change which name it uses — all CRUD, search, and bulk operations always target `$name`. After a rebuild, `$name` becomes an alias pointing at the new index generated by `rebuildName()`.
 
 ```php
 use ElasticKit\Index\Rebuild;
 
 $rebuild = new Rebuild(new ProductIndex());
 
-// 重建：返回新旧索引名
+// rebuild: returns the new and old index names
 $result = $rebuild->batchSize(500)->run();
 // $result = ['newIndex' => 'products_20250601_120000', 'oldIndex' => 'products_20250531_090000']
 
-// 确认无误后清理旧索引
+// once confirmed, clean up the old index
 $rebuild->clean($result['oldIndex']);
 
-// 或出问题时回滚
+// or roll back if something went wrong
 $rebuild->rollback($result['oldIndex']);
 ```
 
-### 工作原理
+### How it works
 
-`run()` 自动检测当前状态：
+`run()` auto-detects the current state:
 
-1. **$name 已是别名**（后续重建）：原子别名切换，零停机
-2. **$name 是真实索引**：抛出 `RuntimeException`，必须先手动删除或转换为别名模式
-3. **$name 不存在**：创建新索引并设置别名
+1. **$name is already an alias** (subsequent rebuilds): atomic alias swap, zero downtime
+2. **$name is a real index**: throws a `RuntimeException`; you must first delete it manually or convert to alias mode
+3. **$name doesn't exist**: creates a new index and sets up the alias
 
-重建后 `$name` 变成别名，指向 `rebuildName()` 生成的新索引。旧索引保留，由你决定 `clean()` 或 `rollback()`。
+After a rebuild `$name` becomes an alias pointing at the new index generated by `rebuildName()`. The old index is kept; you decide whether to `clean()` or `rollback()`.
 
-### 自定义命名
+### Custom naming
 
-重写 `rebuildName()` 自定义新索引命名：
+Override `rebuildName()` to customize the new index name:
 
 ```php
 class ProductIndex extends Index
@@ -210,9 +273,9 @@ class ProductIndex extends Index
 }
 ```
 
-### 数据源
+### Data source
 
-在 Index 子类中重写 `source()` 提供重建数据。基类未重写时会抛异常：
+Override `source()` in an Index subclass to feed the rebuild. The base class throws if not overridden:
 
 ```php
 class ProductIndex extends Index
@@ -226,7 +289,7 @@ class ProductIndex extends Index
 }
 ```
 
-也可以在调用时传入自定义数据源：
+You can also pass a custom data source at call time:
 
 ```php
 $rebuild->source(function () {
@@ -234,33 +297,32 @@ $rebuild->source(function () {
 })->run();
 ```
 
-`run()` 接受可选的 `$context` 参数，传递给 `source()`：
+`run()` accepts an optional `$context` parameter, forwarded to `source()`:
 
 ```php
 $rebuild->run(['after' => '2024-01-01']);
 ```
 
-### 错误处理
+### Error handling
 
-导入错误会触发 `rebuild.import.failed` 事件（始终），并抛出异常（默认）。使用 `skipErrors()` 抑制异常但保留事件通知：
+Rebuild uses Bulk internally for the import; `onError()` works the same as in [Bulk operations > Error handling](#error-handling):
 
 ```php
-Index::listen('rebuild.import.failed', function (Event $e) {
-    Log::warning("重建导入错误", $e->response);
-});
-
-$rebuild->skipErrors()->run();  // 通过事件记录错误，不中断
+$rebuild->onError(function (array $response, array $body, Bulk $newbulk) {
+    Log::warning("Rebuild import error", $response);
+    // to re-send failures use $body + $newbulk, see "Bulk operations > Error handling"
+})->run();
 ```
 
-> rebuild 期间 DB 仍在变更，新索引是开始时刻的快照，建议 rebuild 后通过 `updated_at` 增量同步补齐。
+> During a rebuild the DB keeps changing; the new index is a snapshot of the start moment — after the rebuild, top it up incrementally via `updated_at`.
 >
-> 新增字段后，对尚未建立 mapping 的字段执行 sort、agg、collapse 等操作会报错，需评估是否先 `putMapping()` 再部署。修改/删除字段需分阶段部署。
+> After adding fields, running sort/agg/collapse on fields that don't have a mapping yet will error; evaluate whether to `putMapping()` before deploying. Modifying/removing fields requires a staged deployment.
 
-## 参考
+## Reference
 
 ### Manager
 
-ES indices API 的薄代理。`new Manager($index)`，不会给 Index 添加方法：
+A thin proxy over the ES indices API. `new Manager($index)`; adds no methods to Index:
 
 ```php
 use ElasticKit\Index\Manager;
@@ -268,25 +330,26 @@ use ElasticKit\Index\Manager;
 $manager = new Manager(new ProductIndex());
 ```
 
-### 事件
+### Events
 
 ```php
-use ElasticKit\Index\Event;
+use ElasticKit\Index\Support\Event;
+use ElasticKit\Index\Support\EventDispatcher;
 
-Index::listen('search.query.after', function (Event $e) {
+EventDispatcher::listen('search.query.after', function (Event $e) {
     Log::info("{$e->name} on {$e->index}", ['duration' => $e->duration]);
 });
 
-// 通配符
-Index::listen('search.*', function (Event $e) { ... });
-Index::listen('*', function (Event $e) { ... });
+// wildcards
+EventDispatcher::listen('search.*', function (Event $e) { /* ... */ });
+EventDispatcher::listen('*', function (Event $e) { /* ... */ });
 ```
 
-所有事件携带 `$name` 和 `$index`。
+All events carry `$name` and `$index`.
 
-### 自定义 Client
+### Custom client
 
-使用 `ClientBuilder` 配置客户端（主机、SSL、日志等）：
+Use the `ClientBuilder` to configure the client (hosts, SSL, logging, etc.):
 
 ```php
 $client = \Elastic\Elasticsearch\ClientBuilder::create()
@@ -297,52 +360,52 @@ $client = \Elastic\Elasticsearch\ClientBuilder::create()
 Index::setClient($client);
 ```
 
-## 安全
+## Security
 
-以下方法接受原生 ES 参数，**不得**直接接收用户输入：
+The following methods accept raw ES parameters and **must never** receive user input directly:
 
-- `script()`, `scriptScore()`, `scriptFields()`, `runtimeMappings()` — Painless 脚本执行
-- `Bulk::target()` — 目标索引覆盖
-- `sort()` 使用 `_script` 类型 — 通过排序执行脚本
-- `postFilter()` — 原生查询透传
+- `script()`, `scriptScore()`, `scriptFields()`, `runtimeMappings()` — Painless script execution
+- `Bulk::target()` — target index override
+- `sort()` with the `_script` type — script execution via sorting
+- `postFilter()` — raw query pass-through
 
-务必在传入 DSL 方法前验证和过滤用户输入。
+Always validate and filter user input before passing it to DSL methods.
 
-## 速查表
+## Cheat sheet
 
-### Manager 方法
+### Manager methods
 
-| 方法 | 说明 |
+| Method | Description |
 |------|------|
-| `create()` | 创建索引（含 mappings 和 settings） |
-| `delete()` | 删除索引 |
-| `exists()` | 检查索引是否存在 |
-| `get()` | 获取索引信息 |
-| `open()` | 打开索引 |
-| `close()` | 关闭索引 |
-| `putMapping()` | 更新索引 mappings（使用 Index 定义） |
-| `getMapping()` | 获取索引 mappings |
-| `putSettings($settings)` | 更新索引 settings |
-| `getSettings()` | 获取索引 settings |
-| `refresh()` | 刷新索引 |
-| `forceMerge()` | 强制合并索引段 |
-| `addAlias($alias)` | 添加别名 |
-| `removeAlias($alias)` | 移除别名 |
-| `swapAlias($alias, $target)` | 切换别名指向 |
-| `getAliases()` | 获取索引别名 |
+| `create()` | Create the index (with mappings and settings) |
+| `delete()` | Delete the index |
+| `exists()` | Check whether the index exists |
+| `get()` | Get index info |
+| `open()` | Open the index |
+| `close()` | Close the index |
+| `putMapping()` | Update the index mappings (uses the Index definition) |
+| `getMapping()` | Get the index mappings |
+| `putSettings($settings)` | Update the index settings |
+| `getSettings()` | Get the index settings |
+| `refresh()` | Refresh the index |
+| `forceMerge()` | Force-merge index segments |
+| `addAlias($alias)` | Add an alias |
+| `removeAlias($alias)` | Remove an alias |
+| `swapAlias($alias, $target)` | Swap where an alias points |
+| `getAliases()` | Get the index's aliases |
 
-### 事件列表
+### Event list
 
-所有事件携带 `$name` 和 `$index`。`$action` 是调用方法名：`get`、`first`、`count`、`scroll` 或 `paginate`。
+All events carry `$name` and `$index`. `$action` is the called method name: `get`, `first`, `count`, `scroll`, or `paginate`.
 
-| 事件 | 属性 |
+| Event | Properties |
 |------|------|
 | `search.query.before` | `$dsl`, `$action` |
 | `search.query.after` | `$dsl`, `$response`, `$duration`, `$action` |
 | `search.scroll.before` | `$action`, `$scrollId` |
 | `search.scroll.after` | `$action`, `$scrollId`, `$response`, `$duration` |
-| `bulk.execute.before` | `$actions` |
-| `bulk.execute.after` | `$actions`, `$response`, `$duration` |
+| `bulk.flush.before` | `$actions` |
+| `bulk.flush.after` | `$actions`, `$response`, `$duration` |
 | `manager.create.before` | |
 | `manager.create.after` | `$response` |
 | `manager.delete.before` | |
@@ -351,4 +414,3 @@ Index::setClient($client);
 | `manager.swap_alias.after` | `$response` |
 | `rebuild.run.before` | |
 | `rebuild.run.after` | `$newIndex`, `$oldIndex` |
-| `rebuild.import.failed` | `$response` |

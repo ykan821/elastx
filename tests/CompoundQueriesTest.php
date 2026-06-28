@@ -141,6 +141,113 @@ JSON;
         $this->assertQuery($expectedJson, $query);
     }
 
+    public function testBoolArrayWithListAppendsMultipleClauses()
+    {
+        $expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "A" } },
+        { "term": { "status": "published" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->bool(['must' => [
+            ['match' => ['title' => 'A']],
+            ['term' => ['status' => 'published']],
+        ]]);
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolDynamicBuildWithNoMatchingConditionsKeepsEmptyBool()
+    {
+        $conditions = [
+            ['active' => false, 'q' => ['match' => ['title' => 'A']]],
+        ];
+        $query = new Query();
+        $query->bool(function ($b) use ($conditions) {
+            foreach ($conditions as $c) {
+                if ($c['active']) {
+                    $b->must($c['q']);
+                }
+            }
+        });
+        $this->assertQuery('{"query":{"bool":{}}}', $query);
+    }
+
+    public function testBoolTwoArgWithClosure()
+    {
+        $expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "test" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->bool(new Boolean('must', function (Query $q) {
+            $q->match('title', 'test');
+        }));
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolTwoArgWithQueryObject()
+    {
+        $expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "term": { "status": "published" } }
+      ]
+    }
+  }
+}
+JSON;
+        $inner = new Query();
+        $inner->term('status', 'published');
+        $query = new Query();
+        $query->bool(new Boolean('must', $inner));
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolTraitTwoArgWithClosure()
+    {
+        $expectedJson = <<<JSON
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "test" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->bool('must', function (Query $q) {
+            $q->match('title', 'test');
+        });
+        $this->assertQuery($expectedJson, $query);
+    }
+
+    public function testBoolTwoArgRejectsUnknownClauseKey()
+    {
+        $inner = new Query();
+        $inner->term('status', 'published');
+
+        $this->expectException(\InvalidArgumentException::class);
+        new Boolean('unknown', $inner);
+    }
+
     public function testBoosting()
     {
         $expectedJson = <<<JSON
@@ -570,8 +677,8 @@ JSON;
             ->when(true, function (Query $q) {
                 $q->term('status', 'published');
             })
-            ->match('content', 'guide');
-        $this->assertQuery('{"query":{"match":{"title":"elasticsearch"},"term":{"status":"published"},"match":{"content":"guide"}}}', $query);
+            ->exists('tags');
+        $this->assertQuery('{"query":{"match":{"title":"elasticsearch"},"term":{"status":"published"},"exists":{"field":"tags"}}}', $query);
     }
 
     public function testWhenWithArrayQuery()
@@ -585,8 +692,8 @@ JSON;
     {
         $query = new Query();
         $query->bool(function (Boolean $b) {
-            $b->addMust(new \ElasticKit\DSL\Queries\FullText\Match_('title', 'test'));
-            $b->addFilter(new \ElasticKit\DSL\Queries\TermLevel\Term('status', 'published'));
+            $b->must(new \ElasticKit\DSL\Queries\FullText\Match_('title', 'test'));
+            $b->filter(new \ElasticKit\DSL\Queries\TermLevel\Term('status', 'published'));
         });
         $expectedJson = <<<JSON
 {
@@ -610,11 +717,11 @@ JSON;
         $filters = ['brand' => 'nike', 'color' => 'red'];
         $query = new Query();
         $query->bool(function (Boolean $b) use ($filters) {
-            $b->addMust(function (Query $q) {
+            $b->must(function (Query $q) {
                 $q->match('title', 'shoes');
             });
             foreach ($filters as $field => $value) {
-                $b->addFilter(new \ElasticKit\DSL\Queries\TermLevel\Term($field, $value));
+                $b->filter(new \ElasticKit\DSL\Queries\TermLevel\Term($field, $value));
             }
         });
         $expectedJson = <<<JSON
@@ -639,10 +746,10 @@ JSON;
     {
         $query = new Query();
         $query->disMax(function (DisjunctionMax $dm) {
-            $dm->addQuery(function (Query $q) {
+            $dm->queries(function (Query $q) {
                 $q->term('title', 'Quick pets');
             });
-            $dm->addQuery(function (Query $q) {
+            $dm->queries(function (Query $q) {
                 $q->term('body', 'Quick pets');
             });
             $dm->tieBreaker(0.7);

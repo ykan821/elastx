@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\MatchAll;
 
 use ElasticKit\DSL\Node;
@@ -10,7 +12,7 @@ use ElasticKit\DSL\Node;
  */
 class MatchAll extends Node
 {
-    protected $_key = 'match_all';
+    protected string $_key = 'match_all';
 
     /**
      * {@inheritdoc}

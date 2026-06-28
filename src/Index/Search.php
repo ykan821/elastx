@@ -1,9 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
+use ElasticKit\Index\Support\Event;
+use ElasticKit\Index\Support\EventDispatcher;
+use ElasticKit\Index\Support\StatsSupport;
+use ElasticKit\Index\Support\Pagination;
 use BadMethodCallException;
 use ElasticKit\DSL\Query;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -13,30 +20,23 @@ use stdClass;
  */
 class Search
 {
-    use AggregationShortcut;
+    use StatsSupport;
 
     /**
      * @var Query
      */
-    private $query;
-
-    /**
-     * @var Index
-     */
-    private $index;
+    private Query $query;
 
     /**
      * @var array<string, mixed>
      */
-    private $urlParams = [];
+    private array $urlParams = [];
 
-    /**
-     * @param Index $index
-     */
-    public function __construct(Index $index, Query $query = null)
-    {
+    public function __construct(
+        private readonly Index $index,
+        ?Query $query = null
+    ) {
         $this->query = $query ?? new Query();
-        $this->index = $index;
     }
 
     /**
@@ -45,7 +45,7 @@ class Search
      * @param string $routing
      * @return $this
      */
-    public function routing($routing)
+    public function routing(string $routing): static
     {
         $this->urlParams['routing'] = $routing;
         return $this;
@@ -56,14 +56,14 @@ class Search
      *
      * @param string $method
      * @param array<int, mixed> $args
-     * @return $this|mixed
+     * @return mixed
      * @throws BadMethodCallException
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         if (!method_exists($this->query, $method)) {
             throw new BadMethodCallException(
-                sprintf('Method %s does not exist on %s', $method, get_class($this->query))
+                sprintf('Method %s does not exist on %s (index: %s)', $method, get_class($this->query), $this->index->name())
             );
         }
 
@@ -81,7 +81,7 @@ class Search
      *
      * @return Results
      */
-    public function get()
+    public function get(): Results
     {
         return new Results($this->doSearch('get'));
     }
@@ -91,15 +91,9 @@ class Search
      *
      * @return array<string, mixed>|null
      */
-    public function first()
+    public function first(): ?array
     {
-        $saved = $this->query;
-        $this->query = clone $this->query;
-        $this->query->size(1);
-
-        $response = $this->doSearch('first');
-
-        $this->query = $saved;
+        $response = $this->doSearch('first', ['body' => ['size' => 1, 'from' => 0]]);
 
         $docs = (new Results($response))->docs();
         return $docs[0] ?? null;
@@ -110,9 +104,17 @@ class Search
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
-        return $this->doCount()['count'];
+        $response = $this->doCount();
+
+        if (!isset($response['count'])) {
+            throw new RuntimeException(
+                sprintf('Missing "count" in Elasticsearch response for index [%s].', $this->index->name())
+            );
+        }
+
+        return $response['count'];
     }
 
     /**
@@ -122,22 +124,18 @@ class Search
      * @param string $duration
      * @return Results
      */
-    public function scroll($scrollId = null, $duration = '5m')
+    public function scroll(?string $scrollId = null, string $duration = '5m'): Results
     {
         if ($scrollId !== null) {
             return $this->doScroll($scrollId, $duration);
         }
 
-        $saved = $this->query;
-        $this->query = clone $this->query;
-
+        $extra = ['scroll' => $duration];
         if (!$this->query->hasParam('size')) {
-            $this->query->size(1000);
+            $extra['body'] = ['size' => 1000];
         }
 
-        $response = $this->doSearch('scroll', ['scroll' => $duration]);
-
-        $this->query = $saved;
+        $response = $this->doSearch('scroll', $extra);
 
         return new Results($response);
     }
@@ -149,7 +147,7 @@ class Search
      * @param string $duration
      * @return Results
      */
-    public function next(Results $results, $duration = '5m')
+    public function next(Results $results, string $duration = '5m'): Results
     {
         return $this->doScroll($results->scrollId(), $duration);
     }
@@ -160,7 +158,7 @@ class Search
      * @param Results $results
      * @return void
      */
-    public function clear(Results $results)
+    public function clear(Results $results): void
     {
         $scrollId = $results->scrollId();
         if ($scrollId !== null) {
@@ -177,14 +175,14 @@ class Search
      * @param string $duration
      * @return Results
      */
-    protected function doScroll($scrollId, $duration)
+    protected function doScroll(string $scrollId, string $duration): Results
     {
         $indexName = $this->index->name();
 
         $e = new Event('search.scroll.before', $indexName);
         $e->action = 'scroll';
         $e->scrollId = $scrollId;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $start = microtime(true);
         $response = $this->index->getClient()->scroll([
@@ -199,28 +197,45 @@ class Search
         $e->scrollId = $scrollId;
         $e->response = $response;
         $e->duration = $durationTime;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return new Results($response);
     }
 
     /**
-     * Return a generator that yields Results batches via scroll.
+     * Lazily yield Results batches via scroll. Each yielded Results is one
+     * scroll batch; the scroll context is cleared when iteration ends.
      *
-     * @param string $duration
-     * @return \Generator
+     * @param string $duration scroll keep-alive
+     * @return \Generator<int, Results, mixed, void>
      */
-    public function cursor($duration = '5m')
+    public function chunk(string $duration = '5m'): \Generator
     {
         $results = $this->scroll(null, $duration);
 
         try {
-            while ($results->hasMore()) {
+            while (! $results->isEmpty()) {
                 yield $results;
                 $results = $this->next($results, $duration);
             }
         } finally {
             $this->clear($results);
+        }
+    }
+
+    /**
+     * Lazily yield individual search hits, flattened across scroll batches.
+     *
+     * Each value is a raw ES hit (_id, _score, _source, ...) — the same shape
+     * as Results::hits() entries. Reuses chunk()'s scroll cleanup.
+     *
+     * @param string $duration scroll keep-alive
+     * @return \Generator<int, array<string, mixed>, mixed, void>
+     */
+    public function cursor(string $duration = '5m'): \Generator
+    {
+        foreach ($this->chunk($duration) as $results) {
+            yield from $results->hits();
         }
     }
 
@@ -231,10 +246,10 @@ class Search
      * @param int|null $perPage
      * @return Results
      */
-    public function paginate($page = null, $perPage = null)
+    public function paginate(?int $page = null, ?int $perPage = null): Results
     {
         if ($page === null && $perPage === null) {
-            $resolver = Index::getPageResolver();
+            $resolver = Pagination::getPageResolver();
             if ($resolver !== null) {
                 [$page, $perPage] = $resolver();
             }
@@ -248,14 +263,10 @@ class Search
             $perPage = $maxPerPage;
         }
 
-        $saved = $this->query;
-        $this->query = clone $this->query;
-        $this->query->from(($page - 1) * $perPage);
-        $this->query->size($perPage);
-
-        $response = $this->doSearch('paginate');
-
-        $this->query = $saved;
+        $response = $this->doSearch('paginate', ['body' => [
+            'from' => ($page - 1) * $perPage,
+            'size' => $perPage,
+        ]]);
 
         return (new Results($response))->paginate($page, $perPage);
     }
@@ -265,7 +276,7 @@ class Search
      *
      * @return array<string, mixed>
      */
-    protected function doCount()
+    protected function doCount(): array
     {
         $indexName = $this->index->name();
         $body = $this->query->toArray() ?: new stdClass();
@@ -273,7 +284,7 @@ class Search
         $e = new Event('search.query.before', $indexName);
         $e->dsl = $body;
         $e->action = 'count';
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $start = microtime(true);
         $response = $this->index->getClient()->count([
@@ -288,7 +299,7 @@ class Search
         $e->response = $response;
         $e->duration = $duration;
         $e->action = 'count';
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return $response;
     }
@@ -297,18 +308,30 @@ class Search
      * Execute an ES search call with before/after events.
      *
      * @param string $action calling method name (get, first, scroll, paginate)
-     * @param array<string, mixed> $extra extra request params (e.g. scroll)
+     * @param array<string, mixed> $extra extra request params (e.g. scroll); a 'body' key shallow-merges top-level scalar overrides (size, from) into the query body — nested keys (aggs, query) would replace, not merge
      * @return array<string, mixed>
      */
-    protected function doSearch($action, array $extra = [])
+    protected function doSearch(string $action, array $extra = []): array
     {
         $indexName = $this->index->name();
-        $body = $this->query->toArray() ?: new stdClass();
+
+        // Apply the index's track_total_hits default unless explicitly set.
+        // Skipped for scroll: ES forbids disabling track_total_hits in a scroll context.
+        if ($action !== 'scroll' && !$this->query->hasParam('track_total_hits')) {
+            $this->query->trackTotalHits($this->index->trackTotalHits());
+        }
+
+        $body = $this->query->toArray();
+        if (isset($extra['body'])) {
+            $body = array_merge($body, $extra['body']);
+            unset($extra['body']);
+        }
+        $body = $body ?: new stdClass();
 
         $e = new Event('search.query.before', $indexName);
         $e->dsl = $body;
         $e->action = $action;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $params = array_merge(['index' => $indexName, 'body' => $body], $this->urlParams, $extra);
 
@@ -322,7 +345,7 @@ class Search
         $e->response = $response;
         $e->duration = $duration;
         $e->action = $action;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         return $response;
     }

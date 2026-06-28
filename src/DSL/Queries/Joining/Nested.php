@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Joining;
 
 use ElasticKit\DSL\Query;
@@ -12,7 +14,7 @@ use ElasticKit\DSL\Node;
  */
 class Nested extends Node
 {
-    protected $_key = 'nested';
+    protected string $_key = 'nested';
 
     /**
      * Create an instance from various input formats.
@@ -24,7 +26,7 @@ class Nested extends Node
      * @param mixed $value
      * @return static
      */
-    public static function create($field = null, $value = null)
+    public static function create($field = null, $value = null): static
     {
         if ($value === null && is_string($field)) {
             return (new static())->path($field);
@@ -35,47 +37,47 @@ class Nested extends Node
     /**
      * Path to the nested object you wish to search.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function path($path)
+    public function path(string $value): static
     {
-        return $this->addProperty('path', $path);
+        return $this->addProperty('path', $value);
     }
 
     /**
      * Query you wish to run on nested objects in the path.
      * If an object matches the search, the nested query returns the root parent document.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query)
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 
     /**
      * Indicates how scores for matching child objects affect the root parent
      * document's relevance score. Valid values: avg (default), max, min, none, sum.
      *
-     * @param string $scoreMode
+     * @param string $value
      * @return static
      */
-    public function scoreMode($scoreMode)
+    public function scoreMode(string $value): static
     {
-        return $this->addProperty('score_mode', $scoreMode);
+        return $this->addProperty('score_mode', $value);
     }
 
     /**
      * Indicates whether to ignore an unmapped path and not return any
      * documents instead of an error. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

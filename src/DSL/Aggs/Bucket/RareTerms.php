@@ -1,73 +1,66 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
 
 class RareTerms extends Node
 {
-    protected $_key = 'rare_terms';
+    protected string $_key = 'rare_terms';
 
     /**
-     * @param string $field
+     * @param int $value
      * @return static
      */
-    public function field($field)
+    public function maxDocCount(int $value): static
     {
-        return $this->addProperty('field', $field);
+        return $this->addProperty('max_doc_count', $value);
     }
 
     /**
-     * @param int $maxDocCount
+     * @param mixed $value
      * @return static
      */
-    public function maxDocCount($maxDocCount)
+    public function precision($value): static
     {
-        return $this->addProperty('max_doc_count', $maxDocCount);
+        return $this->addProperty('precision', $value);
     }
 
     /**
-     * @param mixed $precision
+     * @param mixed $value
      * @return static
      */
-    public function precision($precision)
+    public function include($value): static
     {
-        return $this->addProperty('precision', $precision);
+        return $this->addProperty('include', $value);
     }
 
     /**
-     * @param mixed $include
+     * @param mixed $value
      * @return static
      */
-    public function include($include)
+    public function exclude($value): static
     {
-        return $this->addProperty('include', $include);
+        return $this->addProperty('exclude', $value);
     }
 
     /**
-     * @param mixed $exclude
+     * @param mixed $value
      * @return static
      */
-    public function exclude($exclude)
+    public function missing($value): static
     {
-        return $this->addProperty('exclude', $exclude);
+        return $this->addProperty('missing', $value);
     }
 
     /**
-     * @param mixed $missing
+     * @param int $value
      * @return static
      */
-    public function missing($missing)
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('missing', $missing);
-    }
-
-    /**
-     * @param int $shardSize
-     * @return static
-     */
-    public function shardSize($shardSize)
-    {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 }

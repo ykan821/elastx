@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
 use ElasticKit\DSL\Query;
@@ -22,7 +24,7 @@ trait Joining
      * @param callable|Query|array<string, mixed>|null $query optional query when first arg is a path string
      * @return $this
      */
-    public function nested($path, $query = null)
+    public function nested($path, $query = null): static
     {
         if (is_string($path) && $query !== null) {
             $nested = Nested::create($path);
@@ -39,7 +41,7 @@ trait Joining
      * @param callable|Query|array<string, mixed>|null $query optional query when first arg is a type string
      * @return $this
      */
-    public function hasChild($type, $query = null)
+    public function hasChild($type, $query = null): static
     {
         if (is_string($type) && $query !== null) {
             $hasChild = HasChild::create();
@@ -57,7 +59,7 @@ trait Joining
      * @param callable|Query|array<string, mixed>|null $query optional query when first arg is a parent_type string
      * @return $this
      */
-    public function hasParent($type, $query = null)
+    public function hasParent($type, $query = null): static
     {
         if (is_string($type) && $query !== null) {
             $hasParent = HasParent::create();
@@ -71,11 +73,11 @@ trait Joining
     /**
      * Add a parent_id query.
      *
-     * @param mixed $parentId
+     * @param mixed $value
      * @return $this
      */
-    public function parentId($parentId)
+    public function parentId($value): static
     {
-        return $this->addQuery(ParentId::create($parentId));
+        return $this->addQuery(ParentId::create($value));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,60 +11,60 @@ use ElasticKit\DSL\Node;
  */
 class AutoDateHistogram extends Node
 {
-    protected $_key = 'auto_date_histogram';
+    protected string $_key = 'auto_date_histogram';
 
     /**
      * Target number of buckets to return.
      *
-     * @param int $buckets
+     * @param int $value
      * @return static
      */
-    public function buckets($buckets)
+    public function buckets(int $value): static
     {
-        return $this->addProperty('buckets', $buckets);
+        return $this->addProperty('buckets', $value);
     }
 
     /**
      * Date format pattern for bucket keys.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format($format)
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * Time zone for bucketing.
      *
-     * @param string $timeZone
+     * @param string $value
      * @return static
      */
-    public function timeZone($timeZone)
+    public function timeZone(string $value): static
     {
-        return $this->addProperty('time_zone', $timeZone);
+        return $this->addProperty('time_zone', $value);
     }
 
     /**
      * Minimum interval to use when automatically determining buckets.
      *
-     * @param string $minimumInterval
+     * @param string $value
      * @return static
      */
-    public function minimumInterval($minimumInterval)
+    public function minimumInterval(string $value): static
     {
-        return $this->addProperty('minimum_interval', $minimumInterval);
+        return $this->addProperty('minimum_interval', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing)
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }

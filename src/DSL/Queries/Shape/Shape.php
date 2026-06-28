@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Shape;
 
 use ElasticKit\DSL\Node;
@@ -13,42 +15,42 @@ use ElasticKit\DSL\Node;
  */
 class Shape extends Node
 {
-    protected $_key = 'shape';
+    protected string $_key = 'shape';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Inline shape definition. Contains the shape type and coordinates.
      *
-     * @param mixed $shape
+     * @param mixed $value
      * @return static
      */
-    public function shape($shape)
+    public function shape($value): static
     {
-        return $this->addProperty('shape', $shape);
+        return $this->addProperty('shape', $value);
     }
 
     /**
      * Spatial relation operator to use at search time.
      * Valid values: INTERSECTS (default), DISJOINT, WITHIN, CONTAINS.
      *
-     * @param string $relation
+     * @param string $value
      * @return static
      */
-    public function relation($relation)
+    public function relation(string $value): static
     {
-        return $this->addProperty('relation', $relation);
+        return $this->addProperty('relation', $value);
     }
 
     /**
      * Reference to a pre-indexed shape. Contains id, index, path, and routing fields
      * to identify the shape document in another index.
      *
-     * @param mixed $indexedShape
+     * @param mixed $value
      * @return static
      */
-    public function indexedShape($indexedShape)
+    public function indexedShape($value): static
     {
-        return $this->addProperty('indexed_shape', $indexedShape);
+        return $this->addProperty('indexed_shape', $value);
     }
 }

@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
 
 class Terms extends Node
 {
-    protected $_key = 'terms';
+    protected string $_key = 'terms';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Field you wish to search.
@@ -18,10 +20,10 @@ class Terms extends Node
      * By default, Elasticsearch limits the terms query to a maximum of 65,536 terms. You can change this limit using the index.max_terms_count setting.
      *
      * @param string $field
-     * @param array<int, string> $values
+     * @param array<int, string|int|float|bool> $values
      * @return static
      */
-    public function values($field, $values)
+    public function values(string $field, array $values): static
     {
         return $this->addProperty($field, $values);
     }

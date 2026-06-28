@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Query;
@@ -10,16 +12,16 @@ use ElasticKit\DSL\Node;
  */
 class SpanMulti extends Node
 {
-    protected $_key = 'span_multi';
+    protected string $_key = 'span_multi';
 
     /**
      * The non-span query to wrap as a span query.
      *
-     * @param mixed $match
+     * @param mixed $value
      * @return static
      */
-    public function match($match)
+    public function match($value): static
     {
-        return $this->addProperty('match', Query::create($match));
+        return $this->addProperty('match', Query::create($value));
     }
 }

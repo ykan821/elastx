@@ -46,6 +46,17 @@ class PolymorphicInputTest extends DslTestCase
         $this->assertQuery('{"query":{"match":{"title":{"query":"test","fuzziness":"AUTO"}}}}', $query);
     }
 
+    public function testDuplicateClauseKeyThrows()
+    {
+        $query = new Query();
+        $query->match('title', 'A');
+        $query->match('content', 'B');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Duplicate query clause key "match"');
+        $query->toArray();
+    }
+
     public function testTermClosure()
     {
         $query = new Query();

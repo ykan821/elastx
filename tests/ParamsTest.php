@@ -7,7 +7,7 @@ class ParamsTest extends DslTestCase
 {
     public function testSizeWithQuery()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match": { "title": "test" }
@@ -23,7 +23,7 @@ JSON;
 
     public function testFrom()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -39,7 +39,7 @@ JSON;
 
     public function testTimeout()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -55,7 +55,7 @@ JSON;
 
     public function testMinScore()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -71,7 +71,7 @@ JSON;
 
     public function testTerminateAfter()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -87,7 +87,7 @@ JSON;
 
     public function testExplain()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -103,7 +103,7 @@ JSON;
 
     public function testVersion()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -119,7 +119,7 @@ JSON;
 
     public function testProfile()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -135,7 +135,7 @@ JSON;
 
     public function testTrackTotalHits()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -151,7 +151,7 @@ JSON;
 
     public function testSeqNoPrimaryTerm()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -167,7 +167,7 @@ JSON;
 
     public function testSort()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -185,7 +185,7 @@ JSON;
 
     public function testSortChained()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -205,7 +205,7 @@ JSON;
 
     public function testSortFieldWithoutOrder()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -223,7 +223,7 @@ JSON;
 
     public function testSource()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -239,7 +239,7 @@ JSON;
 
     public function testSourceFalse()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -255,7 +255,7 @@ JSON;
 
     public function testSearchAfter()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -271,7 +271,7 @@ JSON;
 
     public function testStoredFields()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -287,7 +287,7 @@ JSON;
 
     public function testDocvalueFields()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -303,7 +303,7 @@ JSON;
 
     public function testIndicesBoost()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -317,9 +317,29 @@ JSON;
         $this->assertQuery($expectedJson, $query);
     }
 
+    public function testIndicesBoostChained()
+    {
+        $expectedJson = <<<JSON
+{
+  "query": {
+    "match_all": {}
+  },
+  "indices_boost": [
+    { "index-1": 1.4 },
+    { "index-2": 1.2 }
+  ]
+}
+JSON;
+        $query = new Query();
+        $query->matchAll();
+        $query->indicesBoost(['index-1' => 1.4])
+              ->indicesBoost(['index-2' => 1.2]);
+        $this->assertQuery($expectedJson, $query);
+    }
+
     public function testChainingParamsAndQuery()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match": { "title": "test" },
@@ -343,7 +363,7 @@ JSON;
 
     public function testParamsWithAggs()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -369,7 +389,7 @@ JSON;
 
     public function testTrackScores()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -385,7 +405,7 @@ JSON;
 
     public function testFields()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -401,7 +421,7 @@ JSON;
 
     public function testPit()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -420,7 +440,7 @@ JSON;
 
     public function testScriptFields()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -446,7 +466,7 @@ JSON;
 
     public function testRuntimeMappings()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -474,7 +494,7 @@ JSON;
 
     public function testParamsDoNotLeakIntoQuery()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match": { "title": "test" }

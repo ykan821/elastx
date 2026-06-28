@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,137 +11,138 @@ use ElasticKit\DSL\Node;
  */
 class DateHistogram extends Node
 {
-    protected $_key = 'date_histogram';
+    protected string $_key = 'date_histogram';
 
     /**
      * Calendar-aware interval for bucketing (e.g. month, week).
      *
-     * @param string $calendarInterval
+     * @param string $value
      * @return static
      */
-    public function calendarInterval($calendarInterval)
+    public function calendarInterval(string $value): static
     {
-        return $this->addProperty('calendar_interval', $calendarInterval);
+        return $this->addProperty('calendar_interval', $value);
     }
 
     /**
      * Interval for bucketing. Deprecated in favor of calendar_interval or fixed_interval.
      *
-     * @param string $interval
+     * @deprecated ES deprecated the bare `interval` key; use calendarInterval() or fixedInterval() instead.
+     * @param string $value
      * @return static
      */
-    public function interval($interval)
+    public function interval(string $value): static
     {
-        return $this->addProperty('interval', $interval);
+        return $this->addProperty('interval', $value);
     }
 
     /**
      * Fixed-unit interval for bucketing (e.g. 30d, 12h).
      *
-     * @param string $fixedInterval
+     * @param string $value
      * @return static
      */
-    public function fixedInterval($fixedInterval)
+    public function fixedInterval(string $value): static
     {
-        return $this->addProperty('fixed_interval', $fixedInterval);
+        return $this->addProperty('fixed_interval', $value);
     }
 
     /**
      * Date format pattern for bucket keys.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format($format)
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * Time zone for bucketing.
      *
-     * @param string $timeZone
+     * @param string $value
      * @return static
      */
-    public function timeZone($timeZone)
+    public function timeZone(string $value): static
     {
-        return $this->addProperty('time_zone', $timeZone);
+        return $this->addProperty('time_zone', $value);
     }
 
     /**
      * Minimum number of documents in a bucket to be returned.
      *
-     * @param int $minDocCount
+     * @param int $value
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $value): static
     {
-        return $this->addProperty('min_doc_count', $minDocCount);
+        return $this->addProperty('min_doc_count', $value);
     }
 
     /**
      * Extends the bucket range beyond the data bounds.
      *
-     * @param mixed $extendedBounds
+     * @param mixed $value
      * @return static
      */
-    public function extendedBounds($extendedBounds)
+    public function extendedBounds($value): static
     {
-        return $this->addProperty('extended_bounds', $extendedBounds);
+        return $this->addProperty('extended_bounds', $value);
     }
 
     /**
      * Limits the bucket range to a bounded range.
      *
-     * @param mixed $hardBounds
+     * @param mixed $value
      * @return static
      */
-    public function hardBounds($hardBounds)
+    public function hardBounds($value): static
     {
-        return $this->addProperty('hard_bounds', $hardBounds);
+        return $this->addProperty('hard_bounds', $value);
     }
 
     /**
      * Sort order for buckets.
      *
-     * @param mixed $order
+     * @param mixed $value
      * @return static
      */
-    public function order($order)
+    public function order($value): static
     {
-        return $this->addProperty('order', $order);
+        return $this->addProperty('order', $value);
     }
 
     /**
      * Whether to return bucket keys as strings.
      *
-     * @param bool $keyed
+     * @param bool $value
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $value): static
     {
-        return $this->addProperty('keyed', $keyed);
+        return $this->addProperty('keyed', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing)
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
      * Offset for each bucket start time.
      *
-     * @param string $offset
+     * @param string $value
      * @return static
      */
-    public function offset($offset)
+    public function offset(string $value): static
     {
-        return $this->addProperty('offset', $offset);
+        return $this->addProperty('offset', $value);
     }
 }

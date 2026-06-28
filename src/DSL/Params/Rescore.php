@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Params;
 
 use ElasticKit\DSL\Query;
 use ElasticKit\DSL\Node;
-use stdClass;
 
 /**
  * Rescores the top documents returned by a query using a secondary query.
@@ -13,52 +14,52 @@ use stdClass;
  */
 class Rescore extends Node
 {
-    protected $_key = 'rescore';
+    protected string $_key = 'rescore';
 
     /**
      * Number of documents to rescore per shard.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function windowSize($size)
+    public function windowSize(int $value): static
     {
-        return $this->addProperty('window_size', $size);
+        return $this->addProperty('window_size', $value);
     }
 
     /**
-     * (Required) The query to use for rescoring.
+     * The query to use for rescoring.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query)
+    public function query($value): static
     {
-        $this->_properties['query']['rescore_query'] = Query::create($query);
+        $this->_properties['query']['rescore_query'] = Query::create($value);
         return $this;
     }
 
     /**
      * Weight of the rescore query. Defaults to 1.0.
      *
-     * @param float $weight
+     * @param float $value
      * @return static
      */
-    public function rescoreQueryWeight($weight)
+    public function rescoreQueryWeight(float $value): static
     {
-        $this->_properties['query']['rescore_query_weight'] = $weight;
+        $this->_properties['query']['rescore_query_weight'] = $value;
         return $this;
     }
 
     /**
      * Weight of the original query. Defaults to 1.0.
      *
-     * @param float $weight
+     * @param float $value
      * @return static
      */
-    public function queryWeight($weight)
+    public function queryWeight(float $value): static
     {
-        $this->_properties['query']['query_weight'] = $weight;
+        $this->_properties['query']['query_weight'] = $value;
         return $this;
     }
 
@@ -66,21 +67,12 @@ class Rescore extends Node
      * How scores are combined. Valid values: total,
      * multiply, max, avg. Defaults to total.
      *
-     * @param string $mode
+     * @param string $value
      * @return static
      */
-    public function scoreMode($mode)
+    public function scoreMode(string $value): static
     {
-        $this->_properties['query']['score_mode'] = $mode;
+        $this->_properties['query']['score_mode'] = $value;
         return $this;
-    }
-
-    public function toArray()
-    {
-        $result = parent::toArray();
-        if (isset($result['query']['rescore_query']) && $result['query']['rescore_query'] instanceof Query) {
-            $result['query']['rescore_query'] = $result['query']['rescore_query']->toArray()['query'] ?? new stdClass();
-        }
-        return $result;
     }
 }

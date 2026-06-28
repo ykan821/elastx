@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,49 +11,38 @@ use ElasticKit\DSL\Node;
  */
 class GeohexGrid extends Node
 {
-    protected $_key = 'geohex_grid';
-
-    /**
-     * The geo point field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'geohex_grid';
 
     /**
      * H3 resolution for grid cells.
      *
-     * @param int $precision
+     * @param int $value
      * @return static
      */
-    public function precision($precision)
+    public function precision(int $value): static
     {
-        return $this->addProperty('precision', $precision);
+        return $this->addProperty('precision', $value);
     }
 
     /**
      * Maximum number of hex buckets to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size($size)
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 
     /**
      * Number of hex buckets to return from each shard.
      *
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 }

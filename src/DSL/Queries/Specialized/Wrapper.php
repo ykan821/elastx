@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class Wrapper extends Node
 {
-    protected $_key = 'wrapper';
+    protected string $_key = 'wrapper';
 
     /**
      * Create an instance from various input formats.
@@ -21,7 +23,7 @@ class Wrapper extends Node
      * @param mixed $value
      * @return static
      */
-    public static function create($field = null, $value = null)
+    public static function create($field = null, $value = null): static
     {
         if ($value === null && is_string($field)) {
             return (new static())->query($field);
@@ -32,11 +34,11 @@ class Wrapper extends Node
     /**
      * A query in base64 encoded format.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query($query)
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 }

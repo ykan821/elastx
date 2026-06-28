@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -12,19 +14,19 @@ use ElasticKit\DSL\Node;
  */
 class CombinedFields extends Node
 {
-    protected $_key = 'combined_fields';
+    protected string $_key = 'combined_fields';
 
     /**
      * Text to search for in the provided fields.
      * The combined_fields query analyzes the provided text before performing
      * a search.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query($query)
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 
     /**
@@ -32,48 +34,48 @@ class CombinedFields extends Node
      * patterns are allowed. Only text fields are supported, and they must all
      * have the same search analyzer.
      *
-     * @param array<int, string> $fields
+     * @param array<int, string> $value
      * @return static
      */
-    public function fields($fields)
+    public function fields(array $value): static
     {
-        return $this->addProperty('fields', $fields);
+        return $this->addProperty('fields', $value);
     }
 
     /**
      * If true, match phrase queries are automatically
      * created for multi-term synonyms. Defaults to true.
      *
-     * @param bool $autoGenerateSynonymsPhraseQuery
+     * @param bool $value
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery($autoGenerateSynonymsPhraseQuery)
+    public function autoGenerateSynonymsPhraseQuery(bool $value): static
     {
-        return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
+        return $this->addProperty('auto_generate_synonyms_phrase_query', $value);
     }
 
     /**
      * Boolean logic used to interpret text in the query
      * value. Valid values are: or (Default), and.
      *
-     * @param string $operator
+     * @param string $value
      * @return static
      */
-    public function operator($operator)
+    public function operator(string $value): static
     {
-        return $this->addProperty('operator', $operator);
+        return $this->addProperty('operator', $value);
     }
 
     /**
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $value
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $value): static
     {
-        return $this->addProperty('minimum_should_match', $minimumShouldMatch);
+        return $this->addProperty('minimum_should_match', $value);
     }
 
     /**
@@ -81,11 +83,11 @@ class CombinedFields extends Node
      * analyzer removes all tokens, such as when using a stop filter.
      * Valid values are: none (Default), all.
      *
-     * @param string $zeroTermsQuery
+     * @param string $value
      * @return static
      */
-    public function zeroTermsQuery($zeroTermsQuery)
+    public function zeroTermsQuery(string $value): static
     {
-        return $this->addProperty('zero_terms_query', $zeroTermsQuery);
+        return $this->addProperty('zero_terms_query', $value);
     }
 }

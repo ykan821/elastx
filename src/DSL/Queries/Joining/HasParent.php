@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Joining;
 
 use ElasticKit\DSL\Query;
@@ -12,52 +14,52 @@ use ElasticKit\DSL\Node;
  */
 class HasParent extends Node
 {
-    protected $_key = 'has_parent';
+    protected string $_key = 'has_parent';
 
     /**
      * Name of the parent relationship mapped for the join field.
      *
-     * @param string $parentType
+     * @param string $value
      * @return static
      */
-    public function parentType($parentType)
+    public function parentType(string $value): static
     {
-        return $this->addProperty('parent_type', $parentType);
+        return $this->addProperty('parent_type', $value);
     }
 
     /**
      * Query you wish to run on parent documents of the parent_type field.
      * If a parent document matches the search, the query returns its child documents.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query)
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 
     /**
      * Indicates whether the relevance score of a matching parent document is
      * aggregated into its child documents. Defaults to false.
      *
-     * @param bool $score
+     * @param bool $value
      * @return static
      */
-    public function score($score)
+    public function score(bool $value): static
     {
-        return $this->addProperty('score', $score);
+        return $this->addProperty('score', $value);
     }
 
     /**
      * Indicates whether to ignore an unmapped parent_type and not return any
      * documents instead of an error. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

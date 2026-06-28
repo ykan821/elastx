@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -12,17 +14,17 @@ use ElasticKit\DSL\Node;
  */
 class SimpleQueryString extends Node
 {
-    protected $_key = 'simple_query_string';
+    protected string $_key = 'simple_query_string';
 
     /**
      * Query string you wish to parse and use for search.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query($query)
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 
     /**
@@ -30,12 +32,12 @@ class SimpleQueryString extends Node
      * Supports wildcard expressions and per-field boosting with caret (^)
      * notation.
      *
-     * @param array<int, string> $fields
+     * @param array<int, string> $value
      * @return static
      */
-    public function fields($fields)
+    public function fields(array $value): static
     {
-        return $this->addProperty('fields', $fields);
+        return $this->addProperty('fields', $value);
     }
 
     /**
@@ -43,24 +45,24 @@ class SimpleQueryString extends Node
      * query string if no operators are specified. Valid values are:
      * OR (Default), AND.
      *
-     * @param string $defaultOperator
+     * @param string $value
      * @return static
      */
-    public function defaultOperator($defaultOperator)
+    public function defaultOperator(string $value): static
     {
-        return $this->addProperty('default_operator', $defaultOperator);
+        return $this->addProperty('default_operator', $value);
     }
 
     /**
      * If true, the query attempts to analyze wildcard terms
      * in the query string. Defaults to false.
      *
-     * @param bool $analyzeWildcard
+     * @param bool $value
      * @return static
      */
-    public function analyzeWildcard($analyzeWildcard)
+    public function analyzeWildcard(bool $value): static
     {
-        return $this->addProperty('analyze_wildcard', $analyzeWildcard);
+        return $this->addProperty('analyze_wildcard', $value);
     }
 
     /**
@@ -68,96 +70,96 @@ class SimpleQueryString extends Node
      * into tokens. Defaults to the index-time analyzer mapped for the
      * default_field.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
      * If true, the parser creates a match_phrase query
      * for each multi-position token. Defaults to true.
      *
-     * @param bool $autoGenerateSynonymsPhraseQuery
+     * @param bool $value
      * @return static
      */
-    public function autoGenerateSynonymsPhraseQuery($autoGenerateSynonymsPhraseQuery)
+    public function autoGenerateSynonymsPhraseQuery(bool $value): static
     {
-        return $this->addProperty('auto_generate_synonyms_phrase_query', $autoGenerateSynonymsPhraseQuery);
+        return $this->addProperty('auto_generate_synonyms_phrase_query', $value);
     }
 
     /**
      * List of enabled operators for the simple query string
      * syntax. Defaults to ALL (all operators).
      *
-     * @param string $flags
+     * @param string $value
      * @return static
      */
-    public function flags($flags)
+    public function flags(string $value): static
     {
-        return $this->addProperty('flags', $flags);
+        return $this->addProperty('flags', $value);
     }
 
     /**
      * Maximum number of terms to which the query expands
      * for fuzzy matching. Defaults to 50.
      *
-     * @param int $fuzzyMaxExpansions
+     * @param int $value
      * @return static
      */
-    public function fuzzyMaxExpansions($fuzzyMaxExpansions)
+    public function fuzzyMaxExpansions(int $value): static
     {
-        return $this->addProperty('fuzzy_max_expansions', $fuzzyMaxExpansions);
+        return $this->addProperty('fuzzy_max_expansions', $value);
     }
 
     /**
      * Number of beginning characters left unchanged for
      * fuzzy matching. Defaults to 0.
      *
-     * @param int $fuzzyPrefixLength
+     * @param int $value
      * @return static
      */
-    public function fuzzyPrefixLength($fuzzyPrefixLength)
+    public function fuzzyPrefixLength(int $value): static
     {
-        return $this->addProperty('fuzzy_prefix_length', $fuzzyPrefixLength);
+        return $this->addProperty('fuzzy_prefix_length', $value);
     }
 
     /**
      * If true, edits for fuzzy matching include
      * transpositions of two adjacent characters (ab -> ba). Defaults to true.
      *
-     * @param bool $fuzzyTranspositions
+     * @param bool $value
      * @return static
      */
-    public function fuzzyTranspositions($fuzzyTranspositions)
+    public function fuzzyTranspositions(bool $value): static
     {
-        return $this->addProperty('fuzzy_transpositions', $fuzzyTranspositions);
+        return $this->addProperty('fuzzy_transpositions', $value);
     }
 
     /**
      * If true, format-based errors, such as providing a
      * text value for a numeric field, are ignored. Defaults to false.
      *
-     * @param bool $lenient
+     * @param bool $value
      * @return static
      */
-    public function lenient($lenient)
+    public function lenient(bool $value): static
     {
-        return $this->addProperty('lenient', $lenient);
+        return $this->addProperty('lenient', $value);
     }
 
     /**
      * Minimum number of clauses that must match for a
      * document to be returned.
      *
-     * @param string $minimumShouldMatch
+     * @param int|string $value
      * @return static
      */
-    public function minimumShouldMatch($minimumShouldMatch)
+    public function minimumShouldMatch(int|string $value): static
     {
-        return $this->addProperty('minimum_should_match', $minimumShouldMatch);
+        return $this->addProperty('minimum_should_match', $value);
     }
 
     /**
@@ -165,11 +167,11 @@ class SimpleQueryString extends Node
      * You can use this suffix to use a different analysis method for exact
      * matches.
      *
-     * @param string $quoteFieldSuffix
+     * @param string $value
      * @return static
      */
-    public function quoteFieldSuffix($quoteFieldSuffix)
+    public function quoteFieldSuffix(string $value): static
     {
-        return $this->addProperty('quote_field_suffix', $quoteFieldSuffix);
+        return $this->addProperty('quote_field_suffix', $value);
     }
 }

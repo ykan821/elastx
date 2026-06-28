@@ -1,60 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
-use ElasticKit\DSL\Shared\RangeSupport;
+use ElasticKit\DSL\Support\RangeSupport;
 
 class Range extends Node
 {
     use RangeSupport;
 
-    protected $_key = 'range';
+    protected string $_key = 'range';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
-     * (Optional) Greater than or equal to.
+     * Greater than or equal to.
      *
-     * @param mixed $gte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gte($gte)
+    public function gte(string|int|float|bool $value): static
     {
-        return $this->addProperty('gte', $gte);
+        return $this->addProperty('gte', $value);
     }
 
     /**
-     * (Optional) Greater than.
+     * Greater than.
      *
-     * @param mixed $gt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function gt($gt)
+    public function gt(string|int|float|bool $value): static
     {
-        return $this->addProperty('gt', $gt);
+        return $this->addProperty('gt', $value);
     }
 
     /**
-     * (Optional) Less than or equal to.
+     * Less than or equal to.
      *
-     * @param mixed $lte
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lte($lte)
+    public function lte(string|int|float|bool $value): static
     {
-        return $this->addProperty('lte', $lte);
+        return $this->addProperty('lte', $value);
     }
 
     /**
-     * (Optional) Less than.
+     * Less than.
      *
-     * @param mixed $lt
+     * @param string|int|float|bool $value
      * @return static
      */
-    public function lt($lt)
+    public function lt(string|int|float|bool $value): static
     {
-        return $this->addProperty('lt', $lt);
+        return $this->addProperty('lt', $value);
     }
 
     /**
@@ -66,12 +68,12 @@ class Range extends Node
      *
      * If a format or date value is incomplete, the range query replaces any missing components with default values. See Missing date components.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format($format)
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
@@ -84,22 +86,22 @@ class Range extends Node
      * WITHIN
      *    Matches documents with a range field value entirely within the query’s range.
      *
-     * @param string $relation
+     * @param string $value
      * @return static
      */
-    public function relation($relation)
+    public function relation(string $value): static
     {
-        return $this->addProperty('relation', $relation);
+        return $this->addProperty('relation', $value);
     }
 
     /**
      * Coordinated Universal Time (UTC) offset or IANA time zone used to convert date values in the query to UTC.
      *
-     * @param string $timeZone
+     * @param string $value
      * @return static
      */
-    public function timeZone($timeZone)
+    public function timeZone(string $value): static
     {
-        return $this->addProperty('time_zone', $timeZone);
+        return $this->addProperty('time_zone', $value);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Metric;
 
 use ElasticKit\DSL\Node;
@@ -9,27 +11,16 @@ use ElasticKit\DSL\Node;
  */
 class ValueCount extends Node
 {
-    protected $_key = 'value_count';
+    protected string $_key = 'value_count';
 
     /**
-     * The field to aggregate.
+     * The script to use for the aggregation.
      *
-     * @param string $field
+     * @param string|callable $value
      * @return static
      */
-    public function field($field)
+    public function script($value): static
     {
-        return $this->addProperty('field', $field);
-    }
-
-    /**
-     * (Optional) The script to use for the aggregation.
-     *
-     * @param string|callable $script
-     * @return static
-     */
-    public function script($script)
-    {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 }

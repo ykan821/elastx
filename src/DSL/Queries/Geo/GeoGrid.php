@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Geo;
 
 use ElasticKit\DSL\Node;
@@ -13,42 +15,42 @@ use ElasticKit\DSL\Node;
  */
 class GeoGrid extends Node
 {
-    protected $_key = 'geo_grid';
+    protected string $_key = 'geo_grid';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * The geohex grid key to match. Only usable with geo_point fields.
      *
-     * @param string $geohex
+     * @param string $value
      * @return static
      */
-    public function geohex($geohex)
+    public function geohex(string $value): static
     {
-        return $this->addProperty('geohex', $geohex);
+        return $this->addProperty('geohex', $value);
     }
 
     /**
      * The geotile grid key to match (e.g. "6/32/21").
      * Usable with geo_point and geo_shape fields.
      *
-     * @param string $geotile
+     * @param string $value
      * @return static
      */
-    public function geotile($geotile)
+    public function geotile(string $value): static
     {
-        return $this->addProperty('geotile', $geotile);
+        return $this->addProperty('geotile', $value);
     }
 
     /**
      * The geohash grid key to match (e.g. "u1").
      * Usable with geo_point and geo_shape fields.
      *
-     * @param string $geohash
+     * @param string $value
      * @return static
      */
-    public function geohash($geohash)
+    public function geohash(string $value): static
     {
-        return $this->addProperty('geohash', $geohash);
+        return $this->addProperty('geohash', $value);
     }
 }

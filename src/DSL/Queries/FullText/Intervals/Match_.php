@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -11,17 +13,17 @@ use ElasticKit\DSL\Node;
  */
 class Match_ extends Node
 {
-    protected $_key = 'match';
+    protected string $_key = 'match';
 
     /**
      * Text you wish to find in the provided field.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query($query)
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 
     /**
@@ -30,47 +32,47 @@ class Match_ extends Node
      * Defaults to -1 (no restriction). If set to 0, the terms must appear
      * next to each other.
      *
-     * @param int $maxGaps
+     * @param int $value
      * @return static
      */
-    public function maxGaps($maxGaps)
+    public function maxGaps(int $value): static
     {
-        return $this->addProperty('max_gaps', $maxGaps);
+        return $this->addProperty('max_gaps', $value);
     }
 
     /**
      * If true, matching terms must appear in their
      * specified order. Defaults to false.
      *
-     * @param bool $ordered
+     * @param bool $value
      * @return static
      */
-    public function ordered($ordered = false)
+    public function ordered(bool $value = false): static
     {
-        return $this->addProperty('ordered', $ordered);
+        return $this->addProperty('ordered', $value);
     }
 
     /**
      * Analyzer used to analyze terms in the query.
      * Defaults to the top-level field's analyzer.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
      * An optional interval filter.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter)
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Filter::create($filter));
+        return $this->addProperty('filter', Filter::create($value));
     }
 
     /**
@@ -78,11 +80,11 @@ class Match_ extends Node
      * than the top-level field. Terms are analyzed using the search analyzer
      * from this field.
      *
-     * @param string $useField
+     * @param string $value
      * @return static
      */
-    public function useField($useField)
+    public function useField(string $value): static
     {
-        return $this->addProperty('use_field', $useField);
+        return $this->addProperty('use_field', $value);
     }
 }

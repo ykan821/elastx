@@ -6,10 +6,10 @@ use PHPUnit\Framework\TestCase;
 use ElasticKit\DSL\Query;
 
 /**
- * Base test case for DSL tests with optional ES validation.
+ * Base test case for DSL tests: asserts the built JSON structure.
  *
- * When ELASTICKIT_TEST_HOST env var is set, assertQuery() also sends the query to
- * Elasticsearch and verifies it is accepted without error.
+ * ES integration validation (connecting to ES, sending the query) lives in the
+ * integration test layer, which reuses the index/seed helpers below.
  */
 abstract class DslTestCase extends TestCase
 {
@@ -19,76 +19,20 @@ abstract class DslTestCase extends TestCase
     protected static $esClient;
 
     /**
-     * @var string
-     */
-    protected static $esIndex = 'elastickit_test';
-
-    public static function setUpBeforeClass(): void
-    {
-        $esHost = getenv('ELASTICKIT_TEST_HOST');
-        if ($esHost) {
-            try {
-                static::$esClient = \Elastic\Elasticsearch\ClientBuilder::create()
-                    ->setHosts([$esHost])
-                    ->build();
-
-                static::ensureIndex();
-            } catch (\Exception $e) {
-                static::$esClient = null;
-            }
-        }
-    }
-
-    /**
-     * (Required, string) Assert Query produces expected JSON, and optionally validate against ES.
+     * Assert Query produces the expected JSON structure.
      *
-     * @param $expectedJson
-     * @param $query
+     * @param string $expectedJson
+     * @param Query $query
      */
     protected function assertQuery(string $expectedJson, Query $query)
     {
         $this->assertJsonStringEqualsJsonString($expectedJson, $query->toJson(), 'JSON mismatch');
-
-        if (static::$esClient) {
-            try {
-                $params = [
-                    'index' => static::$esIndex,
-                    'body'  => $query->toArray(),
-                ];
-                $response = static::$esClient->search($params);
-                if (isset($response['error'])) {
-                    fwrite(STDERR, "\n  [ES Warning] " . $this->getName() . ': ' . json_encode($response['error']) . "\n");
-                }
-            } catch (\Exception $e) {
-                fwrite(STDERR, "\n  [ES Warning] " . $this->getName() . ': ' . $e->getMessage() . "\n");
-            }
-        }
-    }
-
-    /**
-     * Ensure the test index exists with proper mapping and seed data.
-     */
-    private static function ensureIndex(): void
-    {
-        if (!static::$esClient) {
-            return;
-        }
-
-        $client = static::$esClient;
-        $index = static::$esIndex;
-
-        if (!$client->indices()->exists(['index' => $index])) {
-            static::createIndex($client, $index);
-            static::seedData($client, $index);
-        }
-
-        static::ensureSpecialFields($client, $index);
     }
 
     /**
      * Create the test index with full mapping.
      */
-    private static function createIndex(\Elastic\Elasticsearch\ClientInterface $client, string $index): void
+    protected static function createIndex(\Elastic\Elasticsearch\ClientInterface $client, string $index): void
     {
         $client->indices()->create([
             'index' => $index,
@@ -127,7 +71,7 @@ abstract class DslTestCase extends TestCase
     /**
      * Seed test documents.
      */
-    private static function seedData(\Elastic\Elasticsearch\ClientInterface $client, string $index): void
+    protected static function seedData(\Elastic\Elasticsearch\ClientInterface $client, string $index): void
     {
         $docs = [
             [
@@ -217,44 +161,5 @@ abstract class DslTestCase extends TestCase
         }
 
         $client->indices()->refresh(['index' => $index]);
-    }
-
-    /**
-     * Ensure special field mappings (percolator, rank_feature, shape).
-     */
-    private static function ensureSpecialFields(\Elastic\Elasticsearch\ClientInterface $client, string $index): void
-    {
-        $mapping = $client->indices()->getMapping(['index' => $index]);
-        $properties = $mapping[$index]['mappings']['properties'] ?? [];
-
-        $newFields = [];
-        if (!isset($properties['query'])) {
-            $newFields['query'] = ['type' => 'percolator'];
-        }
-        if (!isset($properties['pagerank'])) {
-            $newFields['pagerank'] = ['type' => 'rank_feature'];
-        }
-        if (!isset($properties['cartesian_shape'])) {
-            $newFields['cartesian_shape'] = ['type' => 'shape'];
-        }
-
-        if (!empty($newFields)) {
-            $client->indices()->putMapping([
-                'index' => $index,
-                'body'  => ['properties' => $newFields],
-            ]);
-
-            if (isset($newFields['query'])) {
-                $client->index([
-                    'index' => $index,
-                    'id'    => 'percolator_1',
-                    'body'  => [
-                        'query' => ['match' => ['title' => 'elasticsearch']],
-                    ],
-                ]);
-            }
-
-            $client->indices()->refresh(['index' => $index]);
-        }
     }
 }

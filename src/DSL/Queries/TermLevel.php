@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
 use ElasticKit\DSL\Query;
@@ -32,7 +34,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function fuzzy($field, $value = null)
+    public function fuzzy($field, $value = null): static
     {
         return $this->addQuery(Fuzzy::create($field, $value));
     }
@@ -50,7 +52,7 @@ trait TermLevel
      * @param mixed $field
      * @return $this
      */
-    public function exists($field)
+    public function exists($field): static
     {
         return $this->addQuery(Exists::create($field));
     }
@@ -58,15 +60,15 @@ trait TermLevel
     /**
      * Returns documents based on their IDs. This query uses document IDs stored in the _id field.
      *
-     * @param mixed $ids
+     * @param mixed $value
      * @return $this
      */
-    public function ids($ids)
+    public function ids($value): static
     {
-        if (is_array($ids) && !isset($ids['values'])) {
-            $ids = ['values' => $ids];
+        if (is_array($value) && !isset($value['values'])) {
+            $value = ['values' => $value];
         }
-        return $this->addQuery(IDs::create($ids));
+        return $this->addQuery(IDs::create($value));
     }
 
     /**
@@ -76,7 +78,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function prefix($field, $value = null)
+    public function prefix($field, $value = null): static
     {
         return $this->addQuery(Prefix::create($field, $value));
     }
@@ -91,7 +93,7 @@ trait TermLevel
      * @param callable|array<string, mixed> $value
      * @return $this
      */
-    public function range($field, $value = null)
+    public function range($field, $value = null): static
     {
         return $this->addQuery(Range::create($field, $value));
     }
@@ -103,7 +105,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function regexp($field, $value = null)
+    public function regexp($field, $value = null): static
     {
         return $this->addQuery(Regexp::create($field, $value));
     }
@@ -117,7 +119,7 @@ trait TermLevel
      * @param callable|string|array<string, mixed> $value
      * @return $this
      */
-    public function term($field, $value = null)
+    public function term($field, $value = null): static
     {
         return $this->addQuery(Term::create($field, $value));
     }
@@ -132,7 +134,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function terms($field, $value = null)
+    public function terms($field, $value = null): static
     {
         return $this->addQuery(Terms::create($field, $value));
     }
@@ -149,7 +151,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function termsSet($field, $value = null)
+    public function termsSet($field, $value = null): static
     {
         return $this->addQuery(TermsSet::create($field, $value));
     }
@@ -163,7 +165,7 @@ trait TermLevel
      * @param mixed $value
      * @return $this
      */
-    public function wildcard($field, $value = null)
+    public function wildcard($field, $value = null): static
     {
         return $this->addQuery(Wildcard::create($field, $value));
     }

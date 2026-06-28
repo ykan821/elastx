@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL;
 
-use BadMethodCallException;
 use ElasticKit\DSL\Aggs\Bucket;
 use ElasticKit\DSL\Aggs\Metric;
 use ElasticKit\DSL\Aggs\Pipeline;
+use ElasticKit\DSL\Support\RegistersAgg;
+use stdClass;
 
 /**
  * Aggregation container (independent, does not extend Node).
@@ -17,35 +20,33 @@ class Agg
     use Bucket;
     use Metric;
     use Pipeline;
+    use DeepClone;
+    use RegistersAgg;
 
     /**
      * The aggregation type node.
-     *
-     * @var Node|null
      */
-    protected $_node;
+    protected ?Node $_node = null;
 
     /**
      * The alias name that wraps this aggregation in DSL output.
-     *
-     * @var string|null
      */
-    protected $_alias;
+    protected ?string $_alias = null;
 
     /**
      * Nested sub-aggregations keyed by alias.
      *
      * @var array<string, Agg>
      */
-    protected $subAggs = [];
+    protected array $_subAggs = [];
 
     /**
-     * Properties for array-based aggregation definitions.
-     * Supports nested Query, Node, and Agg instances (resolved by resolveProperties).
+     * Properties for array-based aggregation definitions (raw DSL mode).
+     * Null when the aggregation is node-based or empty.
      *
      * @var array<string, mixed>|null
      */
-    protected $_properties;
+    protected ?array $_properties = null;
 
     /**
      * Static factory — thin proxy over the constructor.
@@ -56,7 +57,7 @@ class Agg
      * @param mixed $agg
      * @return static
      */
-    public static function create($agg = [])
+    public static function create($agg = []): static
     {
         if ($agg instanceof static) {
             return $agg;
@@ -83,7 +84,7 @@ class Agg
      * @param Node $node
      * @return $this
      */
-    protected function node($node)
+    protected function node(Node $node): static
     {
         $this->_node = $node;
         $this->_properties = null;
@@ -96,12 +97,12 @@ class Agg
      * Similar to Node::field(), the alias wraps the output:
      * {"alias_name": {"terms": {"field": "status"}}}.
      *
-     * @param string $alias
+     * @param string $value
      * @return $this
      */
-    public function alias($alias)
+    public function alias(string $value): static
     {
-        $this->_alias = $alias;
+        $this->_alias = $value;
         return $this;
     }
 
@@ -110,7 +111,7 @@ class Agg
      *
      * @return string|null
      */
-    public function getAlias()
+    public function getAlias(): ?string
     {
         return $this->_alias;
     }
@@ -125,50 +126,11 @@ class Agg
      *
      * @param string|Agg|array<string, mixed> $alias
      * @param callable|Agg|array<string, mixed>|null $aggs
-     * @return $this
-     * @throws \BadMethodCallException if called with a string alias and no definition
+     * @return static
      */
-    public function aggs($alias, $aggs = null)
+    public function aggs($alias, $aggs = null): static
     {
-        if ($aggs === null && !is_string($alias)) {
-            $aggs = $alias;
-            $alias = null;
-        }
-
-        if ($aggs instanceof Agg) {
-            if ($alias !== null) {
-                $aggs->alias($alias);
-            }
-            $this->subAggs[$alias ?? $aggs->getAlias()] = $aggs;
-            return $this;
-        }
-
-        if (is_array($aggs)) {
-            $childAgg = Agg::create($aggs);
-            if ($alias !== null) {
-                $childAgg->alias($alias);
-            }
-            $this->subAggs[$alias] = $childAgg;
-            return $this;
-        }
-
-        if ($alias !== null && !isset($this->subAggs[$alias])) {
-            $this->subAggs[$alias] = new Agg();
-            $this->subAggs[$alias]->alias($alias);
-        }
-
-        if ($aggs instanceof \Closure) {
-            $aggs($this->subAggs[$alias]);
-            return $this;
-        }
-
-        if ($alias !== null) {
-            throw new BadMethodCallException(
-                sprintf('aggs() requires a second argument. Use aggs("%s", $definition) where $definition is a closure, array, or Agg instance.', $alias)
-            );
-        }
-
-        return $this;
+        return $this->registerAgg($alias, $aggs, $this->_subAggs);
     }
 
     /**
@@ -177,18 +139,22 @@ class Agg
      * @param array<string, mixed> $properties
      * @return array<string, mixed>
      */
-    protected function resolveProperties(array $properties)
+    protected function resolveProperties(array $properties): array
     {
         foreach ($properties as $key => $property) {
             if ($property instanceof Query) {
-                $properties[$key] = $property->toArray()['query'];
+                $properties[$key] = $property->toArray()['query'] ?? null;
             } elseif ($property instanceof Agg) {
                 $properties[$key] = $property->toArray();
             } elseif ($property instanceof Node) {
                 $properties[$key] = $property->toArray();
+            } elseif ($property instanceof \Closure) {
+                $properties[$key] = Query::create($property)->toArray()['query'] ?? null;
+            } elseif (is_array($property)) {
+                $properties[$key] = $this->resolveProperties($property);
             }
         }
-        return $properties;
+        return array_filter($properties, fn ($v) => $v !== null);
     }
 
     /**
@@ -199,12 +165,12 @@ class Agg
      *
      * @return array<string, mixed>
      */
-    public function toArray()
+    public function toArray(): array
     {
         if ($this->_properties !== null) {
             $resolved = $this->resolveProperties($this->_properties);
             if ($this->_alias !== null) {
-                return [$this->_alias => $resolved];
+                return [$this->_alias => ($resolved === [] ? new stdClass() : $resolved)];
             }
             return $resolved;
         }
@@ -215,15 +181,15 @@ class Agg
             $inner[$this->_node->key()] = $this->_node->toArray();
         }
 
-        if (!empty($this->subAggs)) {
+        if (!empty($this->_subAggs)) {
             $inner['aggs'] = [];
-            foreach ($this->subAggs as $subAgg) {
+            foreach ($this->_subAggs as $subAgg) {
                 $inner['aggs'] += $subAgg->toArray();
             }
         }
 
         if ($this->_alias !== null) {
-            return [$this->_alias => $inner];
+            return [$this->_alias => ($inner === [] ? new stdClass() : $inner)];
         }
 
         return $inner;
@@ -236,9 +202,11 @@ class Agg
      * @param int $depth
      * @return string
      */
-    public function toJson($flags = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT, $depth = 512)
+    public function toJson(int $flags = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION, int $depth = 512): string
     {
-        return json_encode($this->toArray(), $flags, $depth);
+        $json = json_encode($this->toArray(), $flags, $depth);
+
+        return $json === false ? '' : $json;
     }
 
     /**
@@ -246,7 +214,7 @@ class Agg
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toJson();
     }

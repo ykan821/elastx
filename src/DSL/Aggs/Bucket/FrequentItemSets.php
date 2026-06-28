@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,49 +11,49 @@ use ElasticKit\DSL\Node;
  */
 class FrequentItemSets extends Node
 {
-    protected $_key = 'frequent_item_sets';
+    protected string $_key = 'frequent_item_sets';
 
     /**
      * Minimum size of an item set.
      *
-     * @param int $minimumSetSize
+     * @param int $value
      * @return static
      */
-    public function minimumSetSize($minimumSetSize)
+    public function minimumSetSize(int $value): static
     {
-        return $this->addProperty('minimum_set_size', $minimumSetSize);
+        return $this->addProperty('minimum_set_size', $value);
     }
 
     /**
      * Fields to analyze for frequent item sets.
      *
-     * @param array<string> $fields
+     * @param array<string> $value
      * @return static
      */
-    public function fields($fields)
+    public function fields(array $value): static
     {
-        return $this->addProperty('fields', $fields);
+        return $this->addProperty('fields', $value);
     }
 
     /**
      * Maximum number of item sets to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size($size)
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 
     /**
      * Query to filter documents before analysis.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter)
+    public function filter($value): static
     {
-        return $this->addProperty('filter', $filter);
+        return $this->addProperty('filter', $value);
     }
 }

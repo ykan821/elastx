@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
@@ -11,47 +13,47 @@ use ElasticKit\DSL\Node;
  */
 class MatchPhrase extends Node
 {
-    protected $_key = 'match_phrase';
+    protected string $_key = 'match_phrase';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
-    protected $_valueKey = 'query';
+    protected string $_valueKey = 'query';
 
     /**
      * Text you wish to find in the provided field.
      * The match_phrase query analyzes any provided text into tokens before
      * performing a search.
      *
-     * @param string $query
+     * @param string $value
      * @return static
      */
-    public function query($query)
+    public function query(string $value): static
     {
-        return $this->addProperty('query', $query);
+        return $this->addProperty('query', $value);
     }
 
     /**
      * Analyzer used to convert text in the query value
      * into tokens. Defaults to the index-time analyzer mapped for the field.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
      * Maximum number of positions allowed between matching
      * tokens. Defaults to 0. Transposed terms have a slop of 2.
      *
-     * @param int $slop
+     * @param int $value
      * @return static
      */
-    public function slop($slop)
+    public function slop(int $value): static
     {
-        return $this->addProperty('slop', $slop);
+        return $this->addProperty('slop', $value);
     }
 
     /**
@@ -59,11 +61,11 @@ class MatchPhrase extends Node
      * analyzer removes all tokens, such as when using a stop filter.
      * Valid values are: none (Default), all.
      *
-     * @param string $zeroTermsQuery
+     * @param string $value
      * @return static
      */
-    public function zeroTermsQuery($zeroTermsQuery)
+    public function zeroTermsQuery(string $value): static
     {
-        return $this->addProperty('zero_terms_query', $zeroTermsQuery);
+        return $this->addProperty('zero_terms_query', $value);
     }
 }

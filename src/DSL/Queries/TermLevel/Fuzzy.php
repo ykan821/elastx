@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
 
 class Fuzzy extends Node
 {
-    protected $_key = 'fuzzy';
+    protected string $_key = 'fuzzy';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Term you wish to find in the provided <field>.
@@ -16,7 +18,7 @@ class Fuzzy extends Node
      * @param string $value
      * @return static
      */
-    public function value($value)
+    public function value(string $value): static
     {
         return $this->addProperty('value', $value);
     }
@@ -24,55 +26,55 @@ class Fuzzy extends Node
     /**
      * Maximum edit distance allowed for matching. See Fuzziness for valid values and more information.
      *
-     * @param string $fuzziness
+     * @param int|string $value
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $value): static
     {
-        return $this->addProperty('fuzziness', $fuzziness);
+        return $this->addProperty('fuzziness', $value);
     }
 
     /**
      * Maximum number of variations created. Defaults to 50.
      *
-     * @param int $maxExpansions
+     * @param int $value
      * @return static
      */
-    public function maxExpansions($maxExpansions)
+    public function maxExpansions(int $value): static
     {
-        return $this->addProperty('max_expansions', $maxExpansions);
+        return $this->addProperty('max_expansions', $value);
     }
 
     /**
      * Number of beginning characters left unchanged when creating expansions. Defaults to 0.
      *
-     * @param int $prefixLength
+     * @param int $value
      * @return static
      */
-    public function prefixLength($prefixLength)
+    public function prefixLength(int $value): static
     {
-        return $this->addProperty('prefix_length', $prefixLength);
+        return $this->addProperty('prefix_length', $value);
     }
 
     /**
      * Indicates whether edits include transpositions of two adjacent characters (ab → ba). Defaults to true.
      *
-     * @param bool $transpositions
+     * @param bool $value
      * @return static
      */
-    public function transpositions($transpositions)
+    public function transpositions(bool $value): static
     {
-        return $this->addProperty('transpositions', $transpositions);
+        return $this->addProperty('transpositions', $value);
     }
 
     /**
      * Method used to rewrite the query. For valid values and more information, see the rewrite parameter.
      *
-     * @param string $rewrite
+     * @param string $value
      * @return static
      */
-    public function rewrite($rewrite)
+    public function rewrite(string $value): static
     {
-        return $this->addProperty('rewrite', $rewrite);
+        return $this->addProperty('rewrite', $value);
     }
 }

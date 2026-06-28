@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound\Functions;
 
 use ElasticKit\DSL\Node;
@@ -9,28 +11,17 @@ use ElasticKit\DSL\Node;
  */
 class RandomScore extends Node
 {
-    protected $_key = 'random_score';
+    protected string $_key = 'random_score';
 
     /**
-     * (Optional) Seed value for reproducible random scores.
+     * Seed value for reproducible random scores.
      *
-     * @param mixed $seed
+     * @param mixed $value
      * @return static
      */
-    public function seed($seed)
+    public function seed($value): static
     {
-        return $this->addProperty('seed', $seed);
-    }
-
-    /**
-     * (Optional) Field used in combination with the seed to compute reproducible random scores.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
+        return $this->addProperty('seed', $value);
     }
 
     /**

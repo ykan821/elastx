@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Metric;
 
 use ElasticKit\DSL\Node;
@@ -9,49 +11,38 @@ use ElasticKit\DSL\Node;
  */
 class ExtendedStats extends Node
 {
-    protected $_key = 'extended_stats';
+    protected string $_key = 'extended_stats';
 
     /**
-     * The field to aggregate.
+     * The value to use when the field is missing.
      *
-     * @param string $field
+     * @param mixed $value
      * @return static
      */
-    public function field($field)
+    public function missing($value): static
     {
-        return $this->addProperty('field', $field);
+        return $this->addProperty('missing', $value);
     }
 
     /**
-     * (Optional) The value to use when the field is missing.
+     * The script to use for the aggregation.
      *
-     * @param mixed $missing
+     * @param string|callable $value
      * @return static
      */
-    public function missing($missing)
+    public function script($value): static
     {
-        return $this->addProperty('missing', $missing);
-    }
-
-    /**
-     * (Optional) The script to use for the aggregation.
-     *
-     * @param string|callable $script
-     * @return static
-     */
-    public function script($script)
-    {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 
     /**
      * Number of standard deviations above/below the mean to display.
      *
-     * @param int $sigma
+     * @param int $value
      * @return static
      */
-    public function sigma($sigma)
+    public function sigma(int $value): static
     {
-        return $this->addProperty('sigma', $sigma);
+        return $this->addProperty('sigma', $value);
     }
 }

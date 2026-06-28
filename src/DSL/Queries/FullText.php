@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
 use ElasticKit\DSL\Queries\FullText\CombinedFields;
@@ -24,7 +26,7 @@ trait FullText
      * @param mixed $value
      * @return $this
      */
-    public function intervals($field, $value = null)
+    public function intervals($field, $value = null): static
     {
         return $this->addQuery(Intervals::create($field, $value));
     }
@@ -38,7 +40,7 @@ trait FullText
      * @param callable|string|array<string, mixed> $value
      * @return $this
      */
-    public function match($field, $value = null)
+    public function match($field, $value = null): static
     {
         return $this->addQuery(Match_::create($field, $value));
     }
@@ -50,7 +52,7 @@ trait FullText
      * @param mixed $value
      * @return $this
      */
-    public function matchPhrase($field, $value = null)
+    public function matchPhrase($field, $value = null): static
     {
         return $this->addQuery(MatchPhrase::create($field, $value));
     }
@@ -62,7 +64,7 @@ trait FullText
      * @param mixed $value
      * @return $this
      */
-    public function matchPhrasePrefix($field, $value = null)
+    public function matchPhrasePrefix($field, $value = null): static
     {
         return $this->addQuery(MatchPhrasePrefix::create($field, $value));
     }
@@ -74,7 +76,7 @@ trait FullText
      * @param mixed $value
      * @return $this
      */
-    public function matchBoolPrefix($field, $value = null)
+    public function matchBoolPrefix($field, $value = null): static
     {
         return $this->addQuery(MatchBoolPrefix::create($field, $value));
     }
@@ -87,7 +89,7 @@ trait FullText
      * @param callable|MultiMatch|array<string, mixed> $value
      * @return $this
      */
-    public function multiMatch($value)
+    public function multiMatch($value): static
     {
         return $this->addQuery(MultiMatch::create($value));
     }
@@ -98,7 +100,7 @@ trait FullText
      * @param mixed $value
      * @return $this
      */
-    public function combinedFields($value)
+    public function combinedFields($value): static
     {
         return $this->addQuery(CombinedFields::create($value));
     }
@@ -106,22 +108,22 @@ trait FullText
     /**
      * Add a query_string query.
      *
-     * @param mixed $queryString
+     * @param mixed $value
      * @return $this
      */
-    public function queryString($queryString)
+    public function queryString($value): static
     {
-        return $this->addQuery(QueryString::create($queryString));
+        return $this->addQuery(QueryString::create($value));
     }
 
     /**
      * Add a simple_query_string query.
      *
-     * @param mixed $simpleQueryString
+     * @param mixed $value
      * @return $this
      */
-    public function simpleQueryString($simpleQueryString)
+    public function simpleQueryString($value): static
     {
-        return $this->addQuery(SimpleQueryString::create($simpleQueryString));
+        return $this->addQuery(SimpleQueryString::create($value));
     }
 }

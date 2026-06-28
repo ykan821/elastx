@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
-use ElasticKit\DSL\Query;
 use ElasticKit\DSL\Queries\Compound\Boolean;
 use ElasticKit\DSL\Queries\Compound\Boosting;
 use ElasticKit\DSL\Queries\Compound\ConstantScore;
@@ -17,107 +18,67 @@ trait Compound
     /**
      * Add a bool query.
      *
-     * Supports three forms:
-     * bool(closure|Boolean)          — full control over the bool query
-     * bool(['must' => value, ...])   — array of bool clauses
+     * Supports:
+     * bool(closure|Boolean)              — full control over the bool query
+     * bool(['must' => value, ...])       — array of bool clauses
+     * bool('must', $query)               — set a single clause (two-arg form)
+     * bool('minimum_should_match', 1)    — set a single property (two-arg form)
      *
      * @example $query->bool(function (Boolean $b) { $b->must(function (Query $q) { $q->match('title', 'test') }) })
      *
-     * @param callable|Boolean|array<string, mixed> $bool
+     * @param mixed $field Boolean instance, closure, array, or a clause/property key (two-arg form)
+     * @param mixed $value value for the two-arg form
      * @return $this
      */
-    public function bool($bool)
+    public function bool($field = null, $value = null): static
     {
-        if (is_array($bool)) {
-            $boolean = new Boolean();
-            foreach ($bool as $clause => $val) {
-                $method = $clause === 'must_not' ? 'mustNot' : $clause;
-                if ($val instanceof \Closure || $val instanceof Query) {
-                    $boolean->$method($val);
-                } else {
-                    $boolean->addProperty($clause, $val);
-                }
-            }
-            return $this->addQuery($boolean);
-        }
-        return $this->addQuery(Boolean::create($bool));
+        return $this->addQuery(Boolean::create($field, $value));
     }
 
     /**
      * Add a boosting query.
      *
-     * @param callable|Boosting|array<string, mixed> $boosting
+     * @param mixed $field
+     * @param mixed $value
      * @return $this
      */
-    public function boosting($boosting)
+    public function boosting($field = null, $value = null): static
     {
-        if (is_array($boosting)) {
-            $b = new Boosting();
-            foreach ($boosting as $key => $val) {
-                if (($key === 'positive' || $key === 'negative')
-                    && ($val instanceof \Closure || $val instanceof Query)) {
-                    $b->$key($val);
-                } else {
-                    $b->addProperty($key, $val);
-                }
-            }
-            return $this->addQuery($b);
-        }
-        return $this->addQuery(Boosting::create($boosting));
+        return $this->addQuery(Boosting::create($field, $value));
     }
 
     /**
      * Add a constant_score query.
      *
-     * @param callable|ConstantScore|array<string, mixed> $constantScore
+     * @param mixed $field
+     * @param mixed $value
      * @return $this
      */
-    public function constantScore($constantScore)
+    public function constantScore($field = null, $value = null): static
     {
-        if (is_array($constantScore)) {
-            $cs = new ConstantScore();
-            foreach ($constantScore as $key => $val) {
-                if ($key === 'filter' && ($val instanceof \Closure || $val instanceof Query)) {
-                    $cs->filter($val);
-                } else {
-                    $cs->addProperty($key, $val);
-                }
-            }
-            return $this->addQuery($cs);
-        }
-        return $this->addQuery(ConstantScore::create($constantScore));
+        return $this->addQuery(ConstantScore::create($field, $value));
     }
 
     /**
      * Add a dis_max query.
      *
-     * @param callable|DisjunctionMax|array<string, mixed> $disMax
+     * @param mixed $field
+     * @param mixed $value
      * @return $this
      */
-    public function disMax($disMax)
+    public function disMax($field = null, $value = null): static
     {
-        if (is_array($disMax)) {
-            $dm = new DisjunctionMax();
-            foreach ($disMax as $key => $val) {
-                if ($key === 'queries' && ($val instanceof \Closure || $val instanceof Query)) {
-                    $dm->queries($val);
-                } else {
-                    $dm->addProperty($key, $val);
-                }
-            }
-            return $this->addQuery($dm);
-        }
-        return $this->addQuery(DisjunctionMax::create($disMax));
+        return $this->addQuery(DisjunctionMax::create($field, $value));
     }
 
     /**
      * Add a function_score query.
      *
-     * @param mixed $functionScore
+     * @param mixed $value
      * @return $this
      */
-    public function functionScore($functionScore)
+    public function functionScore($value): static
     {
-        return $this->addQuery(FunctionScore::create($functionScore));
+        return $this->addQuery(FunctionScore::create($value));
     }
 }

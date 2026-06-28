@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/bootstrap.php"
-         colors="true"
-         verbose="true"
-         stopOnFailure="false">
-    <testsuites>
-        <testsuite name="unit">
-            <directory>tests</directory>
-            <exclude>tests/Index</exclude>
-        </testsuite>
-        <testsuite name="index">
-            <directory>tests/Index</directory>
-        </testsuite>
-    </testsuites>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/bootstrap.php" colors="true" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="unit">
+      <directory>tests</directory>
+      <exclude>tests/Integration</exclude>
+    </testsuite>
+    <testsuite name="integration">
+      <directory>tests/Integration</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>

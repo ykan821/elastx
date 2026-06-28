@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,7 +11,7 @@ use ElasticKit\DSL\Node;
  */
 class ReverseNested extends Node
 {
-    protected $_key = 'reverse_nested';
+    protected string $_key = 'reverse_nested';
 
     /**
      * {@inheritdoc}
@@ -25,11 +27,11 @@ class ReverseNested extends Node
     /**
      * Path to the nested object to reverse out of.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function path($path)
+    public function path(string $value): static
     {
-        return $this->addProperty('path', $path);
+        return $this->addProperty('path', $value);
     }
 }

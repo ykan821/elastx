@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Node;
@@ -9,16 +11,16 @@ use ElasticKit\DSL\Node;
  */
 class Percolate extends Node
 {
-    protected $_key = 'percolate';
+    protected string $_key = 'percolate';
 
     /**
      * The source document to percolate against registered queries.
      *
-     * @param mixed $document
+     * @param mixed $value
      * @return static
      */
-    public function document($document)
+    public function document($value): static
     {
-        return $this->addProperty('document', $document);
+        return $this->addProperty('document', $value);
     }
 }

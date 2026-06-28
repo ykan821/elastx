@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText\Intervals;
 
 use ElasticKit\DSL\Node;
@@ -11,65 +13,65 @@ use ElasticKit\DSL\Node;
  */
 class Fuzzy extends Node
 {
-    protected $_key = 'fuzzy';
+    protected string $_key = 'fuzzy';
 
     /**
      * The term to match.
      *
-     * @param string $term
+     * @param string $value
      * @return static
      */
-    public function term($term)
+    public function term(string $value): static
     {
-        return $this->addProperty('term', $term);
+        return $this->addProperty('term', $value);
     }
 
     /**
      * Number of beginning characters left unchanged when
      * creating expansions. Defaults to 0.
      *
-     * @param int $prefixLength
+     * @param int $value
      * @return static
      */
-    public function prefixLength($prefixLength)
+    public function prefixLength(int $value): static
     {
-        return $this->addProperty('prefix_length', $prefixLength);
+        return $this->addProperty('prefix_length', $value);
     }
 
     /**
      * Indicates whether edits include transpositions of
      * two adjacent characters (ab -> ba). Defaults to true.
      *
-     * @param bool $transpositions
+     * @param bool $value
      * @return static
      */
-    public function transpositions($transpositions)
+    public function transpositions(bool $value): static
     {
-        return $this->addProperty('transpositions', $transpositions);
+        return $this->addProperty('transpositions', $value);
     }
 
     /**
      * Maximum edit distance allowed for matching.
      * Defaults to auto.
      *
-     * @param string $fuzziness
+     * @param int|string $value
      * @return static
      */
-    public function fuzziness($fuzziness)
+    public function fuzziness(int|string $value): static
     {
-        return $this->addProperty('fuzziness', $fuzziness);
+        return $this->addProperty('fuzziness', $value);
     }
 
     /**
      * Analyzer used to normalize the term. Defaults to the
      * top-level field's analyzer.
      *
-     * @param string $analyzer
+     * @param string $value
      * @return static
      */
-    public function analyzer($analyzer)
+    public function analyzer(string $value): static
     {
-        return $this->addProperty('analyzer', $analyzer);
+        return $this->addProperty('analyzer', $value);
     }
 
     /**
@@ -77,11 +79,11 @@ class Fuzzy extends Node
      * than the top-level field. The term is normalized using the search
      * analyzer from this field.
      *
-     * @param string $useField
+     * @param string $value
      * @return static
      */
-    public function useField($useField)
+    public function useField(string $value): static
     {
-        return $this->addProperty('use_field', $useField);
+        return $this->addProperty('use_field', $value);
     }
 }

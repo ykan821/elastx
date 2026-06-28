@@ -2,7 +2,6 @@
 
 use Tests\DslTestCase;
 use ElasticKit\DSL\Query;
-use ElasticKit\DSL\Queries\Compound\Boolean;
 use ElasticKit\DSL\Queries\FullText\CombinedFields;
 use ElasticKit\DSL\Queries\FullText\Intervals;
 use ElasticKit\DSL\Queries\FullText\MatchBoolPrefix;
@@ -65,6 +64,46 @@ JSON;
             });
         });
         $this->assertQuery($exampleJson, $query);
+    }
+
+    public function testIntervalsPreservesInheritedProperties()
+    {
+        // boost() and other Node-inherited methods were previously dropped silently
+        // by Intervals::toArray(); toArray must no longer bypass $_properties.
+        $exampleJson = <<<JSON
+{
+  "query": {
+    "intervals" : {
+      "my_text" : {
+        "match" : {
+          "query" : "salty"
+        },
+        "boost" : 2.0
+      }
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->match(['query' => 'salty']);
+            $intervals->boost(2.0);
+        });
+        $this->assertQuery($exampleJson, $query);
+    }
+
+    public function testIntervalsThrowsOnDuplicateRuleKey()
+    {
+        // A field node accepts a single rule; two match calls must not be silently merged (second overwriting first) — it must throw.
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->match(['query' => 'foo']);
+            $intervals->match(['query' => 'bar']);
+        });
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Duplicate interval clause key "match"');
+        $query->toArray();
     }
 
     public function testIntervals2()
@@ -243,7 +282,7 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
-    public function testA()
+    public function testQueryStringCrossFields()
     {
         $exampleJson = <<<JSON
 {
@@ -503,6 +542,30 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
+    public function testIntervalsRegexp()
+    {
+        $exampleJson = <<<JSON
+{
+  "query": {
+    "intervals": {
+      "my_text": {
+        "regexp": {
+          "pattern": "h[ao]t"
+        }
+      }
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->regexp(function (Intervals\Regexp $r) {
+                $r->pattern('h[ao]t');
+            });
+        });
+        $this->assertQuery($exampleJson, $query);
+    }
+
     public function testIntervalsRange()
     {
         $exampleJson = <<<JSON
@@ -586,6 +649,41 @@ JSON;
                 });
                 $anyOf->addInterval(function (Intervals $i) {
                     $i->match(['query' => 'cold porridge']);
+                });
+            });
+        });
+        $this->assertQuery($exampleJson, $query);
+    }
+
+    public function testAllOfFilter()
+    {
+        // all_of::filter() must wrap in a Filter rule like any_of::filter()
+        $exampleJson = <<<JSON
+{
+  "query": {
+    "intervals": {
+      "my_text": {
+        "all_of": {
+          "intervals": [
+            { "match": { "query": "hot water" } }
+          ],
+          "filter": {
+            "after": { "match": { "query": "cold porridge" } }
+          }
+        }
+      }
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->intervals('my_text', function (Intervals $intervals) {
+            $intervals->allOf(function (Intervals\AllOf $allOf) {
+                $allOf->addInterval(function (Intervals $i) {
+                    $i->match(['query' => 'hot water']);
+                });
+                $allOf->filter(function (Intervals\Filter $filter) {
+                    $filter->after(['match' => ['query' => 'cold porridge']]);
                 });
             });
         });

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
 use ElasticKit\DSL\Queries\MatchAll\MatchAll as QMatchAll;
@@ -13,12 +15,12 @@ trait MatchAll
     /**
      * Add a match_all query.
      *
-     * @param mixed $matchAll
+     * @param mixed $value
      * @return $this
      */
-    public function matchAll($matchAll = null)
+    public function matchAll($value = null): static
     {
-        return $this->addQuery(QMatchAll::create($matchAll));
+        return $this->addQuery(QMatchAll::create($value));
     }
 
     /**
@@ -26,7 +28,7 @@ trait MatchAll
      *
      * @return $this
      */
-    public function matchNone()
+    public function matchNone(): static
     {
         return $this->addQuery(MatchNone::create());
     }

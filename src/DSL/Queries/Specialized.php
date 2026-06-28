@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries;
 
 use ElasticKit\DSL\Queries\Specialized\DistanceFeature;
@@ -19,88 +21,88 @@ trait Specialized
     /**
      * Add a distance_feature query.
      *
-     * @param mixed $distanceFeature
+     * @param mixed $value
      * @return $this
      */
-    public function distanceFeature($distanceFeature)
+    public function distanceFeature($value): static
     {
-        return $this->addQuery(DistanceFeature::create($distanceFeature));
+        return $this->addQuery(DistanceFeature::create($value));
     }
 
     /**
      * Add a more_like_this query.
      *
-     * @param mixed $moreLikeThis
+     * @param mixed $value
      * @return $this
      */
-    public function moreLikeThis($moreLikeThis)
+    public function moreLikeThis($value): static
     {
-        return $this->addQuery(MoreLikeThis::create($moreLikeThis));
+        return $this->addQuery(MoreLikeThis::create($value));
     }
 
     /**
      * Add a percolate query.
      *
-     * @param mixed $percolate
+     * @param mixed $value
      * @return $this
      */
-    public function percolate($percolate)
+    public function percolate($value): static
     {
-        return $this->addQuery(Percolate::create($percolate));
+        return $this->addQuery(Percolate::create($value));
     }
 
     /**
      * Add a rank_feature query.
      *
-     * @param mixed $rankFeature
+     * @param mixed $value
      * @return $this
      */
-    public function rankFeature($rankFeature)
+    public function rankFeature($value): static
     {
-        return $this->addQuery(RankFeature::create($rankFeature));
+        return $this->addQuery(RankFeature::create($value));
     }
 
     /**
      * Add a script query.
      *
-     * @param mixed $script
+     * @param mixed $value
      * @return $this
      */
-    public function script($script)
+    public function script($value): static
     {
-        return $this->addQuery(Script::create($script));
+        return $this->addQuery(Script::create($value));
     }
 
     /**
      * Add a script_score query.
      *
-     * @param mixed $scriptScore
+     * @param mixed $value
      * @return $this
      */
-    public function scriptScore($scriptScore)
+    public function scriptScore($value): static
     {
-        return $this->addQuery(ScriptScore::create($scriptScore));
+        return $this->addQuery(ScriptScore::create($value));
     }
 
     /**
      * Add a wrapper query.
      *
-     * @param mixed $wrapper
+     * @param mixed $value
      * @return $this
      */
-    public function wrapper($wrapper)
+    public function wrapper($value): static
     {
-        return $this->addQuery(Wrapper::create($wrapper));
+        return $this->addQuery(Wrapper::create($value));
     }
 
     /**
      * Add a pinned query.
      *
-     * @param mixed $pinned
+     * @param mixed $value
      * @return $this
      */
-    public function pinned($pinned)
+    public function pinned($value): static
     {
-        return $this->addQuery(Pinned::create($pinned));
+        return $this->addQuery(Pinned::create($value));
     }
 }

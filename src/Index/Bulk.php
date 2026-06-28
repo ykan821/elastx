@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
+use ElasticKit\Index\Support\Event;
+use ElasticKit\Index\Support\EventDispatcher;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Batch document operations using the ES _bulk API.
@@ -10,41 +15,41 @@ use InvalidArgumentException;
 class Bulk
 {
     /**
-     * @var Index
-     */
-    private $index;
-
-    /**
      * @var array<int, mixed>
      */
-    private $body = [];
+    private array $body = [];
 
     /**
      * @var int
      */
-    private $retryOnConflict = 0;
+    private int $retryOnConflict = 0;
 
     /**
      * @var string|null
      */
-    private $targetIndex = null;
+    private ?string $targetIndex = null;
+
+    /**
+     * Auto-flush threshold (0 = disabled). When set, the buffer is flushed
+     * automatically inside the enqueue methods once docCount reaches it.
+     *
+     * @var int
+     */
+    private int $batchSize = 0;
 
     /**
      * @var int
      */
-    private $batchSize = 0;
+    private int $docCount = 0;
 
     /**
-     * @var int
+     * @var callable|null
      */
-    private $docCount = 0;
+    private $errorHandler = null;
 
-    /**
-     * @param Index $index
-     */
-    public function __construct(Index $index)
-    {
-        $this->index = $index;
+    public function __construct(
+        private readonly Index $index
+    ) {
     }
 
     /**
@@ -52,11 +57,15 @@ class Bulk
      *
      * @param string $indexName
      * @return $this
-     * @throws \InvalidArgumentException if indexName starts with a dot (system index)
+     * @throws \InvalidArgumentException if indexName is empty or starts with a dot (system index)
      */
-    public function target($indexName)
+    public function target(string $indexName): static
     {
-        if (strpos($indexName, '.') === 0) {
+        if ($indexName === '') {
+            throw new InvalidArgumentException('Target index name must not be empty.');
+        }
+
+        if (str_starts_with($indexName, '.')) {
             throw new InvalidArgumentException("System index names (starting with '.') are not allowed: {$indexName}");
         }
 
@@ -66,12 +75,13 @@ class Bulk
     }
 
     /**
-     * Auto-execute when doc count reaches this batch size.
+     * Auto-flush threshold: flush automatically once docCount reaches $size.
+     * Off by default (0). When off, the buffer only sends on an explicit flush().
      *
      * @param int $size
      * @return $this
      */
-    public function batchSize($size)
+    public function batchSize(int $size): static
     {
         $this->batchSize = $size;
 
@@ -79,12 +89,34 @@ class Bulk
     }
 
     /**
-     * Set retry_on_conflict for all update actions in this batch.
+     * Set a callback to handle bulk errors.
+     *
+     * On error the callback receives three tools and decides what to do:
+     * - $response: the raw ES response (items[] carry per-item status/error);
+     * - $body: the full original batch in native ES format (successes included);
+     * - $newbulk: a fresh Bulk bound to the same index and target, for re-send.
+     *
+     * Extract the failures from $body using $response (items[k] matches the k-th
+     * action), re-enqueue them on $newbulk, and call $newbulk->flush() to retry.
+     * Return to consume this batch (cleared), or throw to abort and leave it.
+     *
+     * @param callable $handler function (array $response, array $body, Bulk $newbulk): void
+     * @return $this
+     */
+    public function onError(callable $handler): static
+    {
+        $this->errorHandler = $handler;
+        return $this;
+    }
+
+    /**
+     * Set retry_on_conflict for all subsequent update actions. Persists across
+     * flush() calls (it's a setting, not per-batch).
      *
      * @param int $count
      * @return $this
      */
-    public function retryOnConflict($count)
+    public function retryOnConflict(int $count): static
     {
         $this->retryOnConflict = $count;
 
@@ -95,17 +127,17 @@ class Bulk
      * Queue an index (create/overwrite) action.
      *
      * @param string|int|null $id document ID, or null to let ES auto-generate
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return $this
      */
-    public function index($id, $document)
+    public function index(string|int|null $id, array $data): static
     {
         $action = ['index' => ['_index' => $this->resolveIndex()]];
         if ($id !== null && $id !== '') {
             $action['index']['_id'] = $id;
         }
         $this->body[] = $action;
-        $this->body[] = $document;
+        $this->body[] = $data;
         $this->afterPush();
 
         return $this;
@@ -115,25 +147,29 @@ class Bulk
      * Alias for index(). Queue a save (create/overwrite) action.
      *
      * @param string|int|null $id
-     * @param array<string, mixed> $document
+     * @param array<string, mixed> $data
      * @return $this
      */
-    public function save($id, $document)
+    public function save(string|int|null $id, array $data): static
     {
-        return $this->index($id, $document);
+        return $this->index($id, $data);
     }
 
     /**
      * Queue a create action (fail if document already exists).
      *
-     * @param string|int $id
-     * @param array<string, mixed> $document
+     * @param string|int|null $id document ID, or null/'' to let ES auto-generate
+     * @param array<string, mixed> $data
      * @return $this
      */
-    public function create($id, $document)
+    public function create(string|int|null $id, array $data): static
     {
-        $this->body[] = ['create' => ['_index' => $this->resolveIndex(), '_id' => $id]];
-        $this->body[] = $document;
+        $action = ['create' => ['_index' => $this->resolveIndex()]];
+        if ($id !== null && $id !== '') {
+            $action['create']['_id'] = $id;
+        }
+        $this->body[] = $action;
+        $this->body[] = $data;
         $this->afterPush();
 
         return $this;
@@ -149,7 +185,7 @@ class Bulk
      * @param bool $upsert
      * @return $this
      */
-    public function update($id, $data, $upsert = false)
+    public function update(string|int $id, array $data, bool $upsert = false): static
     {
         $action = ['update' => ['_index' => $this->resolveIndex(), '_id' => $id]];
 
@@ -170,7 +206,7 @@ class Bulk
      * @param string|int $id
      * @return $this
      */
-    public function delete($id)
+    public function delete(string|int $id): static
     {
         $this->body[] = ['delete' => ['_index' => $this->resolveIndex(), '_id' => $id]];
         $this->afterPush();
@@ -179,12 +215,19 @@ class Bulk
     }
 
     /**
-     * Execute all queued actions and return the raw ES response.
+     * Flush all queued actions to ES and return the raw response.
+     *
+     * On success the queue is cleared. On error: with an onError handler the
+     * batch is handed off (response, the full body, and a fresh Bulk) and cleared
+     * on return; without a handler a RuntimeException is thrown and the batch is
+     * preserved for the caller to retry. Call this at the end of a batch to flush
+     * the remainder — batchSize() auto-flushes full batches during enqueue.
      *
      * @param array<string, mixed> $options top-level bulk API params (refresh, timeout, etc)
      * @return array<string, mixed>
+     * @throws \RuntimeException when the response has errors and no handler swallowed them
      */
-    public function execute(array $options = [])
+    public function flush(array $options = []): array
     {
         if (empty($this->body)) {
             return [];
@@ -193,9 +236,9 @@ class Bulk
         $indexName = $this->resolveIndex();
         $actions = $this->body;
 
-        $e = new Event('bulk.execute.before', $indexName);
+        $e = new Event('bulk.flush.before', $indexName);
         $e->actions = $actions;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
 
         $start = microtime(true);
         $response = $this->index->getClient()->bulk(
@@ -203,15 +246,38 @@ class Bulk
         )->asArray();
         $duration = microtime(true) - $start;
 
-        $this->body = [];
-        $this->docCount = 0;
-        $this->retryOnConflict = 0;
-
-        $e = new Event('bulk.execute.after', $indexName);
+        $e = new Event('bulk.flush.after', $indexName);
         $e->actions = $actions;
         $e->response = $response;
         $e->duration = $duration;
-        Index::dispatch($e);
+        EventDispatcher::dispatch($e);
+
+        if (!empty($response['errors'])) {
+            if ($this->errorHandler) {
+                // Hand the caller the raw materials: the response, the full body,
+                // and a fresh Bulk on the same index/target. The caller extracts
+                // the failures and re-sends them however it likes.
+                $newbulk = new Bulk($this->index);
+                $newbulk->targetIndex = $this->targetIndex;
+                ($this->errorHandler)($response, $actions, $newbulk);
+            } else {
+                $json = json_encode($response, JSON_UNESCAPED_UNICODE);
+                // json_encode() can return false on malformed payloads; guard required
+                // under strict_types to avoid passing false to strlen().
+                if ($json === false) {
+                    $json = '(unable to encode bulk response)';
+                }
+                if (strlen($json) > 4096) {
+                    $json = mb_strcut($json, 0, 4096) . '... [truncated]';
+                }
+                throw new RuntimeException("Bulk request has errors: {$json}");
+            }
+        }
+
+        // Success, or the handler consumed the batch. Only the buffer is reset;
+        // retryOnConflict persists across flushes (it's a setting, like target()).
+        $this->body = [];
+        $this->docCount = 0;
 
         return $response;
     }
@@ -221,7 +287,7 @@ class Bulk
      *
      * @return string
      */
-    private function resolveIndex()
+    private function resolveIndex(): string
     {
         return $this->targetIndex ?? $this->index->name();
     }
@@ -234,7 +300,7 @@ class Bulk
         $this->docCount++;
 
         if ($this->batchSize > 0 && $this->docCount >= $this->batchSize) {
-            $this->execute();
+            $this->flush();
         }
     }
 }

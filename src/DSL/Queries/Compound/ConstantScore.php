@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound;
 
 use ElasticKit\DSL\Query;
@@ -10,16 +12,16 @@ use ElasticKit\DSL\Node;
  */
 class ConstantScore extends Node
 {
-    protected $_key = 'constant_score';
+    protected string $_key = 'constant_score';
 
     /**
      * Filter query you wish to run. Any returned documents must match this query.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function filter($query)
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Query::create($query));
+        return $this->addProperty('filter', Query::create($value));
     }
 }

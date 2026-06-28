@@ -1,14 +1,43 @@
 # Changelog
 
+## [8.0.0-beta.5] - 2026-06-28
+
+### Added
+
+- `Index::$trackTotalHits` (int|bool, default `false`) — opt-in total-hit tracking per index; `true` counts every hit, an int caps the count, `false` omits it.
+- `Results::hasMorePages()` — next-page signal that works with or without a total (full-page heuristic when `track_total_hits` is false).
+- `PaginationTotalUnavailableException` (in `ElasticKit\Index\Exception`) — thrown by `Results::toPaginator()` when no total is available.
+
+### Changed
+
+- **BC:** `Index` now defaults `track_total_hits` to `false`, so Elasticsearch omits the hit total. `Results::total()`/`lastPage()` return `?int` (null when the total is unavailable), and `toPaginator()` throws unless the index sets `$trackTotalHits = true` (or a count cap). Set `protected int|bool $trackTotalHits = true;` on indexes that paginate.
+- `Results::isEmpty()` docblock now points to `hasMorePages()` for "has next page".
+
+### Fixed
+
+- `Node::toArray()` (and field-keyed overrides such as `Intervals`) throw `LogicException` when a field-keyed node has no field set, instead of an uncatchable typed-property `Error`.
+- `Agg` empty aggregation body serializes to `{}`, not `[]` (which Elasticsearch rejects).
+- `RangeSupport` rejects positional elements beyond the `[start, end]` shorthand instead of leaking them as numeric keys.
+- `SpanTerm::term()` emits Elasticsearch's `{value}` key (was `{term}`).
+- `Rebuild` alias-swap failures now delete the orphaned new index.
+
+### Deprecated
+
+- `DateHistogram::interval()` — Elasticsearch deprecated the bare `interval` key; use `calendarInterval()`/`fixedInterval()`.
+
+### Removed
+
+- Composer scripts (`analyse` / `cs-check` / `cs-fix`) — run the binaries via your Docker workflow instead.
+
 ## [8.0.0-beta.4] - 2026-06-07
 
-### 新增
+### Added
 
-- DSL 查询构建器，支持多态参数（字符串/数组/闭包/对象）
-- 全量查询类型覆盖：TermLevel、FullText、Compound、Geo、Joining、Span、Shape、Specialized
-- 聚合支持：Bucket、Metric、Pipeline 三大类
-- 搜索参数：sort、highlight、rescore、collapse、suggest、post_filter、knn 等
-- Index 层：CRUD、分页、游标遍历、批量写入（Bulk）、零停机重建（Rebuild）
-- 事件系统：搜索、批量操作、重建各阶段的事件监听
-- OOP 风格：每个查询/聚合类型独立 Node 类，支持链式调用和增量构建
-- 原生 DSL 透传：未覆盖的 ES 特性直接传数组
+- DSL query builder with polymorphic parameters (string/array/closure/object)
+- Full query-type coverage: TermLevel, FullText, Compound, Geo, Joining, Span, Shape, Specialized
+- Aggregations: Bucket, Metric, and Pipeline categories
+- Search parameters: sort, highlight, rescore, collapse, suggest, post_filter, knn, etc.
+- Index layer: CRUD, pagination, cursor iteration, bulk writes (Bulk), zero-downtime rebuild (Rebuild)
+- Event system: listeners for each phase of search, bulk operations, and rebuild
+- OOP style: each query/aggregation type is a dedicated Node class, supporting chaining and incremental building
+- Raw DSL pass-through: uncovered ES features can be passed directly as arrays

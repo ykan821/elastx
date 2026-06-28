@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Metric;
 
 use ElasticKit\DSL\Node;
@@ -9,49 +11,38 @@ use ElasticKit\DSL\Node;
  */
 class Cardinality extends Node
 {
-    protected $_key = 'cardinality';
-
-    /**
-     * The field to aggregate.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'cardinality';
 
     /**
      * Controls the precision of the count.
      *
-     * @param int $threshold
+     * @param int $value
      * @return static
      */
-    public function precisionThreshold($threshold)
+    public function precisionThreshold(int $value): static
     {
-        return $this->addProperty('precision_threshold', $threshold);
+        return $this->addProperty('precision_threshold', $value);
     }
 
     /**
-     * (Optional) The value to use when the field is missing.
+     * The value to use when the field is missing.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing)
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
-     * (Optional) The script to use for the aggregation.
+     * The script to use for the aggregation.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script)
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 }

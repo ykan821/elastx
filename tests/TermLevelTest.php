@@ -6,8 +6,6 @@ use ElasticKit\DSL\Queries\TermLevel\Fuzzy;
 use ElasticKit\DSL\Queries\TermLevel\Prefix;
 use ElasticKit\DSL\Queries\TermLevel\Range;
 use ElasticKit\DSL\Queries\TermLevel\Regexp;
-use ElasticKit\DSL\Queries\TermLevel\Term;
-use ElasticKit\DSL\Queries\TermLevel\Terms;
 use ElasticKit\DSL\Queries\TermLevel\TermsSet;
 use ElasticKit\DSL\Queries\TermLevel\Wildcard;
 
@@ -15,7 +13,7 @@ class TermLevelTest extends DslTestCase
 {
     public function testExists()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "exists": {
@@ -31,7 +29,7 @@ JSON;
 
     public function testFuzzy()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "fuzzy": {
@@ -61,7 +59,7 @@ JSON;
 
     public function testTerm()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "term": {
@@ -80,7 +78,7 @@ JSON;
 
     public function testTermSimple()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "term": { "status": "published" }
@@ -94,7 +92,7 @@ JSON;
 
     public function testTerms()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "terms": {
@@ -110,7 +108,7 @@ JSON;
 
     public function testRange()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "range": {
@@ -131,7 +129,7 @@ JSON;
 
     public function testRangeShorthand()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "range": {
@@ -148,9 +146,16 @@ JSON;
         $this->assertQuery($expectedJson, $query);
     }
 
+    public function testRangeShorthandRejectsExtraPositionalElements()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $query = new Query();
+        $query->range('price', [10, 20, 30]);
+    }
+
     public function testRangeOperators()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "range": {
@@ -169,7 +174,7 @@ JSON;
 
     public function testPrefix()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "prefix": {
@@ -189,7 +194,7 @@ JSON;
 
     public function testRegexp()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "regexp": {
@@ -210,7 +215,7 @@ JSON;
 
     public function testWildcard()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "wildcard": {
@@ -230,7 +235,7 @@ JSON;
 
     public function testIds()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "ids": {
@@ -246,7 +251,7 @@ JSON;
 
     public function testTermsSet()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "terms_set": {

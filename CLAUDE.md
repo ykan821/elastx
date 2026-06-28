@@ -1,59 +1,67 @@
 # ElasticKit - Elasticsearch DSL Query Builder
 
-PHP Elasticsearch DSL 查询构建库。
+A PHP Elasticsearch DSL query builder library.
 
-> 本文件提交到仓库。本地环境变量放在 `CLAUDE.local.md`（已 gitignore），Claude Code 自动加载两者。
+> This file is committed to the repository. Local environment variables live in `CLAUDE.local.md` (gitignored); Claude Code loads both automatically.
 
-**版本管理：** a.b.c，a 对齐 ES 主版本，`^8` 即可。
+**Versioning:** a.b.c, where `a` tracks the ES major version. `^8` suffices.
 
-> master 对应 v8.x（ES 8.x，PHP 8.1+），7.x 分支独立维护（ES 7.x，PHP 7.2+）。两条线不互合并，CLAUDE.md 各分支独立维护。
+> `master` tracks v8.x (ES 8.x, PHP 8.1+); the 7.x branch is maintained separately (ES 7.x, PHP 7.2+). The two lines are never merged into each other; CLAUDE.md is maintained per branch.
 
-### 提交信息规范
+### Commit message conventions
 
-- **参数名锁定**：公开方法参数名是 API 的一部分（支持命名参数），minor 版本禁止重命名
+- **Parameter names are locked**: public method parameter names are part of the API (named arguments are supported); renaming is forbidden in minor versions
 
-[Conventional Commits](https://www.conventionalcommits.org/)，中文描述：`feat(query): 新增 knn 向量搜索`
+[Conventional Commits](https://www.conventionalcommits.org/), with an English description: `feat(query): add knn vector search`
 
-Scope 可选：dsl / index / agg / query / docs。Breaking change 加 `!` 后缀。
+Scope is optional: dsl / index / agg / query / docs. Append `!` for breaking changes.
 
-### Changelog 规范
+### Changelog conventions
 
-[Keep a Changelog](https://keepachangelog.com)，中文分类：
+[Keep a Changelog](https://keepachangelog.com), with English categories:
 
-- **新增** / **变更** / **弃用** / **移除** / **修复** / **安全**
-- 只记录对用户有影响的变更
-- 相关改动合并为一条
-- Breaking change 以 `**BC:**` 前缀标记
+- **Added** / **Changed** / **Deprecated** / **Removed** / **Fixed** / **Security**
+- Record only user-facing changes
+- Merge related changes into a single entry
+- Mark breaking changes with the `**BC:**` prefix
 
-### 发版流程
+### Release flow
 
-1. 跑全部测试
-2. 更新 CHANGELOG.md
-3. 提交并推送
-4. 确认版本号后打 tag 并推送
+1. Run the full test suite
+2. Update CHANGELOG.md
+3. Commit and push
+4. Confirm the version, then tag and push
 
-### PHPDoc 规范
+### PHPDoc conventions
 
-PSR-5 规范。
+Follow PSR-5.
 
-## 测试
+## TODO
 
-测试在 Docker 容器中运行，需要设置以下环境变量：
+- [ ] **Add integration contract tests for Span and Shape queries**: unit DSL tests exist, but there is no Elasticsearch execution coverage (other query families have `tests/Integration/Dsl/*ContractTest.php`)
+- [ ] **Cover Rebuild import-failure rollback**: the `createIndex`→`import` try/catch (deletes the new index on failure) is untested; only the alias-swap rollback path is covered
 
-| 变量 | 用途 |
+## Tests
+
+Tests run inside a Docker container and require these environment variables:
+
+| Variable | Purpose |
 |---|---|
-| `PHP_CONTAINER` | Docker 容器名 |
-| `PROJECT_PATH` | 项目在容器内的路径 |
-| `PROXY_PORT` | HTTP 代理端口（推送用） |
+| `PHP_CONTAINER` | Docker container name |
+| `PROJECT_PATH` | Project path inside the container |
+| `PROXY_PORT` | HTTP proxy port (for pushing) |
+| `ELASTICKIT_TEST_HOST` | ES endpoint for integration tests (e.g. `https://localhost:9200`); integration tests are skipped when unset |
+
+## Pre-push checklist
 
 ```bash
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite unit"
-docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite index"
+docker exec -e ELASTICKIT_TEST_HOST=https://elasticsearch:9200 $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit --testsuite integration"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpunit"
-docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpstan analyse"
+docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpstan analyse --memory-limit=256M"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && vendor/bin/phpmd src text phpmd.xml"
 docker exec $PHP_CONTAINER sh -c "cd $PROJECT_PATH && PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --diff"
 
-# GitHub 不可达时走代理
+# Route through the proxy when GitHub is unreachable
 https_proxy=http://127.0.0.1:$PROXY_PORT http_proxy=http://127.0.0.1:$PROXY_PORT git push
 ```

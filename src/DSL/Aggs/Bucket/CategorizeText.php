@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,104 +11,104 @@ use ElasticKit\DSL\Node;
  */
 class CategorizeText extends Node
 {
-    protected $_key = 'categorize_text';
+    protected string $_key = 'categorize_text';
 
     /**
      * Analyzer used for categorization.
      *
-     * @param mixed $categorizationAnalyzer
+     * @param mixed $value
      * @return static
      */
-    public function categorizationAnalyzer($categorizationAnalyzer)
+    public function categorizationAnalyzer($value): static
     {
-        return $this->addProperty('categorization_analyzer', $categorizationAnalyzer);
+        return $this->addProperty('categorization_analyzer', $value);
     }
 
     /**
      * Filters applied to each token before categorization.
      *
-     * @param array<string, mixed> $categorizationFilters
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function categorizationFilters($categorizationFilters)
+    public function categorizationFilters(array $value): static
     {
-        return $this->addProperty('categorization_filters', $categorizationFilters);
+        return $this->addProperty('categorization_filters', $value);
     }
 
     /**
      * Maximum number of matched tokens to consider.
      *
-     * @param int $maxMatchedTokens
+     * @param int $value
      * @return static
      */
-    public function maxMatchedTokens($maxMatchedTokens)
+    public function maxMatchedTokens(int $value): static
     {
-        return $this->addProperty('max_matched_tokens', $maxMatchedTokens);
+        return $this->addProperty('max_matched_tokens', $value);
     }
 
     /**
      * Maximum number of unique tokens to consider.
      *
-     * @param int $maxUniqueTokens
+     * @param int $value
      * @return static
      */
-    public function maxUniqueTokens($maxUniqueTokens)
+    public function maxUniqueTokens(int $value): static
     {
-        return $this->addProperty('max_unique_tokens', $maxUniqueTokens);
+        return $this->addProperty('max_unique_tokens', $value);
     }
 
     /**
      * Minimum document count per bucket.
      *
-     * @param int $minDocCount
+     * @param int $value
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $value): static
     {
-        return $this->addProperty('min_doc_count', $minDocCount);
+        return $this->addProperty('min_doc_count', $value);
     }
 
     /**
      * Minimum document count per shard.
      *
-     * @param int $shardMinDocCount
+     * @param int $value
      * @return static
      */
-    public function shardMinDocCount($shardMinDocCount)
+    public function shardMinDocCount(int $value): static
     {
-        return $this->addProperty('shard_min_doc_count', $shardMinDocCount);
+        return $this->addProperty('shard_min_doc_count', $value);
     }
 
     /**
      * Number of categories to return from each shard.
      *
-     * @param int $shardSize
+     * @param int $value
      * @return static
      */
-    public function shardSize($shardSize)
+    public function shardSize(int $value): static
     {
-        return $this->addProperty('shard_size', $shardSize);
+        return $this->addProperty('shard_size', $value);
     }
 
     /**
      * Similarity threshold for grouping categories.
      *
-     * @param float $similarityThreshold
+     * @param float $value
      * @return static
      */
-    public function similarityThreshold($similarityThreshold)
+    public function similarityThreshold(float $value): static
     {
-        return $this->addProperty('similarity_threshold', $similarityThreshold);
+        return $this->addProperty('similarity_threshold', $value);
     }
 
     /**
      * Maximum number of categories to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size($size)
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
+        return $this->addProperty('size', $value);
     }
 }

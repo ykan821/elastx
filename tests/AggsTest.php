@@ -2,15 +2,27 @@
 
 use Tests\DslTestCase;
 use ElasticKit\DSL\Query;
+use ElasticKit\DSL\Agg;
 use ElasticKit\DSL\Aggs\Bucket\Terms;
 use ElasticKit\DSL\Aggs\Bucket\Range;
 use ElasticKit\DSL\Aggs\Bucket\GeoDistance;
 
 class AggsTest extends DslTestCase
 {
-    public function testTermsregation()
+    public function testAggsAcceptsAggInstanceAsOnlyArgument()
     {
-$expectedJson = <<<JSON
+        $agg = (new Agg())->terms(['field' => 'status']);
+        $agg->alias('by_status');
+
+        $query = new Query();
+        $query->aggs($agg);
+
+        $this->assertQuery('{"aggs":{"by_status":{"terms":{"field":"status"}}}}', $query);
+    }
+
+    public function testTermsAggregation()
+    {
+        $expectedJson = <<<JSON
 {
   "query": {
     "match": { "title": "elasticsearch" }
@@ -34,7 +46,7 @@ JSON;
 
     public function testNestedAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match": { "title": "elasticsearch" }
@@ -64,7 +76,7 @@ JSON;
 
     public function testFilterAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -88,7 +100,7 @@ JSON;
 
     public function testDeepNestedAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "match_all": {}
@@ -124,7 +136,7 @@ JSON;
 
     public function testRangeAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -153,7 +165,7 @@ JSON;
 
     public function testHistogramAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -174,7 +186,7 @@ JSON;
 
     public function testNestedAggType()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -200,7 +212,7 @@ JSON;
 
     public function testMetricAggregations()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -222,7 +234,7 @@ JSON;
 
     public function testPipelineAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -250,7 +262,7 @@ JSON;
 
     public function testGeoDistanceAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -282,7 +294,7 @@ JSON;
 
     public function testTermsAggregationWithIncludeExclude()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -310,7 +322,7 @@ JSON;
 
     public function testHistogramWithOffset()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -332,7 +344,7 @@ JSON;
 
     public function testMinAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -348,7 +360,7 @@ JSON;
 
     public function testValueCountAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -364,7 +376,7 @@ JSON;
 
     public function testStatsAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -380,7 +392,7 @@ JSON;
 
     public function testAvgBucketPipeline()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -408,7 +420,7 @@ JSON;
 
     public function testSumBucketPipeline()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -436,7 +448,7 @@ JSON;
 
     public function testBucketScriptPipeline()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -482,7 +494,7 @@ JSON;
 
     public function testAdjacencyMatrixAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -512,7 +524,7 @@ JSON;
 
     public function testAutoDateHistogramAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -530,7 +542,7 @@ JSON;
 
     public function testCategorizeTextAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -548,7 +560,7 @@ JSON;
 
     public function testCompositeAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -576,7 +588,7 @@ JSON;
 
     public function testDateRangeAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -604,7 +616,7 @@ JSON;
 
     public function testDiversifiedSamplerAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -622,7 +634,7 @@ JSON;
 
     public function testFiltersAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -652,7 +664,7 @@ JSON;
 
     public function testFrequentItemSetsAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -678,7 +690,7 @@ JSON;
 
     public function testGeoHashGridAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -696,7 +708,7 @@ JSON;
 
     public function testGeohexGridAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -714,7 +726,7 @@ JSON;
 
     public function testGeotileGridAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -732,7 +744,7 @@ JSON;
 
     public function testGlobalAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -745,14 +757,14 @@ JSON;
         $query = new Query();
         $query->matchAll();
         $query->aggs('all', function ($a) {
-            $a->globalAggregation();
+            $a->global();
         });
         $this->assertQuery($expectedJson, $query);
     }
 
     public function testIpPrefixAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -770,7 +782,7 @@ JSON;
 
     public function testIpRangeAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -799,7 +811,7 @@ JSON;
 
     public function testMissingAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -817,7 +829,7 @@ JSON;
 
     public function testMultiTermsAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -844,7 +856,7 @@ JSON;
 
     public function testParentAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -862,7 +874,7 @@ JSON;
 
     public function testRandomSamplerAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -880,7 +892,7 @@ JSON;
 
     public function testRareTermsAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -898,7 +910,7 @@ JSON;
 
     public function testReverseNestedAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -926,7 +938,7 @@ JSON;
 
     public function testSignificantTermsAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -944,7 +956,7 @@ JSON;
 
     public function testSignificantTextAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -962,7 +974,7 @@ JSON;
 
     public function testTimeSeriesAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -980,7 +992,7 @@ JSON;
 
     public function testVariableWidthHistogramAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -1000,7 +1012,7 @@ JSON;
 
     public function testExtendedStatsAggregation()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -1018,7 +1030,7 @@ JSON;
 
     public function testMaxBucketPipeline()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -1046,7 +1058,7 @@ JSON;
 
     public function testMinBucketPipeline()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -1074,7 +1086,7 @@ JSON;
 
     public function testStatsBucketPipeline()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -1102,7 +1114,7 @@ JSON;
 
     public function testCumulativeSumPipeline()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": { "match_all": {} },
   "aggs": {
@@ -1136,6 +1148,14 @@ JSON;
         $query->matchAll();
         $query->aggs('by_status', ['terms' => ['field' => 'status']]);
         $this->assertQuery('{"query":{"match_all":{}},"aggs":{"by_status":{"terms":{"field":"status"}}}}', $query);
+    }
+
+    public function testEmptyArrayAggSerializesToObject()
+    {
+        $query = new Query();
+        $query->matchAll();
+        $query->aggs('empty', []);
+        $this->assertQuery('{"query":{"match_all":{}},"aggs":{"empty":{}}}', $query);
     }
 
     public function testHistogramStringShorthand()
@@ -1290,5 +1310,16 @@ JSON;
         $query->matchAll();
         $query->aggs('total', ['sum_bucket' => ['buckets_path' => 'monthly>sales']]);
         $this->assertQuery('{"query":{"match_all":{}},"aggs":{"total":{"sum_bucket":{"buckets_path":"monthly>sales"}}}}', $query);
+    }
+
+    public function testBucketScriptRejectsStringShorthand()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('bucket_script.buckets_path must be a map');
+
+        $query = new Query();
+        $query->aggs('script', function ($a) {
+            $a->bucketScript('bare_string');
+        });
     }
 }

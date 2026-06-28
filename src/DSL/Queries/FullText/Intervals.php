@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\FullText;
 
 use ElasticKit\DSL\Node;
+use RuntimeException;
 
 /**
  * Returns documents based on the order and proximity of matching terms.
@@ -11,22 +14,22 @@ use ElasticKit\DSL\Node;
  */
 class Intervals extends Node
 {
-    protected $_key = 'intervals';
+    protected string $_key = 'intervals';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /** @var array<int, mixed> */
-    protected $_intervals = [];
+    protected array $_intervals = [];
 
     /**
      * Add a match rule that matches analyzed text.
      *
-     * @param mixed $match
+     * @param mixed $value
      * @return static
      */
-    public function match($match)
+    public function match($value): static
     {
-        $this->_intervals[] = Intervals\Match_::create($match);
+        $this->_intervals[] = Intervals\Match_::create($value);
         return $this;
     }
 
@@ -34,24 +37,37 @@ class Intervals extends Node
      * Add a prefix rule that matches terms that start with a specified set
      * of characters.
      *
-     * @param mixed $prefix
+     * @param mixed $value
      * @return static
      */
-    public function prefix($prefix)
+    public function prefix($value): static
     {
-        $this->_intervals[] = Intervals\Prefix::create($prefix);
+        $this->_intervals[] = Intervals\Prefix::create($value);
         return $this;
     }
 
     /**
      * Add a wildcard rule that matches terms using a wildcard pattern.
      *
-     * @param mixed $wildcard
+     * @param mixed $value
      * @return static
      */
-    public function wildcard($wildcard)
+    public function wildcard($value): static
     {
-        $this->_intervals[] = Intervals\Wildcard::create($wildcard);
+        $this->_intervals[] = Intervals\Wildcard::create($value);
+        return $this;
+    }
+
+    /**
+     * Add a regexp rule that matches terms using a regular expression
+     * pattern.
+     *
+     * @param mixed $value
+     * @return static
+     */
+    public function regexp($value): static
+    {
+        $this->_intervals[] = Intervals\Regexp::create($value);
         return $this;
     }
 
@@ -59,24 +75,24 @@ class Intervals extends Node
      * Add a fuzzy rule that matches terms that are similar to the provided
      * term, within a defined edit distance.
      *
-     * @param mixed $fuzzy
+     * @param mixed $value
      * @return static
      */
-    public function fuzzy($fuzzy)
+    public function fuzzy($value): static
     {
-        $this->_intervals[] = Intervals\Fuzzy::create($fuzzy);
+        $this->_intervals[] = Intervals\Fuzzy::create($value);
         return $this;
     }
 
     /**
      * Add a range rule that matches terms that fall within a specified range.
      *
-     * @param mixed $range
+     * @param mixed $value
      * @return static
      */
-    public function range($range)
+    public function range($value): static
     {
-        $this->_intervals[] = Intervals\Range::create($range);
+        $this->_intervals[] = Intervals\Range::create($value);
         return $this;
     }
 
@@ -84,12 +100,12 @@ class Intervals extends Node
      * Add an all_of rule that returns matches that span a combination of
      * other rules.
      *
-     * @param mixed $allOf
+     * @param mixed $value
      * @return static
      */
-    public function allOf($allOf)
+    public function allOf($value): static
     {
-        $this->_intervals[] = Intervals\AllOf::create($allOf);
+        $this->_intervals[] = Intervals\AllOf::create($value);
         return $this;
     }
 
@@ -97,12 +113,12 @@ class Intervals extends Node
      * Add an any_of rule that returns intervals produced by any of its
      * sub-rules.
      *
-     * @param mixed $anyOf
+     * @param mixed $value
      * @return static
      */
-    public function anyOf($anyOf)
+    public function anyOf($value): static
     {
-        $this->_intervals[] = Intervals\AnyOf::create($anyOf);
+        $this->_intervals[] = Intervals\AnyOf::create($value);
         return $this;
     }
 
@@ -120,16 +136,34 @@ class Intervals extends Node
             }
         }
         if (!$this->_multi) {
-            $properties = array_reduce($resolved, function ($carry, $item) {
-                return array_merge($carry, $item);
-            }, []);
+            $properties = $this->mergeUnique($resolved);
+            if (!empty($this->_properties)) {
+                $properties = $this->mergeUnique([$properties, $this->resolveProperties($this->_properties)]);
+            }
         } else {
             $properties = $resolved;
         }
 
-        if ($this->_isPropertyField) {
-            return [$this->_field => $properties];
+        return $this->wrapFieldKeyed($properties);
+    }
+
+    /**
+     * Merge clause arrays, throwing on duplicate keys instead of silently overwriting.
+     *
+     * @param array<int, array<string, mixed>> $clauses
+     * @return array<string, mixed>
+     * @throws RuntimeException when two clauses share a key
+     */
+    private function mergeUnique(array $clauses): array
+    {
+        $merged = [];
+        foreach ($clauses as $clause) {
+            $clash = array_intersect_key($merged, $clause);
+            if ($clash) {
+                throw new RuntimeException(sprintf('Duplicate interval clause key "%s".', implode('", "', array_keys($clash))));
+            }
+            $merged += $clause;
         }
-        return $properties;
+        return $merged;
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\Index;
 
+use ElasticKit\Index\Support\ClientManager;
 use BadMethodCallException;
 use Elastic\Elasticsearch\ClientInterface;
 use ElasticKit\DSL\Query;
@@ -15,65 +18,55 @@ use RuntimeException;
 abstract class Index
 {
     /**
-     * @var array<string, ClientInterface>
+     * @var string
      */
-    protected static $clients = [];
+    protected string $connection = 'default';
 
     /**
      * @var string
      */
-    protected $connection = 'default';
-
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
     /**
      * @var array<string, mixed>
      */
-    protected $mappings = [];
+    protected array $mappings = [];
 
     /**
      * @var array<string, mixed>
      */
-    protected $settings = [];
+    protected array $settings = [];
 
     /**
      * @var int
      */
-    protected $perPage = 15;
+    protected int $perPage = 15;
 
     /**
      * @var int
      */
-    protected $maxPerPage = 100;
+    protected int $maxPerPage = 100;
 
     /**
-     * @var callable|null
+     * Whether searches on this index track the total hit count.
+     *
+     * false (default) leaves the total unset (Elasticsearch omits hits.total);
+     * true counts every hit; an int caps the count at that many hits.
+     *
+     * @var int|bool
      */
-    protected static $pageResolver;
-
-    /**
-     * @var callable|null
-     */
-    protected static $paginatorResolver;
-
-    /**
-     * @var array<string, array<int, callable>>
-     */
-    protected static $listeners = [];
+    protected int|bool $trackTotalHits = false;
 
     /**
      * Register an Elasticsearch client. Optionally name the connection.
      *
      * @param ClientInterface $client
-     * @param string|null $name connection name, null for default
+     * @param string $connection connection name, defaults to 'default'
      * @return void
      */
-    public static function setClient(ClientInterface $client, $name = null)
+    public static function setClient(ClientInterface $client, string $connection = 'default'): void
     {
-        self::$clients[$name ?? 'default'] = $client;
+        ClientManager::set($client, $connection);
     }
 
     /**
@@ -81,18 +74,43 @@ abstract class Index
      *
      * @return ClientInterface
      */
-    public function getClient()
+    public function getClient(): ClientInterface
     {
-        if (isset(self::$clients[$this->connection])) {
-            return self::$clients[$this->connection];
-        }
-        if (isset(self::$clients['default'])) {
-            return self::$clients['default'];
-        }
-        throw new RuntimeException(
-            'Elasticsearch client not registered for connection \'' . $this->connection . '\'. '
-            . 'Call ' . static::class . '::setClient($client) first.'
-        );
+        return ClientManager::get($this->connection);
+    }
+
+    /**
+     * Set the connection name for this index instance.
+     *
+     * @param string $connection
+     * @return $this
+     */
+    public function setConnection(string $connection): static
+    {
+        $this->connection = $connection;
+
+        return $this;
+    }
+
+    /**
+     * Return the connection name for this index.
+     *
+     * @return string
+     */
+    public function getConnection(): string
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Create a new index instance with the given connection.
+     *
+     * @param string $connection
+     * @return static
+     */
+    public static function on(string $connection): static
+    {
+        return (new static())->setConnection($connection);
     }
 
     /**
@@ -100,49 +118,59 @@ abstract class Index
      *
      * @return string
      */
-    public function name()
+    public function name(): string
     {
+        if (!isset($this->name) || $this->name === '') {
+            throw new RuntimeException(
+                sprintf('Index $name is not set in %s', static::class)
+            );
+        }
+
         return $this->name;
     }
 
     /**
-     * Create a new Search instance. Supports both static and instance call.
+     * Create a new Search instance from this index instance.
      *
+     * @param Query|null $query
      * @return Search
      */
-    public static function query(Query $query = null)
+    public function newQuery(?Query $query = null): Search
     {
-        return new Search(new static(), $query);
+        return new Search($this, $query);
     }
 
     /**
-     * Create a DocReference for a single document. Supports both static and instance call.
+     * Create a Search instance. Delegates to newQuery() with a fresh instance.
      *
-     * @param string|int $id
+     * @param Query|null $query
+     * @return Search
+     */
+    public static function query(?Query $query = null): Search
+    {
+        return (new static())->newQuery($query);
+    }
+
+    /**
+     * Create a Doc reference from this index instance.
+     *
+     * @param string|int|null $id document id, or null/'' to let ES auto-generate
      * @return Doc
      */
-    public static function doc($id)
+    public function newDoc(string|int|null $id): Doc
     {
-        return new Doc(new static(), $id);
+        return new Doc($this, $id);
     }
 
     /**
-     * Insert (create or overwrite) a single document.
+     * Create a Doc reference. Delegates to newDoc() with a fresh instance.
      *
-     * @param string|int|null $id document ID, null or empty string to let ES auto-generate
-     * @param array<string, mixed> $document document body
-     * @return array<string, mixed>
+     * @param string|int|null $id document id, or null/'' to let ES auto-generate
+     * @return Doc
      */
-    public static function insert($id, array $document)
+    public static function doc(string|int|null $id): Doc
     {
-        $index = new static();
-        $params = ['index' => $index->name(), 'body' => $document];
-
-        if ($id !== null && $id !== '') {
-            $params['id'] = $id;
-        }
-
-        return $index->getClient()->index($params)->asArray();
+        return (new static())->newDoc($id);
     }
 
     /**
@@ -150,7 +178,7 @@ abstract class Index
      *
      * @return array<string, mixed>
      */
-    public function mappings()
+    public function mappings(): array
     {
         return $this->mappings;
     }
@@ -160,7 +188,7 @@ abstract class Index
      *
      * @return array<string, mixed>
      */
-    public function settings()
+    public function settings(): array
     {
         return $this->settings;
     }
@@ -180,7 +208,7 @@ abstract class Index
      *
      * @return int
      */
-    public function perPage()
+    public function perPage(): int
     {
         return $this->perPage;
     }
@@ -190,51 +218,19 @@ abstract class Index
      *
      * @return int
      */
-    public function maxPerPage()
+    public function maxPerPage(): int
     {
         return $this->maxPerPage;
     }
 
     /**
-     * Register a resolver that extracts page and perPage from the request.
+     * Return the track_total_hits setting: true, false, or a count cap.
      *
-     * @param callable $resolver returns [$page, $perPage]
-     * @return void
+     * @return int|bool
      */
-    public static function setPageResolver(callable $resolver)
+    public function trackTotalHits(): int|bool
     {
-        self::$pageResolver = $resolver;
-    }
-
-    /**
-     * Register a resolver that converts Results into a framework paginator.
-     *
-     * @param callable $resolver receives (Results $results, int $page, int $perPage)
-     * @return void
-     */
-    public static function setPaginatorResolver(callable $resolver)
-    {
-        self::$paginatorResolver = $resolver;
-    }
-
-    /**
-     * Return the registered page resolver, or null.
-     *
-     * @return callable|null
-     */
-    public static function getPageResolver()
-    {
-        return self::$pageResolver;
-    }
-
-    /**
-     * Return the registered paginator resolver, or null.
-     *
-     * @return callable|null
-     */
-    public static function getPaginatorResolver()
-    {
-        return self::$paginatorResolver;
+        return $this->trackTotalHits;
     }
 
     /**
@@ -251,49 +247,4 @@ abstract class Index
         );
     }
 
-    /**
-     * Register an event listener. Supports exact event name, category wildcard (e.g. 'search.*'), or global '*'.
-     *
-     * @param string $event
-     * @param callable $listener receives (Event $event)
-     * @return void
-     */
-    public static function listen($event, callable $listener)
-    {
-        self::$listeners[$event][] = $listener;
-    }
-
-    /**
-     * Dispatch an event to all matching listeners.
-     *
-     * @param Event $event
-     * @return void
-     */
-    public static function dispatch(Event $event)
-    {
-        foreach (self::$listeners as $pattern => $listeners) {
-            if ($pattern === $event->name || $pattern === '*' || static::matchesCategory($pattern, $event->name)) {
-                foreach ($listeners as $listener) {
-                    $listener($event);
-                }
-            }
-        }
-    }
-
-    /**
-     * Check if a wildcard pattern matches an event by category.
-     *
-     * @param string $pattern
-     * @param string $event
-     * @return bool
-     */
-    protected static function matchesCategory($pattern, $event)
-    {
-        if (substr($pattern, -2) !== '.*') {
-            return false;
-        }
-
-        $prefix = substr($pattern, 0, -1);
-        return strpos($event, $prefix) === 0;
-    }
 }

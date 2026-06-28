@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Node;
@@ -9,27 +11,27 @@ use ElasticKit\DSL\Node;
  */
 class DistanceFeature extends Node
 {
-    protected $_key = 'distance_feature';
+    protected string $_key = 'distance_feature';
 
     /**
      * Location or date to use as the origin from which to calculate distance.
      *
-     * @param mixed $origin
+     * @param mixed $value
      * @return static
      */
-    public function origin($origin)
+    public function origin($value): static
     {
-        return $this->addProperty('origin', $origin);
+        return $this->addProperty('origin', $value);
     }
 
     /**
      * Distance from the origin at which relevance scores receive half of the boost value.
      *
-     * @param mixed $pivot
+     * @param string $value
      * @return static
      */
-    public function pivot($pivot)
+    public function pivot(string $value): static
     {
-        return $this->addProperty('pivot', $pivot);
+        return $this->addProperty('pivot', $value);
     }
 }

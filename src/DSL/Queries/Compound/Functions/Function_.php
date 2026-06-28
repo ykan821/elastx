@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound\Functions;
 
 use ElasticKit\DSL\Query;
@@ -11,110 +13,110 @@ use ElasticKit\DSL\Queries\Script;
  */
 class Function_ extends Node
 {
-    protected $_key = 'function';
+    protected string $_key = 'function';
 
     /**
-     * (Optional) A filtering query that restricts the score function to matching documents only.
+     * A filtering query that restricts the score function to matching documents only.
      *
-     * @param mixed $filter
+     * @param mixed $value
      * @return static
      */
-    public function filter($filter)
+    public function filter($value): static
     {
-        return $this->addProperty('filter', Query::create($filter));
+        return $this->addProperty('filter', Query::create($value));
     }
 
     /**
-     * (Optional) Multiplies the score by the provided weight value.
+     * Multiplies the score by the provided weight value.
      *
-     * @param float $weight
+     * @param float $value
      * @return static
      */
-    public function weight($weight)
+    public function weight(float $value): static
     {
-        return $this->addProperty('weight', $weight);
+        return $this->addProperty('weight', $value);
     }
 
     /**
-     * (Optional) Generates uniformly distributed random scores from 0 up to but not including 1.
+     * Generates uniformly distributed random scores from 0 up to but not including 1.
      *
-     * @param mixed $randomScore
+     * @param mixed $value
      * @return static
      */
-    public function randomScore($randomScore = null)
+    public function randomScore($value = null): static
     {
-        return $this->addProperty('random_score', RandomScore::create($randomScore));
+        return $this->addProperty('random_score', RandomScore::create($value));
     }
 
     /**
-     * (Optional) Wraps another query and customizes the scoring using a script.
+     * Wraps another query and customizes the scoring using a script.
      *
-     * @param mixed $scriptScore
+     * @param mixed $value
      * @return static
      */
-    public function scriptScore($scriptScore)
+    public function scriptScore($value): static
     {
-        return $this->addProperty('script_score', ScriptScore::create($scriptScore));
+        return $this->addProperty('script_score', ScriptScore::create($value));
     }
 
     /**
-     * (Optional) Sets the script for script_score using a Script object or closure.
+     * Sets the script for script_score using a Script object or closure.
      *
-     * @param mixed $script
+     * @param mixed $value
      * @return static
      */
-    public function script($script)
+    public function script($value): static
     {
-        $scriptScore = (new ScriptScore())->script($script);
-        return $this->addProperty('script_score', $scriptScore);
+        $valueScore = (new ScriptScore())->script($value);
+        return $this->addProperty('script_score', $valueScore);
     }
 
     /**
-     * (Optional) Uses a numeric field value to influence the score.
+     * Uses a numeric field value to influence the score.
      *
      * @param mixed $field
-     * @param mixed $fieldValueFactor
+     * @param mixed $value
      * @return static
      */
-    public function fieldValueFactor($field, $fieldValueFactor = null)
+    public function fieldValueFactor($field, $value = null): static
     {
-        return $this->addProperty('field_value_factor', FieldValueFactor::create($field, $fieldValueFactor));
+        return $this->addProperty('field_value_factor', FieldValueFactor::create($field, $value));
     }
 
     /**
-     * (Optional) Scores documents using normal (Gaussian) decay based on distance from an origin point.
+     * Scores documents using normal (Gaussian) decay based on distance from an origin point.
      *
      * @param mixed $field
-     * @param mixed $gauss
+     * @param mixed $value
      * @return static
      */
-    public function gauss($field, $gauss = null)
+    public function gauss($field, $value = null): static
     {
-        return $this->addProperty('gauss', Gauss::create($field, $gauss));
+        return $this->addProperty('gauss', Gauss::create($field, $value));
     }
 
     /**
-     * (Optional) Scores documents using linear decay based on distance from an origin point.
+     * Scores documents using linear decay based on distance from an origin point.
      *
      * @param mixed $field
-     * @param mixed $linear
+     * @param mixed $value
      * @return static
      */
-    public function linear($field, $linear = null)
+    public function linear($field, $value = null): static
     {
-        return $this->addProperty('linear', Linear::create($field, $linear));
+        return $this->addProperty('linear', Linear::create($field, $value));
     }
 
     /**
-     * (Optional) Scores documents using exponential decay based on distance from an origin point.
+     * Scores documents using exponential decay based on distance from an origin point.
      *
      * @param mixed $field
-     * @param mixed $exp
+     * @param mixed $value
      * @return static
      */
-    public function exp($field, $exp = null)
+    public function exp($field, $value = null): static
     {
-        return $this->addProperty('exp', Exp::create($field, $exp));
+        return $this->addProperty('exp', Exp::create($field, $value));
     }
 
     /**

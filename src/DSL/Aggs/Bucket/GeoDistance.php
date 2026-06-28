@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,71 +11,60 @@ use ElasticKit\DSL\Node;
  */
 class GeoDistance extends Node
 {
-    protected $_key = 'geo_distance';
-
-    /**
-     * The geo point field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'geo_distance';
 
     /**
      * The central geo point from which distances are measured.
      *
-     * @param mixed $origin
+     * @param mixed $value
      * @return static
      */
-    public function origin($origin)
+    public function origin($value): static
     {
-        return $this->addProperty('origin', $origin);
+        return $this->addProperty('origin', $value);
     }
 
     /**
      * Distance unit (e.g. km, mi, m).
      *
-     * @param string $unit
+     * @param string $value
      * @return static
      */
-    public function unit($unit)
+    public function unit(string $value): static
     {
-        return $this->addProperty('unit', $unit);
+        return $this->addProperty('unit', $value);
     }
 
     /**
      * How to compute the distance (arc or plane).
      *
-     * @param string $distanceType
+     * @param string $value
      * @return static
      */
-    public function distanceType($distanceType)
+    public function distanceType(string $value): static
     {
-        return $this->addProperty('distance_type', $distanceType);
+        return $this->addProperty('distance_type', $value);
     }
 
     /**
      * Array of distance range definitions for bucketing.
      *
-     * @param array<string, mixed> $ranges
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function ranges($ranges)
+    public function ranges(array $value): static
     {
-        return $this->addProperty('ranges', $ranges);
+        return $this->addProperty('ranges', $value);
     }
 
     /**
      * Whether to return range buckets as a hash keyed by range key.
      *
-     * @param bool $keyed
+     * @param bool $value
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $value): static
     {
-        return $this->addProperty('keyed', $keyed);
+        return $this->addProperty('keyed', $value);
     }
 }

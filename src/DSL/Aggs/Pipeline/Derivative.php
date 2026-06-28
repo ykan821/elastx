@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Pipeline;
 
 use ElasticKit\DSL\Node;
@@ -9,49 +11,49 @@ use ElasticKit\DSL\Node;
  */
 class Derivative extends Node
 {
-    protected $_key = 'derivative';
+    protected string $_key = 'derivative';
 
     /**
      * Path to the buckets to differentiate.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function bucketsPath($path)
+    public function bucketsPath(string $value): static
     {
-        return $this->addProperty('buckets_path', $path);
+        return $this->addProperty('buckets_path', $value);
     }
 
     /**
      * Policy to apply when gaps are found in the data.
      *
-     * @param string $policy
+     * @param string $value
      * @return static
      */
-    public function gapPolicy($policy)
+    public function gapPolicy(string $value): static
     {
-        return $this->addProperty('gap_policy', $policy);
+        return $this->addProperty('gap_policy', $value);
     }
 
     /**
      * Format for the output value.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format($format)
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * The unit for the derivative when the histogram uses time units.
      *
-     * @param string $unit
+     * @param string $value
      * @return static
      */
-    public function unit($unit)
+    public function unit(string $value): static
     {
-        return $this->addProperty('unit', $unit);
+        return $this->addProperty('unit', $value);
     }
 }

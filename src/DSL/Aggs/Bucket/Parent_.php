@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -7,18 +9,18 @@ use ElasticKit\DSL\Node;
 /**
  * A bucket aggregation that aggregates on parent documents from a join field.
  */
-class ParentAgg extends Node
+class Parent_ extends Node
 {
-    protected $_key = 'parent';
+    protected string $_key = 'parent';
 
     /**
      * The child type that identifies the parent documents to aggregate on.
      *
-     * @param string $type
+     * @param string $value
      * @return static
      */
-    public function type($type)
+    public function type(string $value): static
     {
-        return $this->addProperty('type', $type);
+        return $this->addProperty('type', $value);
     }
 }

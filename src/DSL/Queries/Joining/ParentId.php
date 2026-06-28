@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Joining;
 
 use ElasticKit\DSL\Node;
@@ -11,39 +13,39 @@ use ElasticKit\DSL\Node;
  */
 class ParentId extends Node
 {
-    protected $_key = 'parent_id';
+    protected string $_key = 'parent_id';
 
     /**
      * Name of the child relationship mapped for the join field.
      *
-     * @param string $type
+     * @param string $value
      * @return static
      */
-    public function type($type)
+    public function type(string $value): static
     {
-        return $this->addProperty('type', $type);
+        return $this->addProperty('type', $value);
     }
 
     /**
      * ID of the parent document. The query will return child documents of this parent document.
      *
-     * @param string $id
+     * @param string $value
      * @return static
      */
-    public function id($id)
+    public function id(string $value): static
     {
-        return $this->addProperty('id', $id);
+        return $this->addProperty('id', $value);
     }
 
     /**
      * Indicates whether to ignore an unmapped type and not return any
      * documents instead of an error. Defaults to false.
      *
-     * @param bool $ignoreUnmapped
+     * @param bool $value
      * @return static
      */
-    public function ignoreUnmapped($ignoreUnmapped)
+    public function ignoreUnmapped(bool $value): static
     {
-        return $this->addProperty('ignore_unmapped', $ignoreUnmapped);
+        return $this->addProperty('ignore_unmapped', $value);
     }
 }

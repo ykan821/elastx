@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
-use ElasticKit\DSL\Shared\ClausesSupport;
+use ElasticKit\DSL\Support\ClausesSupport;
 use ElasticKit\DSL\Node;
-use ElasticKit\DSL\Query;
 
 /**
  * Matches spans that are near each other, with configurable slop and ordering.
@@ -13,49 +14,39 @@ class SpanNear extends Node
 {
     use ClausesSupport;
 
-    protected $_key = 'span_near';
+    protected string $_key = 'span_near';
 
     /**
      * The list of span query clauses that must appear near each other.
+     * Supports multiple calls to incrementally build.
      *
-     * @param mixed $clauses
+     * @param mixed $value
      * @return static
      */
-    public function clauses($clauses)
+    public function clauses($value): static
     {
-        return $this->addProperty('clauses', Query::create($clauses)->multi(true));
-    }
-
-    /**
-     * Append a span query clause. Supports multiple calls to incrementally build.
-     *
-     * @param mixed $clause
-     * @return static
-     */
-    public function addClause($clause)
-    {
-        return $this->pushClause('clauses', $clause);
+        return $this->addClause('clauses', $value);
     }
 
     /**
      * The maximum number of positions allowed between matching spans.
      *
-     * @param int $slop
+     * @param int $value
      * @return static
      */
-    public function slop($slop)
+    public function slop(int $value): static
     {
-        return $this->addProperty('slop', $slop);
+        return $this->addProperty('slop', $value);
     }
 
     /**
      * Whether the span clauses must appear in their specified order.
      *
-     * @param bool $inOrder
+     * @param bool $value
      * @return static
      */
-    public function inOrder($inOrder)
+    public function inOrder(bool $value): static
     {
-        return $this->addProperty('in_order', $inOrder);
+        return $this->addProperty('in_order', $value);
     }
 }

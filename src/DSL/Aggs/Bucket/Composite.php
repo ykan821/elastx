@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,77 +11,50 @@ use ElasticKit\DSL\Node;
  */
 class Composite extends Node
 {
-    /** @var string */
-    protected $_key = 'composite';
-
-    /** @var mixed */
-    protected $sources;
+    protected string $_key = 'composite';
 
     /**
-     * List of source definitions used to build composite buckets.
+     * Set the whole sources list. Each element is {name: {type: config}} where
+     * type is one of: terms, histogram, date_histogram, geotile_grid.
      *
-     * @param mixed $sources
+     * @param array<int, array<string, mixed>> $value
      * @return static
      */
-    public function sources($sources)
+    public function sources(array $value): static
     {
-        return $this->addProperty('sources', $sources);
+        return $this->addProperty('sources', $value);
     }
 
     /**
      * Cursor value to resume pagination after a previous composite response.
      *
-     * @param mixed $after
+     * @param mixed $value
      * @return static
      */
-    public function after($after)
+    public function after($value): static
     {
-        return $this->addProperty('after', $after);
+        return $this->addProperty('after', $value);
     }
 
     /**
      * Sort order for composite buckets.
      *
-     * @param mixed $order
+     * @param mixed $value
      * @return static
      */
-    public function order($order)
+    public function order($value): static
     {
-        return $this->addProperty('order', $order);
+        return $this->addProperty('order', $value);
     }
 
     /**
      * Maximum number of composite buckets to return.
      *
-     * @param int $size
+     * @param int $value
      * @return static
      */
-    public function size($size)
+    public function size(int $value): static
     {
-        return $this->addProperty('size', $size);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @SuppressWarnings(PHPMD.IfStatementAssignment)
-     */
-    public function toArray()
-    {
-        $properties = $this->_properties;
-
-        if (isset($properties['sources'])) {
-            foreach ($properties['sources'] as $key => $source) {
-                if (($item = current($source)) instanceof Node) {
-                    $properties['sources'][$key] = $item->toArray();
-                }
-            }
-        }
-
-        $properties = $this->resolveProperties($properties);
-
-        if ($this->_isPropertyField) {
-            return [$this->_field => $properties];
-        }
-        return $properties;
+        return $this->addProperty('size', $value);
     }
 }

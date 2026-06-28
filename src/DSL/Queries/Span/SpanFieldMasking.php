@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Span;
 
 use ElasticKit\DSL\Query;
@@ -10,27 +12,16 @@ use ElasticKit\DSL\Node;
  */
 class SpanFieldMasking extends Node
 {
-    protected $_key = 'span_field_masking';
+    protected string $_key = 'span_field_masking';
 
     /**
      * The inner span query to execute.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query)
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
-    }
-
-    /**
-     * The masked field to use for the span query.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
+        return $this->addProperty('query', Query::create($value));
     }
 }

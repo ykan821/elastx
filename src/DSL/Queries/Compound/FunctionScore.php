@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Compound;
 
 use ElasticKit\DSL\Query;
@@ -11,85 +13,85 @@ use ElasticKit\DSL\Queries\Compound\Functions\Function_;
  */
 class FunctionScore extends Node
 {
-    protected $_key = 'function_score';
+    protected string $_key = 'function_score';
 
     /**
-     * (Optional) Controls how the computed scores from multiple functions are combined.
+     * Controls how the computed scores from multiple functions are combined.
      * Options: multiply (default), sum, avg, first, max, min.
      *
-     * @param string $scoreMode
+     * @param string $value
      * @return static
      */
-    public function scoreMode($scoreMode)
+    public function scoreMode(string $value): static
     {
-        return $this->addProperty('score_mode', $scoreMode);
+        return $this->addProperty('score_mode', $value);
     }
 
     /**
-     * (Optional) Defines how the newly computed function score is combined with the query score.
+     * Defines how the newly computed function score is combined with the query score.
      * Options: multiply (default), replace, sum, avg, max, min.
      *
-     * @param string $boostMode
+     * @param string $value
      * @return static
      */
-    public function boostMode($boostMode)
+    public function boostMode(string $value): static
     {
-        return $this->addProperty('boost_mode', $boostMode);
+        return $this->addProperty('boost_mode', $value);
     }
 
     /**
-     * (Optional) Excludes documents that do not meet the specified score threshold.
+     * Excludes documents that do not meet the specified score threshold.
      *
-     * @param float $minScore
+     * @param float $value
      * @return static
      */
-    public function minScore($minScore)
+    public function minScore(float $value): static
     {
-        return $this->addProperty('min_score', $minScore);
+        return $this->addProperty('min_score', $value);
     }
 
     /**
-     * (Optional) Restricts the new score to not exceed the specified limit. Defaults to FLT_MAX.
+     * Restricts the new score to not exceed the specified limit. Defaults to FLT_MAX.
      *
-     * @param float $maxBoost
+     * @param float $value
      * @return static
      */
-    public function maxBoost($maxBoost)
+    public function maxBoost(float $value): static
     {
-        return $this->addProperty('max_boost', $maxBoost);
+        return $this->addProperty('max_boost', $value);
     }
 
     /**
-     * (Required) The query to be scored.
+     * The query to be scored.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query)
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 
     /**
-     * (Optional) Array of score functions to apply.
+     * Array of score functions to apply.
      *
-     * @param array<int, mixed> $functions
+     * @param array<int, mixed> $value
      * @return static
      */
-    public function functions($functions)
+    public function functions(array $value): static
     {
-        return $this->addProperty('functions', $functions);
+        return $this->addProperty('functions', $value);
     }
 
     /**
-     * (Optional) Appends a score function to the functions array.
+     * Appends a score function to the functions array.
      *
-     * @param mixed $function
+     * @param mixed $value
      * @return static
      */
-    public function addFunction($function)
+    public function addFunction($value): static
     {
-        return $this->addProperty('functions', Function_::create($function), true);
+        return $this->addProperty('functions', Function_::create($value), true);
     }
 
     /**
@@ -114,9 +116,6 @@ class FunctionScore extends Node
 
         $properties = $this->resolveProperties($properties);
 
-        if ($this->_isPropertyField) {
-            return [$this->_field => $properties];
-        }
-        return $properties;
+        return $this->wrapFieldKeyed($properties);
     }
 }

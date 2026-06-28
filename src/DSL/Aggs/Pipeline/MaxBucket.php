@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Pipeline;
 
 use ElasticKit\DSL\Node;
@@ -9,49 +11,49 @@ use ElasticKit\DSL\Node;
  */
 class MaxBucket extends Node
 {
-    protected $_key = 'max_bucket';
+    protected string $_key = 'max_bucket';
 
     /**
      * Path to the buckets to find the maximum.
      *
-     * @param string $path
+     * @param string $value
      * @return static
      */
-    public function bucketsPath($path)
+    public function bucketsPath(string $value): static
     {
-        return $this->addProperty('buckets_path', $path);
+        return $this->addProperty('buckets_path', $value);
     }
 
     /**
      * Policy to apply when gaps are found in the data.
      *
-     * @param string $policy
+     * @param string $value
      * @return static
      */
-    public function gapPolicy($policy)
+    public function gapPolicy(string $value): static
     {
-        return $this->addProperty('gap_policy', $policy);
+        return $this->addProperty('gap_policy', $value);
     }
 
     /**
      * Format for the output value.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format($format)
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
-     * (Optional) The value to use when the aggregation is missing a value.
+     * The value to use when the aggregation is missing a value.
      *
-     * @param mixed $missing
+     * @param mixed $value
      * @return static
      */
-    public function missing($missing)
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }

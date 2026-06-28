@@ -1,36 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\TermLevel;
 
 use ElasticKit\DSL\Node;
 
 class Wildcard extends Node
 {
-    protected $_key = 'wildcard';
+    protected string $_key = 'wildcard';
 
-    protected $_isPropertyField = true;
+    protected bool $_fieldKeyed = true;
 
     /**
      * Allows case insensitive matching of the pattern with the indexed field values when set to true. Default is false which means the case sensitivity of matching depends on the underlying field’s mapping.
      *
-     * @param bool $caseInsensitive
+     * @param bool $value
      * @return static
      * @version 7.10.0
      */
-    public function caseInsensitive($caseInsensitive)
+    public function caseInsensitive(bool $value): static
     {
-        return $this->addProperty('case_insensitive', $caseInsensitive);
+        return $this->addProperty('case_insensitive', $value);
     }
 
     /**
      * Method used to rewrite the query. For valid values and more information, see the rewrite parameter.
      *
-     * @param string $rewrite
+     * @param string $value
      * @return static
      */
-    public function rewrite($rewrite)
+    public function rewrite(string $value): static
     {
-        return $this->addProperty('rewrite', $rewrite);
+        return $this->addProperty('rewrite', $value);
     }
 
     /**
@@ -45,7 +47,7 @@ class Wildcard extends Node
      * @param string $value
      * @return static
      */
-    public function value($value)
+    public function value(string $value): static
     {
         return $this->addProperty('value', $value);
     }
@@ -53,11 +55,11 @@ class Wildcard extends Node
     /**
      * An alias for the value parameter. If you specify both value and wildcard, the query uses the last one in the request body.
      *
-     * @param string $wildcard
+     * @param string $value
      * @return static
      */
-    public function wildcard($wildcard)
+    public function wildcard(string $value): static
     {
-        return $this->addProperty('wildcard', $wildcard);
+        return $this->addProperty('wildcard', $value);
     }
 }

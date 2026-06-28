@@ -15,7 +15,7 @@ class SpecializedQueriesTest extends DslTestCase
 {
     public function testDistanceFeature()
     {
-$expectedJson = <<<JSON
+        $expectedJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -47,7 +47,7 @@ JSON;
 
     public function testMoreLikeThis()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "more_like_this" : {
@@ -69,9 +69,9 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
-    public function testMoreLikeThisWithQuery()
+    public function testPercolate()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "percolate": {
@@ -93,7 +93,7 @@ JSON;
 
     public function testRankFeature()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -155,7 +155,7 @@ JSON;
 
     public function testScript()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "bool": {
@@ -193,7 +193,7 @@ JSON;
 
     public function testScriptScore()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "script_score": {
@@ -202,7 +202,8 @@ $exampleJson = <<<JSON
       },
       "script": {
         "source": "doc['my-int'].value / 10 "
-      }
+      },
+      "min_score": 5.5
     }
   }
 }
@@ -215,13 +216,14 @@ JSON;
             $scriptScore->script(function (\ElasticKit\DSL\Queries\Script $script) {
                 $script->source('doc[\'my-int\'].value / 10 ');
             });
+            $scriptScore->minScore(5.5);
         });
         $this->assertQuery($exampleJson, $query);
     }
 
     public function testWrapper()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "wrapper": {
@@ -239,7 +241,7 @@ JSON;
 
     public function testPinned()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "pinned": {

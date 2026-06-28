@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Node;
@@ -9,49 +11,49 @@ use ElasticKit\DSL\Node;
  */
 class MoreLikeThis extends Node
 {
-    protected $_key = 'more_like_this';
+    protected string $_key = 'more_like_this';
 
     /**
      * List of fields to use for similarity comparison.
      *
-     * @param array<int, string> $array
+     * @param array<int, string> $value
      * @return static
      */
-    public function fields($array)
+    public function fields(array $value): static
     {
-        return $this->addProperty('fields', $array);
+        return $this->addProperty('fields', $value);
     }
 
     /**
      * Text or documents to find similar documents for.
      *
-     * @param mixed $string
+     * @param mixed $value
      * @return static
      */
-    public function like($string)
+    public function like($value): static
     {
-        return $this->addProperty('like', $string);
+        return $this->addProperty('like', $value);
     }
 
     /**
      * Minimum term frequency below which terms are ignored. Defaults to 2.
      *
-     * @param int $int
+     * @param int $value
      * @return static
      */
-    public function minTermFreq($int)
+    public function minTermFreq(int $value): static
     {
-        return $this->addProperty('min_term_freq', $int);
+        return $this->addProperty('min_term_freq', $value);
     }
 
     /**
      * Maximum number of query terms to be selected per result document. Defaults to 25.
      *
-     * @param int $int
+     * @param int $value
      * @return static
      */
-    public function maxQueryTerms($int)
+    public function maxQueryTerms(int $value): static
     {
-        return $this->addProperty('max_query_terms', $int);
+        return $this->addProperty('max_query_terms', $value);
     }
 }

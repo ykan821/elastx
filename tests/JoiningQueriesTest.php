@@ -15,7 +15,7 @@ class JoiningQueriesTest extends DslTestCase
 {
     public function testNested()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "nested": {
@@ -61,7 +61,7 @@ JSON;
 
     public function testHasChild()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "has_child": {
@@ -92,7 +92,7 @@ JSON;
 
     public function testHasParent()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
     "has_parent": {
@@ -132,7 +132,7 @@ JSON;
 
     public function testParentId()
     {
-$exampleJson = <<<JSON
+        $exampleJson = <<<JSON
 {
   "query": {
       "parent_id": {
@@ -143,7 +143,7 @@ $exampleJson = <<<JSON
 }
 JSON;
         $query = new Query();
-        $query->parentId(function (ParentId $parentId)  {
+        $query->parentId(function (ParentId $parentId) {
             $parentId->type('my-child');
             $parentId->id('1');
         });

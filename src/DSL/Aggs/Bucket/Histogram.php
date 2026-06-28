@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,126 +11,115 @@ use ElasticKit\DSL\Node;
  */
 class Histogram extends Node
 {
-    protected $_key = 'histogram';
-
-    /**
-     * The numeric field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'histogram';
 
     /**
      * Interval size for each bucket.
      *
-     * @param float $interval
+     * @param float $value
      * @return static
      */
-    public function interval($interval)
+    public function interval(float $value): static
     {
-        return $this->addProperty('interval', $interval);
+        return $this->addProperty('interval', $value);
     }
 
     /**
      * Minimum number of documents in a bucket to be returned.
      *
-     * @param int $minDocCount
+     * @param int $value
      * @return static
      */
-    public function minDocCount($minDocCount)
+    public function minDocCount(int $value): static
     {
-        return $this->addProperty('min_doc_count', $minDocCount);
+        return $this->addProperty('min_doc_count', $value);
     }
 
     /**
      * Extends the bucket range beyond the data bounds.
      *
-     * @param mixed $bounds
+     * @param mixed $value
      * @return static
      */
-    public function extendedBounds($bounds)
+    public function extendedBounds($value): static
     {
-        return $this->addProperty('extended_bounds', $bounds);
+        return $this->addProperty('extended_bounds', $value);
     }
 
     /**
      * Sort order for buckets.
      *
-     * @param mixed $order
+     * @param mixed $value
      * @return static
      */
-    public function order($order)
+    public function order($value): static
     {
-        return $this->addProperty('order', $order);
+        return $this->addProperty('order', $value);
     }
 
     /**
      * Whether to return bucket keys as strings.
      *
-     * @param bool $keyed
+     * @param bool $value
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $value): static
     {
-        return $this->addProperty('keyed', $keyed);
+        return $this->addProperty('keyed', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param float $missing
+     * @param float $value
      * @return static
      */
-    public function missing($missing)
+    public function missing(float $value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 
     /**
      * Format pattern for bucket key values.
      *
-     * @param string $format
+     * @param string $value
      * @return static
      */
-    public function format($format)
+    public function format(string $value): static
     {
-        return $this->addProperty('format', $format);
+        return $this->addProperty('format', $value);
     }
 
     /**
      * Script to compute the bucket value.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script)
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 
     /**
      * Offset for bucket starting values.
      *
-     * @param float $offset
+     * @param float $value
      * @return static
      */
-    public function offset($offset)
+    public function offset(float $value): static
     {
-        return $this->addProperty('offset', $offset);
+        return $this->addProperty('offset', $value);
     }
 
     /**
      * Limits the bucket range to a bounded range.
      *
-     * @param mixed $hardBounds
+     * @param mixed $value
      * @return static
      */
-    public function hardBounds($hardBounds)
+    public function hardBounds($value): static
     {
-        return $this->addProperty('hard_bounds', $hardBounds);
+        return $this->addProperty('hard_bounds', $value);
     }
 }

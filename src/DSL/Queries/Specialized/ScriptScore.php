@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Queries\Specialized;
 
 use ElasticKit\DSL\Query;
@@ -10,38 +12,38 @@ use ElasticKit\DSL\Node;
  */
 class ScriptScore extends Node
 {
-    protected $_key = 'script_score';
+    protected string $_key = 'script_score';
 
     /**
      * The base query whose scores will be modified by the script.
      *
-     * @param mixed $query
+     * @param mixed $value
      * @return static
      */
-    public function query($query)
+    public function query($value): static
     {
-        return $this->addProperty('query', Query::create($query));
+        return $this->addProperty('query', Query::create($value));
     }
 
     /**
      * The script used to compute the new relevance score.
      *
-     * @param mixed $script
+     * @param mixed $value
      * @return static
      */
-    public function script($script)
+    public function script($value): static
     {
-        return $this->addProperty('script', \ElasticKit\DSL\Queries\Script::create($script));
+        return $this->addProperty('script', \ElasticKit\DSL\Queries\Script::create($value));
     }
 
     /**
      * Minimum relevance score threshold. Documents with a lower score are excluded.
      *
-     * @param float $minScore
+     * @param float $value
      * @return static
      */
-    public function minScore($minScore)
+    public function minScore(float $value): static
     {
-        return $this->addProperty('min_score', Query::create($minScore));
+        return $this->addProperty('min_score', $value);
     }
 }

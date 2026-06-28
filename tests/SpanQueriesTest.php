@@ -240,12 +240,34 @@ JSON;
         $this->assertQuery($exampleJson, $query);
     }
 
+    public function testSpanOrArrayForm()
+    {
+        $exampleJson = <<<JSON
+{
+  "query": {
+    "span_or": {
+      "clauses": [
+        { "span_term": { "field": "value1" } },
+        { "span_term": { "field": "value2" } }
+      ]
+    }
+  }
+}
+JSON;
+        $query = new Query();
+        $query->spanOr(['clauses' => function (Query $query) {
+            $query->spanTerm('field', 'value1');
+            $query->spanTerm('field', 'value2');
+        }]);
+        $this->assertQuery($exampleJson, $query);
+    }
+
     public function testSpanTerm()
     {
         $exampleJson = <<<'JSON'
 {
   "query": {
-    "span_term" : { "user.id" : { "term" : "kimchy", "boost" : 2.0 } }
+    "span_term" : { "user.id" : { "value" : "kimchy", "boost" : 2.0 } }
   }
 }
 JSON;
@@ -312,10 +334,10 @@ JSON;
 JSON;
         $query = new Query();
         $query->spanOr(function (SpanOr $spanOr) {
-            $spanOr->addClause(function (Query $q) {
+            $spanOr->clauses(function (Query $q) {
                 $q->spanTerm('field1', 'bar');
             });
-            $spanOr->addClause(function (Query $q) {
+            $spanOr->clauses(function (Query $q) {
                 $q->spanTerm('field2', 'baz');
             });
         });
@@ -340,10 +362,10 @@ JSON;
 JSON;
         $query = new Query();
         $query->spanNear(function (SpanNear $spanNear) {
-            $spanNear->addClause(function (Query $q) {
+            $spanNear->clauses(function (Query $q) {
                 $q->spanTerm('field1', 'bar');
             });
-            $spanNear->addClause(function (Query $q) {
+            $spanNear->clauses(function (Query $q) {
                 $q->spanTerm('field2', 'baz');
             });
             $spanNear->slop(5)->inOrder(true);

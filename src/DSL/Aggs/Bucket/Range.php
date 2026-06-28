@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElasticKit\DSL\Aggs\Bucket;
 
 use ElasticKit\DSL\Node;
@@ -9,60 +11,49 @@ use ElasticKit\DSL\Node;
  */
 class Range extends Node
 {
-    protected $_key = 'range';
-
-    /**
-     * The numeric field to aggregate on.
-     *
-     * @param string $field
-     * @return static
-     */
-    public function field($field)
-    {
-        return $this->addProperty('field', $field);
-    }
+    protected string $_key = 'range';
 
     /**
      * Array of range definitions for bucketing.
      *
-     * @param array<string, mixed> $ranges
+     * @param array<string, mixed> $value
      * @return static
      */
-    public function ranges($ranges)
+    public function ranges(array $value): static
     {
-        return $this->addProperty('ranges', $ranges);
+        return $this->addProperty('ranges', $value);
     }
 
     /**
      * Whether to return range buckets as a hash keyed by range key.
      *
-     * @param bool $keyed
+     * @param bool $value
      * @return static
      */
-    public function keyed($keyed)
+    public function keyed(bool $value): static
     {
-        return $this->addProperty('keyed', $keyed);
+        return $this->addProperty('keyed', $value);
     }
 
     /**
      * Script to compute the bucket value.
      *
-     * @param string|callable $script
+     * @param string|callable $value
      * @return static
      */
-    public function script($script)
+    public function script($value): static
     {
-        return $this->addProperty('script', $script);
+        return $this->addProperty('script', $value);
     }
 
     /**
      * Value to use for documents missing the field value.
      *
-     * @param float $missing
+     * @param float $value
      * @return static
      */
-    public function missing($missing)
+    public function missing($value): static
     {
-        return $this->addProperty('missing', $missing);
+        return $this->addProperty('missing', $value);
     }
 }
