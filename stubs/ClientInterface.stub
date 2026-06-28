@@ -3,6 +3,12 @@
 namespace Elastic\Elasticsearch;
 
 /**
+ * NOTE: phpstan does not merge interface-stub methods over the vendored
+ * ClientInterface, so calls like $client->search() are still reported as
+ * undefined and suppressed via phpstan-baseline.neon (the Indices class stub
+ * works; this one does not). Adding a new endpoint here requires a matching
+ * baseline entry. Kept for intent and the ESResponse return type.
+ *
  * @phpstan-type ESResponse array<string, mixed>|object
  */
 interface ClientInterface

@@ -38,8 +38,8 @@ Follow PSR-5.
 
 ## TODO
 
-- [ ] **Add boundary tests for core paths**: scroll, bulk batching, rebuild failure rollback
-- [ ] **Set up integration test infrastructure**: driven by `ELASTICKIT_TEST_HOST`, with random index names for isolation
+- [ ] **Add integration contract tests for Span and Shape queries**: unit DSL tests exist, but there is no Elasticsearch execution coverage (other query families have `tests/Integration/Dsl/*ContractTest.php`)
+- [ ] **Cover Rebuild import-failure rollback**: the `createIndex`→`import` try/catch (deletes the new index on failure) is untested; only the alias-swap rollback path is covered
 
 ## Tests
 
