@@ -56,7 +56,7 @@ $results = ProductIndex::query()
     ->size(20)
     ->get();
 
-$results->total();        // 命中数
+$results->total();        // 命中数（索引未设 $trackTotalHits = true 时为 null）
 $results->docs();         // _source 数组
 $results->hits();         // 完整 hit 数组
 $results->aggregations(); // 聚合结果
@@ -96,6 +96,17 @@ Pagination::setPaginatorResolver(function ($results, $page, $perPage) {
 });
 $results->toPaginator();
 ```
+
+> **总数追踪默认关闭。** `Index` 默认 `$trackTotalHits = false`，ES 不返命中总数：`total()`/`lastPage()` 返 `null`、`toPaginator()` 抛异常。需要带页码的分页时，在索引上开启——`true` 精确计数、int 限制计数上限（如 5000）：
+>
+> ```php
+> class ProductIndex extends Index
+> {
+>     protected int|bool $trackTotalHits = true;
+> }
+> ```
+>
+> 否则用无总数分页：`hasMorePages()`（满页启发式）或 `chunk()` / `cursor()`。深翻页超过 1 万（`from + size > max_result_window`）会被 ES 拒绝——那里用 `chunk()`（scroll）。
 
 ## Scroll
 

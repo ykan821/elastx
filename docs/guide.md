@@ -160,6 +160,8 @@ public function index(Request $request)
 }
 ```
 
+> `toPaginator()` needs a hit total. Set `protected int|bool $trackTotalHits = true;` on `OrderIndex` — `Index` defaults to `false`, which omits the total and makes `toPaginator()` throw.
+
 > Conditions are checked one by one with `if`; a clause is added only when a value is present. `should()` implements OR search. For deep pagination use `chunk()` (batches) or `cursor()` (per hit) instead of `paginate()`.
 
 Operations also wants to export the filtered results to Excel. ES defaults to `max_result_window = 10000`, so `from/size` can't reach later data; iterate with `cursor()` (scroll-based):

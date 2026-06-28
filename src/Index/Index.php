@@ -51,11 +51,11 @@ abstract class Index
      * Whether searches on this index track the total hit count.
      *
      * false (default) leaves the total unset (Elasticsearch omits hits.total);
-     * set true on subclasses that need accurate pagination totals.
+     * true counts every hit; an int caps the count at that many hits.
      *
-     * @var bool
+     * @var int|bool
      */
-    protected bool $trackTotalHits = false;
+    protected int|bool $trackTotalHits = false;
 
     /**
      * Register an Elasticsearch client. Optionally name the connection.
@@ -224,11 +224,11 @@ abstract class Index
     }
 
     /**
-     * Return whether total hit tracking is enabled for this index.
+     * Return the track_total_hits setting: true, false, or a count cap.
      *
-     * @return bool
+     * @return int|bool
      */
-    public function trackTotalHits(): bool
+    public function trackTotalHits(): int|bool
     {
         return $this->trackTotalHits;
     }

@@ -56,7 +56,7 @@ $results = ProductIndex::query()
     ->size(20)
     ->get();
 
-$results->total();        // hit count
+$results->total();        // hit count (null unless the index sets $trackTotalHits = true)
 $results->docs();         // array of _source
 $results->hits();         // full hit array
 $results->aggregations(); // aggregation results
@@ -96,6 +96,17 @@ Pagination::setPaginatorResolver(function ($results, $page, $perPage) {
 });
 $results->toPaginator();
 ```
+
+> **Total tracking is opt-in.** `Index` defaults `$trackTotalHits = false`, so Elasticsearch omits the hit total: `total()`/`lastPage()` return `null` and `toPaginator()` throws. For length-aware pagination, enable it on the index — `true` counts every hit, an int caps the count (e.g. 5000):
+>
+> ```php
+> class ProductIndex extends Index
+> {
+>     protected int|bool $trackTotalHits = true;
+> }
+> ```
+>
+> Otherwise use total-less pagination: `hasMorePages()` (full-page heuristic) or `chunk()` / `cursor()`. Deep pagination past 10,000 (`from + size > max_result_window`) is rejected by Elasticsearch — use `chunk()` (scroll) there.
 
 ## Scroll
 

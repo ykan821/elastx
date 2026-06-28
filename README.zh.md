@@ -45,7 +45,7 @@ $results = ProductIndex::query()
     ->get();
 
 $hits = $results->docs();   // [['title' => '...'], ...]
-$total = $results->total(); // 命中总数
+$total = $results->total(); // 索引未设 $trackTotalHits = true 时为 null（见分页与游标）
 ```
 
 ## DSL 示例
@@ -213,6 +213,8 @@ foreach (ProductIndex::query()->cursor() as $hit) {
     // ...
 }
 ```
+
+> **分页要总数，而总数默认关闭。** `Index` 默认 `$trackTotalHits = false`，`total()`/`lastPage()` 返 `null`、`toPaginator()` 抛异常。需要页码分页时在索引上设 `protected int|bool $trackTotalHits = true;`（或计数上限）；否则用 `hasMorePages()` / `chunk()` / `cursor()` 做无总数遍历。
 
 ### 文档 CRUD
 

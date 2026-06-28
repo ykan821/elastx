@@ -45,7 +45,7 @@ $results = ProductIndex::query()
     ->get();
 
 $hits = $results->docs();   // [['title' => '...'], ...]
-$total = $results->total(); // total hits
+$total = $results->total(); // null unless $trackTotalHits = true (see Pagination & cursor)
 ```
 
 ## DSL Examples
@@ -213,6 +213,8 @@ foreach (ProductIndex::query()->cursor() as $hit) {
     // ...
 }
 ```
+
+> **Pagination needs totals, which are opt-in.** `Index` defaults `$trackTotalHits = false`, so `total()`/`lastPage()` return `null` and `toPaginator()` throws. Set `protected int|bool $trackTotalHits = true;` (or a count cap) on the index for page-count pagination, or use `hasMorePages()` / `chunk()` / `cursor()` for total-less iteration.
 
 ### Document CRUD
 
