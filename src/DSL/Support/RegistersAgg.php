@@ -19,8 +19,6 @@ trait RegistersAgg
     /**
      * Register an aggregation under an alias into the given store.
      *
-     * @SuppressWarnings(PHPMD.NPathComplexity) flat type-dispatch on polymorphic input; each branch is simple
-     *
      * @param mixed $alias aggregation alias (string), Agg instance (when passed as the only argument), or null
      * @param mixed $aggs Agg instance, array, closure, or null
      * @param array<string, Agg> $store the target aggregation store (by reference)

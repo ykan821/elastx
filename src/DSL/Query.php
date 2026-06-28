@@ -22,7 +22,6 @@ use stdClass;
  * Query container that combines multiple query conditions into an Elasticsearch DSL query.
  *
  * @phpstan-consistent-constructor
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Query extends Node
 {

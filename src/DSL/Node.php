@@ -15,7 +15,6 @@ use stdClass;
  * Abstract base class for DSL nodes (query types, params).
  *
  * @phpstan-consistent-constructor
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) the DSL base accumulates many thin accessors
  */
 abstract class Node
 {
