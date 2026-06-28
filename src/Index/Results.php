@@ -6,6 +6,7 @@ namespace ElasticKit\Index;
 
 use ElasticKit\Index\Support\Pagination;
 use RuntimeException;
+use ElasticKit\Index\Exception\PaginationTotalUnavailableException;
 
 /**
  * Lightweight wrapper for Elasticsearch search response.
@@ -56,13 +57,15 @@ class Results
     }
 
     /**
-     * Return the total number of matching documents.
+     * Return the total number of matching documents, or null when unavailable.
      *
-     * @return int
+     * Null when track_total_hits is false (Elasticsearch omits hits.total).
+     *
+     * @return int|null
      */
-    public function total(): int
+    public function total(): ?int
     {
-        return $this->response['hits']['total']['value'] ?? 0;
+        return $this->response['hits']['total']['value'] ?? null;
     }
 
     /**
@@ -142,7 +145,7 @@ class Results
      * Whether the current result set has no hits.
      *
      * For scroll loops: `while (! $results->isEmpty())`. For pagination
-     * "has a next page", use `page() < lastPage()` instead.
+     * "has a next page", use hasMorePages() (works with or without a total).
      *
      * @return bool
      */
@@ -202,17 +205,40 @@ class Results
     }
 
     /**
-     * Return the last page number.
+     * Return the last page number, or null when the total is unavailable.
      *
-     * @return int
+     * @return int|null
      */
-    public function lastPage(): int
+    public function lastPage(): ?int
     {
+        if ($this->total() === null) {
+            return null;
+        }
+
         if ($this->perPage < 1) {
             return 1;
         }
 
         return (int) ceil($this->total() / $this->perPage) ?: 1;
+    }
+
+    /**
+     * Whether there is a page after the current one.
+     *
+     * With a known total: page() < lastPage(). Without one (track_total_hits
+     * is false): a full page implies more, a partial page is the last.
+     *
+     * @return bool
+     */
+    public function hasMorePages(): bool
+    {
+        $lastPage = $this->lastPage();
+
+        if ($lastPage !== null) {
+            return $this->page < $lastPage;
+        }
+
+        return count($this->hits()) === $this->perPage;
     }
 
     /**
@@ -236,6 +262,13 @@ class Results
         if (!$this->paginated) {
             throw new RuntimeException(
                 'Cannot create paginator from non-paginated results. Call paginate() first.'
+            );
+        }
+
+        if ($this->totalRelation() === null) {
+            throw new PaginationTotalUnavailableException(
+                'Cannot build a length-aware paginator: total is unavailable (track_total_hits is false). '
+                . 'Enable track_total_hits on the index, or use hasMorePages()/chunk() for total-less pagination.'
             );
         }
 

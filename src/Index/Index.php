@@ -48,6 +48,16 @@ abstract class Index
     protected int $maxPerPage = 100;
 
     /**
+     * Whether searches on this index track the total hit count.
+     *
+     * false (default) leaves the total unset (Elasticsearch omits hits.total);
+     * set true on subclasses that need accurate pagination totals.
+     *
+     * @var bool
+     */
+    protected bool $trackTotalHits = false;
+
+    /**
      * Register an Elasticsearch client. Optionally name the connection.
      *
      * @param ClientInterface $client
@@ -211,6 +221,16 @@ abstract class Index
     public function maxPerPage(): int
     {
         return $this->maxPerPage;
+    }
+
+    /**
+     * Return whether total hit tracking is enabled for this index.
+     *
+     * @return bool
+     */
+    public function trackTotalHits(): bool
+    {
+        return $this->trackTotalHits;
     }
 
     /**

@@ -265,28 +265,33 @@ class Rebuild
             throw $e;
         }
 
-        $client->refresh(['index' => $newIndex]);
-
         $oldIndex = null;
 
-        if ($client->existsAlias(['name' => $name])->asBool()) {
-            $oldIndices = array_keys($client->getAlias(['name' => $name])->asArray());
-            $oldIndex = $oldIndices[0] ?? null;
-            $actions = [];
-            foreach ($oldIndices as $idx) {
-                $actions[] = ['remove' => ['index' => $idx, 'alias' => $name]];
+        try {
+            $client->refresh(['index' => $newIndex]);
+
+            if ($client->existsAlias(['name' => $name])->asBool()) {
+                $oldIndices = array_keys($client->getAlias(['name' => $name])->asArray());
+                $oldIndex = $oldIndices[0] ?? null;
+                $actions = [];
+                foreach ($oldIndices as $idx) {
+                    $actions[] = ['remove' => ['index' => $idx, 'alias' => $name]];
+                }
+                $actions[] = ['add' => ['index' => $newIndex, 'alias' => $name]];
+                $client->updateAliases(['body' => ['actions' => $actions]]);
+            } elseif ($client->exists(['index' => $name])->asBool()) {
+                throw new RuntimeException(
+                    "Index [{$name}] is a real index, not an alias. "
+                    . "Rebuild requires an alias to swap atomically. "
+                    . "Delete the index manually or convert it to alias mode before running rebuild."
+                );
+            } else {
+                $client->putAlias(['index' => $newIndex, 'name' => $name]);
             }
-            $actions[] = ['add' => ['index' => $newIndex, 'alias' => $name]];
-            $client->updateAliases(['body' => ['actions' => $actions]]);
-        } elseif ($client->exists(['index' => $name])->asBool()) {
+        } catch (\Throwable $e) {
+            // Swap failed (or precondition unmet) — remove the orphaned new index.
             $client->delete(['index' => $newIndex]);
-            throw new RuntimeException(
-                "Index [{$name}] is a real index, not an alias. "
-                . "Rebuild requires an alias to swap atomically. "
-                . "Delete the index manually or convert it to alias mode before running rebuild."
-            );
-        } else {
-            $client->putAlias(['index' => $newIndex, 'name' => $name]);
+            throw $e;
         }
 
         $e = new Event('rebuild.run.after', $name);

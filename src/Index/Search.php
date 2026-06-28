@@ -314,6 +314,13 @@ class Search
     protected function doSearch(string $action, array $extra = []): array
     {
         $indexName = $this->index->name();
+
+        // Apply the index's track_total_hits default unless explicitly set.
+        // Skipped for scroll: ES forbids disabling track_total_hits in a scroll context.
+        if ($action !== 'scroll' && !$this->query->hasParam('track_total_hits')) {
+            $this->query->trackTotalHits($this->index->trackTotalHits());
+        }
+
         $body = $this->query->toArray();
         if (isset($extra['body'])) {
             $body = array_merge($body, $extra['body']);

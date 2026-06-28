@@ -84,6 +84,7 @@ abstract class IntegrationTestCase extends DslTestCase
             public function __construct(string $name)
             {
                 $this->name = $name;
+                $this->trackTotalHits = true;
             }
         };
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
+use ElasticKit\Index\Exception\PaginationTotalUnavailableException;
 use ElasticKit\Index\Support\ClientManager;
 use ElasticKit\Index\Support\Pagination;
 use ElasticKit\Index\Results;
@@ -228,5 +229,45 @@ class ResultsTest extends TestCase
     {
         $results = new Results($this->makeResponse(['timed_out' => false]));
         $this->assertFalse($results->timedOut());
+    }
+
+    public function testTotalIsNullWhenOmitted()
+    {
+        // track_total_hits=false omits hits.total entirely.
+        $results = new Results(['hits' => ['hits' => []]]);
+        $this->assertNull($results->total());
+        $this->assertNull($results->totalRelation());
+    }
+
+    public function testLastPageIsNullWhenTotalUnavailable()
+    {
+        $results = (new Results(['hits' => ['hits' => []]]))->paginate(1, 15);
+        $this->assertNull($results->lastPage());
+    }
+
+    public function testHasMorePagesUsesTotalWhenKnown()
+    {
+        $results = (new Results($this->makeResponse([
+            'hits' => ['total' => ['value' => 33, 'relation' => 'eq'], 'hits' => []],
+        ])))->paginate(1, 15);
+        $this->assertTrue($results->hasMorePages()); // page 1 < lastPage 3
+    }
+
+    public function testHasMorePagesFullPageHeuristicWhenNoTotal()
+    {
+        $full = array_fill(0, 15, ['_id' => 'x', '_source' => []]);
+        $results = (new Results(['hits' => ['hits' => $full]]))->paginate(1, 15);
+        $this->assertTrue($results->hasMorePages()); // full page -> probably more
+
+        $partial = array_fill(0, 10, ['_id' => 'x', '_source' => []]);
+        $results = (new Results(['hits' => ['hits' => $partial]]))->paginate(1, 15);
+        $this->assertFalse($results->hasMorePages()); // partial page -> last
+    }
+
+    public function testToPaginatorThrowsWhenTotalUnavailable()
+    {
+        $results = (new Results(['hits' => ['hits' => []]]))->paginate(1, 15);
+        $this->expectException(PaginationTotalUnavailableException::class);
+        $results->toPaginator();
     }
 }
