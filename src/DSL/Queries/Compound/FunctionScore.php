@@ -116,9 +116,6 @@ class FunctionScore extends Node
 
         $properties = $this->resolveProperties($properties);
 
-        if ($this->_fieldKeyed) {
-            return [$this->_field => $properties];
-        }
-        return $properties;
+        return $this->wrapFieldKeyed($properties);
     }
 }

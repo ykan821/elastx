@@ -65,4 +65,11 @@ class NodeInvariantsTest extends DslTestCase
         $this->expectException(\LogicException::class);
         (new Term())->toArray();
     }
+
+    // field-keyed node that overrides toArray() (Intervals) must be guarded too
+    public function testFieldKeyedOverrideWithoutFieldThrows()
+    {
+        $this->expectException(\LogicException::class);
+        (new \ElasticKit\DSL\Queries\FullText\Intervals())->toArray();
+    }
 }

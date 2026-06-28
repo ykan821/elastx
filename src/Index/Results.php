@@ -238,7 +238,7 @@ class Results
             return $this->page < $lastPage;
         }
 
-        return count($this->hits()) === $this->perPage;
+        return $this->perPage > 0 && count($this->hits()) === $this->perPage;
     }
 
     /**
@@ -265,7 +265,7 @@ class Results
             );
         }
 
-        if ($this->totalRelation() === null) {
+        if ($this->total() === null) {
             throw new PaginationTotalUnavailableException(
                 'Cannot build a length-aware paginator: total is unavailable (track_total_hits is false). '
                 . 'Enable track_total_hits on the index, or use hasMorePages()/chunk() for total-less pagination.'

@@ -144,10 +144,7 @@ class Intervals extends Node
             $properties = $resolved;
         }
 
-        if ($this->_fieldKeyed) {
-            return [$this->_field => $properties];
-        }
-        return $properties;
+        return $this->wrapFieldKeyed($properties);
     }
 
     /**

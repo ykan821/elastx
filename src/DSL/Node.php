@@ -298,6 +298,27 @@ abstract class Node
     }
 
     /**
+     * Wrap properties under the field name for field-keyed nodes.
+     *
+     * @param mixed $properties
+     * @return mixed
+     * @throws LogicException when the node is field-keyed but no field was set
+     */
+    protected function wrapFieldKeyed($properties): mixed
+    {
+        if (!$this->_fieldKeyed) {
+            return $properties;
+        }
+        if (!isset($this->_field)) {
+            throw new LogicException(sprintf(
+                '%s is field-keyed but no field was set; call field() before serializing.',
+                static::class
+            ));
+        }
+        return [$this->_field => $properties];
+    }
+
+    /**
      * Serialize to an Elasticsearch DSL array.
      *
      * Recursively resolves nested Query and Node instances.
@@ -325,16 +346,7 @@ abstract class Node
             }
         }
 
-        if ($this->_fieldKeyed) {
-            if (!isset($this->_field)) {
-                throw new LogicException(sprintf(
-                    '%s is field-keyed but no field was set; call field() before serializing.',
-                    static::class
-                ));
-            }
-            return [$this->_field => $properties];
-        }
-        return $properties;
+        return $this->wrapFieldKeyed($properties);
     }
 
     /**
