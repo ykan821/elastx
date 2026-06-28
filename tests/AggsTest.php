@@ -1150,6 +1150,14 @@ JSON;
         $this->assertQuery('{"query":{"match_all":{}},"aggs":{"by_status":{"terms":{"field":"status"}}}}', $query);
     }
 
+    public function testEmptyArrayAggSerializesToObject()
+    {
+        $query = new Query();
+        $query->matchAll();
+        $query->aggs('empty', []);
+        $this->assertQuery('{"query":{"match_all":{}},"aggs":{"empty":{}}}', $query);
+    }
+
     public function testHistogramStringShorthand()
     {
         $query = new Query();

@@ -19,12 +19,14 @@ class SpanTerm extends Node
     /**
      * The value of the term to match.
      *
+     * ES span_term uses the {value} key (not {term}); delegates to value().
+     *
      * @param string|int|float|bool $value
      * @return static
      */
     public function term(string|int|float|bool $value): static
     {
-        return $this->addProperty('term', $value);
+        return $this->value($value);
     }
 
     /**

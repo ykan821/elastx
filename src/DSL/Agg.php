@@ -8,6 +8,7 @@ use ElasticKit\DSL\Aggs\Bucket;
 use ElasticKit\DSL\Aggs\Metric;
 use ElasticKit\DSL\Aggs\Pipeline;
 use ElasticKit\DSL\Support\RegistersAgg;
+use stdClass;
 
 /**
  * Aggregation container (independent, does not extend Node).
@@ -169,7 +170,7 @@ class Agg
         if ($this->_properties !== null) {
             $resolved = $this->resolveProperties($this->_properties);
             if ($this->_alias !== null) {
-                return [$this->_alias => $resolved];
+                return [$this->_alias => ($resolved === [] ? new stdClass() : $resolved)];
             }
             return $resolved;
         }
@@ -188,7 +189,7 @@ class Agg
         }
 
         if ($this->_alias !== null) {
-            return [$this->_alias => $inner];
+            return [$this->_alias => ($inner === [] ? new stdClass() : $inner)];
         }
 
         return $inner;

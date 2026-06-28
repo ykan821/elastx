@@ -146,6 +146,13 @@ JSON;
         $this->assertQuery($expectedJson, $query);
     }
 
+    public function testRangeShorthandRejectsExtraPositionalElements()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $query = new Query();
+        $query->range('price', [10, 20, 30]);
+    }
+
     public function testRangeOperators()
     {
         $expectedJson = <<<JSON

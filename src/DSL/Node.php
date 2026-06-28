@@ -8,6 +8,7 @@ use ArgumentCountError;
 use BadMethodCallException;
 use Closure;
 use InvalidArgumentException;
+use LogicException;
 use stdClass;
 
 /**
@@ -325,6 +326,12 @@ abstract class Node
         }
 
         if ($this->_fieldKeyed) {
+            if (!isset($this->_field)) {
+                throw new LogicException(sprintf(
+                    '%s is field-keyed but no field was set; call field() before serializing.',
+                    static::class
+                ));
+            }
             return [$this->_field => $properties];
         }
         return $properties;

@@ -27,6 +27,7 @@ class DateHistogram extends Node
     /**
      * Interval for bucketing. Deprecated in favor of calendar_interval or fixed_interval.
      *
+     * @deprecated ES deprecated the bare `interval` key; use calendarInterval() or fixedInterval() instead.
      * @param string $value
      * @return static
      */

@@ -58,4 +58,11 @@ class NodeInvariantsTest extends DslTestCase
         // boost 2.0 must stay a float in JSON, not collapse to int 2
         $this->assertStringContainsString('"boost": 2.0', $t->toJson());
     }
+
+    // field-keyed node with no field set -> LogicException (not uncatchable Error)
+    public function testFieldKeyedWithoutFieldThrows()
+    {
+        $this->expectException(\LogicException::class);
+        (new Term())->toArray();
+    }
 }

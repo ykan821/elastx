@@ -267,7 +267,7 @@ JSON;
         $exampleJson = <<<'JSON'
 {
   "query": {
-    "span_term" : { "user.id" : { "term" : "kimchy", "boost" : 2.0 } }
+    "span_term" : { "user.id" : { "value" : "kimchy", "boost" : 2.0 } }
   }
 }
 JSON;

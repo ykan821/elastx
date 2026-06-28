@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ElasticKit\DSL\Support;
 
+use InvalidArgumentException;
+
 /**
  * Maps operator shorthands (>=, >, <=, <) and [start, end] to ES range keys.
  */
@@ -26,7 +28,7 @@ trait RangeSupport
     }
 
     /**
-     * @param array<string, mixed> $props
+     * @param array<int|string, mixed> $props
      * @return array<string, mixed>
      */
     private static function normalizeKeys(array $props): array
@@ -39,6 +41,14 @@ trait RangeSupport
             if (isset($operators[$operator])) {
                 unset($props[$operator]);
                 $props[$operators[$operator]] = $val;
+            } elseif (is_int($operator)) {
+                // A positional element beyond the [start, end] shorthand is invalid;
+                // without this guard it leaks into DSL as a numeric string key.
+                throw new InvalidArgumentException(sprintf(
+                    'Range shorthand only supports two positional elements [start, end]; '
+                    . 'unexpected element at index %d. Use [\'gte\' => ..., \'lte\' => ...] instead.',
+                    $operator
+                ));
             }
         }
         return $props;
