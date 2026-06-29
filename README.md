@@ -304,24 +304,6 @@ EventDispatcher::listen('search.*', function (Event $e) {
 
 </details>
 
-## Long-lived processes
-
-`Index::setClient()`, `ClientManager`, `EventDispatcher`, and `Pagination` hold **static state**. In a long-lived worker (Swoole, RoadRunner, Laravel Octane) this state persists across requests, so a worker leaks the registered client, event listeners, and pagination resolvers between requests.
-
-Reset them between requests — e.g. in a request-terminated hook:
-
-```php
-use ElasticKit\Index\Support\ClientManager;
-use ElasticKit\Index\Support\EventDispatcher;
-use ElasticKit\Index\Support\Pagination;
-
-ClientManager::reset();
-EventDispatcher::reset();
-Pagination::reset();
-```
-
-PHP-FPM forks a worker per request, so this only affects persistent workers.
-
 ## Documentation
 
 - [Guide](docs/guide.md) — an e-commerce order scenario, the full flow from install to production
