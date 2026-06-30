@@ -113,4 +113,19 @@ class BulkContractTest extends IntegrationTestCase
         $this->refreshIndex();
         $this->assertSame('resend', $index->newDoc('1')->source()['title']);
     }
+
+    public function testFlushThrowsWhenNoErrorHandler(): void
+    {
+        // create on the already-seeded id '1' triggers a bulk error; with no
+        // onError handler, flush() must throw a RuntimeException describing it.
+        $index = $this->makeIndex();
+        $bulk = (new Bulk($index))->create('1', ['title' => 'dup']);
+
+        try {
+            $bulk->flush();
+            $this->fail('Expected flush() to throw on bulk errors with no onError handler');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('Bulk request has errors', $e->getMessage());
+        }
+    }
 }

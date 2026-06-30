@@ -391,7 +391,7 @@ Always validate and filter user input before passing it to DSL methods.
 | `forceMerge()` | Force-merge index segments |
 | `addAlias($alias)` | Add an alias |
 | `removeAlias($alias)` | Remove an alias |
-| `swapAlias($alias, $target)` | Swap where an alias points |
+| `swapAlias($alias, $fromIndex)` | Swap where an alias points |
 | `getAliases()` | Get the index's aliases |
 
 ### Event list

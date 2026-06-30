@@ -52,9 +52,28 @@ class SearchContractTest extends IntegrationTestCase
 
     public function testScroll(): void
     {
-        $results = $this->makeIndex()->newQuery()->matchAll()->scroll(null, '1m');
+        $search = $this->makeIndex()->newQuery()->matchAll();
+        $results = $search->scroll(null, '1m');
         $this->assertNotEmpty($results->scrollId());
-        $this->assertGreaterThanOrEqual(1, count($results->hits()));
+        $this->assertCount(3, $results->hits());
+        $search->clear($results);
+    }
+
+    public function testScrollNextAndClear(): void
+    {
+        $search = $this->makeIndex()->newQuery()->matchAll()->size(2);
+
+        $first = $search->scroll(null, '1m');
+        $this->assertNotEmpty($first->scrollId());
+        $this->assertCount(2, $first->hits());
+
+        $second = $search->next($first, '1m');
+        $this->assertCount(1, $second->hits());
+
+        $third = $search->next($second, '1m');
+        $this->assertCount(0, $third->hits());
+
+        $search->clear($third);
     }
 
     public function testChunk(): void

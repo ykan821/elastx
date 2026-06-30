@@ -391,7 +391,7 @@ Index::setClient($client);
 | `forceMerge()` | 强制合并索引段 |
 | `addAlias($alias)` | 添加别名 |
 | `removeAlias($alias)` | 移除别名 |
-| `swapAlias($alias, $target)` | 切换别名指向 |
+| `swapAlias($alias, $fromIndex)` | 切换别名指向 |
 | `getAliases()` | 获取索引别名 |
 
 ### 事件列表
