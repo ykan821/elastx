@@ -110,4 +110,13 @@ class DocContractTest extends IntegrationTestCase
         // refresh=wait_for makes it searchable immediately
         $this->assertSame('refreshed', $index->newDoc('42')->source()['title']);
     }
+
+    public function testRefreshAcceptsBool(): void
+    {
+        $index = $this->makeIndex();
+        // bool refresh (true/false) is valid per ES alongside 'wait_for';
+        // verify the widened string|bool type is accepted and the write lands.
+        $index->newDoc('43')->refresh(true)->index(['title' => 'bool-refresh']);
+        $this->assertSame('bool-refresh', $index->newDoc('43')->source()['title']);
+    }
 }

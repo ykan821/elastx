@@ -1,6 +1,7 @@
 /vendor/
 .claude/
 CLAUDE.local.md
+CLAUDE.md
 composer.lock
 .idea
 composer.phar

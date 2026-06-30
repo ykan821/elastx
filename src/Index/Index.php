@@ -238,7 +238,6 @@ abstract class Index
      *
      * @param array<string, mixed> $context user-defined context passed from rebuild
      * @return iterable<string|int, array<string, mixed>>
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function source(array $context = []): iterable
     {

@@ -161,4 +161,73 @@ class RebuildContractTest extends IntegrationTestCase
         $this->assertNotEmpty($result['newIndex']);
         $this->assertNull($result['oldIndex']);
     }
+
+    public function testImportFailureDeletesNewIndex(): void
+    {
+        $alias = 'ek_rebuild_' . bin2hex(random_bytes(4));
+        $newIndex = $alias . '_backing_' . bin2hex(random_bytes(2));
+        $index = new class ($alias, $newIndex) extends Index {
+            public function __construct(string $alias, private string $backing)
+            {
+                $this->name = $alias;
+            }
+
+            public function rebuildName(): string
+            {
+                return $this->backing;
+            }
+
+            public function source(array $context = []): iterable
+            {
+                yield 1 => ['title' => 'A'];
+                throw new \RuntimeException('import blew up');
+            }
+        };
+
+        try {
+            (new Rebuild($index))->run();
+            $this->fail('Expected rebuild to throw on import failure');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('import blew up', $e->getMessage());
+        }
+
+        $this->assertFalse(
+            $index->getClient()->indices()->exists(['index' => $newIndex])->asBool(),
+            'Orphan new backing index must be deleted after an import failure'
+        );
+    }
+
+    public function testSwapFailureDeletesNewIndex(): void
+    {
+        // $this->indexName is a real index (created by setUp), not an alias
+        $newIndex = $this->indexName . '_backing_' . bin2hex(random_bytes(2));
+        $index = new class ($this->indexName, $newIndex) extends Index {
+            public function __construct(string $name, private string $backing)
+            {
+                $this->name = $name;
+            }
+
+            public function rebuildName(): string
+            {
+                return $this->backing;
+            }
+
+            public function source(array $context = []): iterable
+            {
+                yield 1 => ['title' => 'A']; // import succeeds; the swap then fails
+            }
+        };
+
+        try {
+            (new Rebuild($index))->run();
+            $this->fail('Expected rebuild to throw on a real index');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('is a real index', $e->getMessage());
+        }
+
+        $this->assertFalse(
+            $index->getClient()->indices()->exists(['index' => $newIndex])->asBool(),
+            'Orphan new backing index must be deleted after a swap failure'
+        );
+    }
 }

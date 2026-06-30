@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.0.0] - 2026-06-30
+
+First stable release. The public API is now frozen: public method parameter
+names are part of the API (named arguments are supported) and will not change
+in 8.x patch/minor releases.
+
+### Changed
+
+- `Doc::refresh()` now accepts `bool` (`true`/`false`) in addition to `string` (`'wait_for'`), matching Elasticsearch's `refresh` parameter.
+
+See the 8.0.0-beta.5 and 8.0.0-beta.4 entries for the full feature set and breaking changes introduced during the beta cycle.
+
 ## [8.0.0-beta.5] - 2026-06-28
 
 ### Added

@@ -304,24 +304,6 @@ EventDispatcher::listen('search.*', function (Event $e) {
 
 </details>
 
-## 常驻进程
-
-`Index::setClient()`、`ClientManager`、`EventDispatcher`、`Pagination` 持有**静态状态**。在常驻 worker（Swoole、RoadRunner、Laravel Octane）中，这些状态跨请求保留，worker 会把已注册的客户端、事件监听器、分页解析器泄漏到下一个请求。
-
-请在请求之间重置它们——例如在请求终止钩子里：
-
-```php
-use ElasticKit\Index\Support\ClientManager;
-use ElasticKit\Index\Support\EventDispatcher;
-use ElasticKit\Index\Support\Pagination;
-
-ClientManager::reset();
-EventDispatcher::reset();
-Pagination::reset();
-```
-
-PHP-FPM 每请求 fork 一个 worker，因此本节仅影响常驻 worker。
-
 ## 文档
 
 - [实践指南](docs/guide.zh.md)——电商订单场景，从安装到上线的完整流程

@@ -20,9 +20,9 @@ class Doc
     private int $retryOnConflict = 0;
 
     /**
-     * @var string|null
+     * @var string|bool|null
      */
-    private ?string $refresh = null;
+    private string|bool|null $refresh = null;
 
     /**
      * @param string|int|null $id document id, or null/'' to let ES auto-generate
@@ -59,10 +59,10 @@ class Doc
     /**
      * Set refresh for subsequent write operations (true/false/wait_for).
      *
-     * @param string $value
+     * @param string|bool $value
      * @return $this
      */
-    public function refresh(string $value): static
+    public function refresh(string|bool $value): static
     {
         $this->refresh = $value;
 
