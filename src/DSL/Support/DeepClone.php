@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ElasticKit\DSL;
+namespace ElasticKit\DSL\Support;
 
 use Closure;
 use ReflectionClass;
@@ -12,8 +12,8 @@ use ReflectionClass;
  * (own and inherited) is duplicated so the clone shares no references with its
  * original. New properties are covered automatically — no per-class __clone.
  *
- * Closures are left shared (uncloneable; they capture context but are not
- * mutated after creation). Scalars/null are copied by PHP's clone and skipped.
+ *
+ * @internal
  */
 trait DeepClone
 {

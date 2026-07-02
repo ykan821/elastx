@@ -7,6 +7,7 @@ namespace ElasticKit\DSL;
 use ElasticKit\DSL\Aggs\Bucket;
 use ElasticKit\DSL\Aggs\Metric;
 use ElasticKit\DSL\Aggs\Pipeline;
+use ElasticKit\DSL\Support\DeepClone;
 use ElasticKit\DSL\Support\RegistersAgg;
 use stdClass;
 
