@@ -4,9 +4,15 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![Total Downloads](https://img.shields.io/packagist/dt/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
+[![Tests](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml/badge.svg)](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml)
+[![PHP](https://img.shields.io/packagist/php-v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![License](https://img.shields.io/packagist/l/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 
 PHP Elasticsearch DSL 查询构建库，覆盖查询、聚合、CRUD、批量写入、零停机重建。
+
+## 集成
+
+- **[ElasticKit Laravel](https://github.com/ykan821/ElasticKitLaravel)** — Laravel 集成(原生分页、artisan 重建)。`composer require ykan/elastickit-laravel`。
 
 ## 安装
 
@@ -50,45 +56,10 @@ $total = $results->total(); // 索引未设 $trackTotalHits = true 时为 null�
 
 ## DSL 示例
 
+ElasticKit 的 DSL 尽量贴近 ES 原生 API，以减少认知负担——熟悉 ES DSL 的人可以平滑迁移。每个查询类型都是一个专门的 `Node` 类，方法名与 ES 参数对应。
+
 <details>
 <summary>展开查看</summary>
-
-### 多态参数
-
-同一个方法支持字符串、数组、闭包、对象四种写法：
-
-```php
-$q->term('status', 'published');                                     // string
-$q->term(['status' => 'published']);                                 // array
-$q->term(fn ($t) => $t->field('status')->value('published'));        // closure
-$q->term(Term::create('status', 'published'));                       // object
-```
-
-### OOP 风格
-
-每个查询类型都是独立的 Node 类，支持链式调用：
-
-```php
-use ElasticKit\DSL\Query;
-use ElasticKit\DSL\Queries\TermLevel\Term;
-use ElasticKit\DSL\Queries\TermLevel\Range;
-use ElasticKit\DSL\Queries\FullText\Match_;
-use ElasticKit\DSL\Queries\Compound\Boolean;
-
-$bool = Boolean::create()
-    ->must(Match_::create('title', 'elasticsearch'))
-    ->filter(Term::create('status', 'published')->boost(1.5));
-
-// 增量构建
-if ($filterByPrice) {
-    $bool->filter(Range::create('price', [10, 100]));
-}
-
-$query = Query::create($bool);
-
-$query->toArray();  // ['query' => ['bool' => [...]]]
-$query->toJson();   // '{"query":{"bool":{...}}}'
-```
 
 ### 复合查询
 
@@ -98,8 +69,7 @@ $results = ProductIndex::query()
         'must'   => fn ($q) => $q->match('title', 'elasticsearch'),
         'filter' => fn ($q) => $q
             ->range('price', [10, 100])
-            ->when($status, fn ($q) => $q->term('status', $status))  // 条件过滤
-            ->term('status', 'published'),
+            ->when($status, fn ($q) => $q->term('status', $status)),  // 条件过滤
     ])
     ->highlight('title')
     ->sort('price', 'asc')
@@ -124,25 +94,29 @@ $results = ProductIndex::query()
 }
 ```
 
-### 子句追加（ClausesSupport）
+### OOP 风格
 
-`bool` 查询的子句（must / should / filter / must_not）**累加追加**，并接受与叶子查询相同的 4 种输入形式：
+先单独构造各个子句，再组合成查询：
 
 ```php
-// 4 种输入形式等价，都产出一条 must
-$q->bool(fn ($b) => $b->must(fn ($q) => $q->term('status', 'published')));
-$q->bool(['must' => fn ($q) => $q->term('status', 'published')]);
-$q->bool('must', fn ($q) => $q->term('status', 'published'));
+use ElasticKit\DSL\Queries\Compound\Boolean;
+use ElasticKit\DSL\Queries\FullText\Match_;
+use ElasticKit\DSL\Queries\TermLevel\Range;
+use ElasticKit\DSL\Queries\TermLevel\Term;
 
-// 子句累加（多次调用、列表形式都追加）
-$q->bool(fn ($b) => $b->must(...)->must(...));   // must: [q1, q2]
-$q->bool(['must' => [$q1, $q2]]);                // 同上
+// 构造子句
+$status = Term::create('status', 'published')->boost(1.5);
+$title  = Match_::create('title', 'elasticsearch');
 
-// 对比：minimum_should_match 是单值属性，后调覆盖而非追加
-$q->bool(fn ($b) => $b->minimumShouldMatch(1)->minimumShouldMatch(3)); // 3
+// 组合成 bool 查询
+$bool = Boolean::create()->must($title)->filter($status);
+if ($filterByPrice) {
+    $bool->filter(Range::create('price', [10, 100]));
+}
+
+// 执行
+$results = ProductIndex::query()->bool($bool)->size(20)->get();
 ```
-
-> `dis_max`、`span_or`、`span_near` 等其他数组子句容器同理（queries / clauses 累加）。
 
 ### 聚合
 
@@ -157,22 +131,25 @@ $results = ProductIndex::query()
 $aggs = $results->aggregations();
 ```
 
-### 嵌套查询
+### kNN 搜索
 
 ```php
 $results = ProductIndex::query()
-    ->nested('comments', fn ($q) => $q->match('comments.body', 'great'))
+    ->knn(fn ($k) => $k
+        ->field('embedding')
+        ->queryVector([0.12, 0.45, 0.78, /* ... */])
+        ->numCandidates(100))
+    ->size(10)
     ->get();
 ```
 
-### 原生 DSL 透传
+### 原生数组
 
 ```php
-// 支持原生数组嵌套闭包，query/aggs/参数可一次性传入
 $query = Query::create([
     'query' => [
         'bool' => [
-            'must'   => fn ($q) => $q->match('title', 'elasticsearch'),
+            'must'   => fn ($q) => $q->match('title', 'elasticsearch'),  // 支持数组嵌套闭包
             'filter' => fn ($q) => $q->term('status', 'published'),
         ],
     ],
@@ -181,9 +158,33 @@ $query = Query::create([
 ]);
 ```
 
+### 子句追加（ClausesSupport）
+
+`bool` 查询的子句（must / should / filter / must_not）**累加追加**——重复调用会累加，而非覆盖：
+
+```php
+$q->bool(fn ($b) => $b->must($q1));   // must: [q1]
+$q->bool(fn ($b) => $b->must($q2));   // must: [q1, q2]
+```
+
+> `dis_max`、`span_or`、`span_near` 等其他数组子句容器同理。
+
+### 灵活入参
+
+同一个方法接受多种入参形式——按场景选用：
+
+```php
+$q->term('status', 'published');                                     // string
+$q->term(['status' => 'published']);                                 // array
+$q->term(fn ($t) => $t->field('status')->value('published'));        // closure
+$q->term(Term::create('status', 'published'));                       // object
+```
+
 </details>
 
 ## Index 示例
+
+围绕 `Index` 基类，ElasticKit 为索引日常操作封装了专用类——分页、CRUD、批量写入、索引管理、零停机重建、事件监听。
 
 <details>
 <summary>展开查看</summary>

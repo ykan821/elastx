@@ -4,9 +4,16 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![Total Downloads](https://img.shields.io/packagist/dt/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
+[![Tests](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml/badge.svg)](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml)
+[![PHP](https://img.shields.io/packagist/php-v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![License](https://img.shields.io/packagist/l/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 
 A PHP Elasticsearch DSL query builder covering queries, aggregations, CRUD, bulk writes, and zero-downtime rebuilds.
+
+## Integrations
+
+- **[ElasticKit Laravel](https://github.com/ykan821/ElasticKitLaravel)** — Laravel integration
+  (native pagination, artisan rebuild). `composer require ykan/elastickit-laravel`.
 
 ## Installation
 
@@ -50,45 +57,10 @@ $total = $results->total(); // null unless $trackTotalHits = true (see Paginatio
 
 ## DSL Examples
 
+ElasticKit's DSL stays close to the native ES API to minimize cognitive load — if you know ES DSL, the transfer is smooth. Every query type is a dedicated `Node` class whose method names mirror ES parameters.
+
 <details>
 <summary>Expand</summary>
-
-### Polymorphic parameters
-
-The same method accepts four forms — string, array, closure, object:
-
-```php
-$q->term('status', 'published');                                     // string
-$q->term(['status' => 'published']);                                 // array
-$q->term(fn ($t) => $t->field('status')->value('published'));        // closure
-$q->term(Term::create('status', 'published'));                       // object
-```
-
-### OOP style
-
-Each query type is a dedicated Node class supporting chaining:
-
-```php
-use ElasticKit\DSL\Query;
-use ElasticKit\DSL\Queries\TermLevel\Term;
-use ElasticKit\DSL\Queries\TermLevel\Range;
-use ElasticKit\DSL\Queries\FullText\Match_;
-use ElasticKit\DSL\Queries\Compound\Boolean;
-
-$bool = Boolean::create()
-    ->must(Match_::create('title', 'elasticsearch'))
-    ->filter(Term::create('status', 'published')->boost(1.5));
-
-// incremental build
-if ($filterByPrice) {
-    $bool->filter(Range::create('price', [10, 100]));
-}
-
-$query = Query::create($bool);
-
-$query->toArray();  // ['query' => ['bool' => [...]]]
-$query->toJson();   // '{"query":{"bool":{...}}}'
-```
 
 ### Compound query
 
@@ -98,8 +70,7 @@ $results = ProductIndex::query()
         'must'   => fn ($q) => $q->match('title', 'elasticsearch'),
         'filter' => fn ($q) => $q
             ->range('price', [10, 100])
-            ->when($status, fn ($q) => $q->term('status', $status))  // conditional filter
-            ->term('status', 'published'),
+            ->when($status, fn ($q) => $q->term('status', $status)),  // conditional filter
     ])
     ->highlight('title')
     ->sort('price', 'asc')
@@ -124,25 +95,29 @@ $results = ProductIndex::query()
 }
 ```
 
-### Clause appending (ClausesSupport)
+### OOP style
 
-The clauses of a `bool` query (must / should / filter / must_not) **append**, and accept the same four input forms as leaf queries:
+Build each clause separately, then combine them into a query:
 
 ```php
-// all four forms are equivalent, each produces one must clause
-$q->bool(fn ($b) => $b->must(fn ($q) => $q->term('status', 'published')));
-$q->bool(['must' => fn ($q) => $q->term('status', 'published')]);
-$q->bool('must', fn ($q) => $q->term('status', 'published'));
+use ElasticKit\DSL\Queries\Compound\Boolean;
+use ElasticKit\DSL\Queries\FullText\Match_;
+use ElasticKit\DSL\Queries\TermLevel\Range;
+use ElasticKit\DSL\Queries\TermLevel\Term;
 
-// clauses accumulate (multiple calls and list form both append)
-$q->bool(fn ($b) => $b->must(...)->must(...));   // must: [q1, q2]
-$q->bool(['must' => [$q1, $q2]]);                // same
+// Build the clauses
+$status = Term::create('status', 'published')->boost(1.5);
+$title  = Match_::create('title', 'elasticsearch');
 
-// contrast: minimum_should_match is a single-value property; later calls overwrite instead of append
-$q->bool(fn ($b) => $b->minimumShouldMatch(1)->minimumShouldMatch(3)); // 3
+// Combine into a bool query
+$bool = Boolean::create()->must($title)->filter($status);
+if ($filterByPrice) {
+    $bool->filter(Range::create('price', [10, 100]));
+}
+
+// Execute
+$results = ProductIndex::query()->bool($bool)->size(20)->get();
 ```
-
-> `dis_max`, `span_or`, `span_near` and other array-clause containers behave the same way (queries / clauses append).
 
 ### Aggregations
 
@@ -157,22 +132,25 @@ $results = ProductIndex::query()
 $aggs = $results->aggregations();
 ```
 
-### Nested query
+### kNN search
 
 ```php
 $results = ProductIndex::query()
-    ->nested('comments', fn ($q) => $q->match('comments.body', 'great'))
+    ->knn(fn ($k) => $k
+        ->field('embedding')
+        ->queryVector([0.12, 0.45, 0.78, /* ... */])
+        ->numCandidates(100))
+    ->size(10)
     ->get();
 ```
 
-### Raw DSL pass-through
+### Raw array
 
 ```php
-// supports raw arrays with nested closures; query/aggs/parameters can be passed all at once
 $query = Query::create([
     'query' => [
         'bool' => [
-            'must'   => fn ($q) => $q->match('title', 'elasticsearch'),
+            'must'   => fn ($q) => $q->match('title', 'elasticsearch'),  // array may nest closures
             'filter' => fn ($q) => $q->term('status', 'published'),
         ],
     ],
@@ -181,9 +159,33 @@ $query = Query::create([
 ]);
 ```
 
+### Clause appending (ClausesSupport)
+
+The clauses of a `bool` query (must / should / filter / must_not) **append** — repeated calls accumulate, they don't overwrite:
+
+```php
+$q->bool(fn ($b) => $b->must($q1));   // must: [q1]
+$q->bool(fn ($b) => $b->must($q2));   // must: [q1, q2]
+```
+
+> `dis_max`, `span_or`, `span_near` and other array-clause containers behave the same way.
+
+### Flexible arguments
+
+The same method accepts multiple input forms — use whichever suits:
+
+```php
+$q->term('status', 'published');                                     // string
+$q->term(['status' => 'published']);                                 // array
+$q->term(fn ($t) => $t->field('status')->value('published'));        // closure
+$q->term(Term::create('status', 'published'));                       // object
+```
+
 </details>
 
 ## Index Examples
+
+Around the `Index` base class, dedicated classes cover routine index operations — pagination, CRUD, bulk writes, index management, zero-downtime rebuilds, and event hooks.
 
 <details>
 <summary>Expand</summary>

@@ -7,6 +7,7 @@ namespace ElasticKit\DSL;
 use ArgumentCountError;
 use BadMethodCallException;
 use Closure;
+use ElasticKit\DSL\Support\DeepClone;
 use InvalidArgumentException;
 use LogicException;
 use stdClass;
