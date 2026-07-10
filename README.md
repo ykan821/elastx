@@ -2,18 +2,11 @@
 
 > [中文](README.zh.md) | English
 
-[![Latest Version](https://img.shields.io/packagist/v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
-[![Total Downloads](https://img.shields.io/packagist/dt/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![Tests](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml/badge.svg)](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml)
 [![PHP](https://img.shields.io/packagist/php-v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![License](https://img.shields.io/packagist/l/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 
 A PHP Elasticsearch DSL query builder covering queries, aggregations, CRUD, bulk writes, and zero-downtime rebuilds.
-
-## Integrations
-
-- **[ElasticKit Laravel](https://github.com/ykan821/ElasticKitLaravel)** — Laravel integration
-  (native pagination, artisan rebuild). `composer require ykan/elastickit-laravel`.
 
 ## Installation
 
@@ -312,10 +305,6 @@ EventDispatcher::listen('search.*', function (Event $e) {
 - [Index docs](docs/index.md) — search, CRUD, bulk operations, zero-downtime rebuild, events
 - [Changelog](CHANGELOG.md)
 - [Elasticsearch official docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) — query types and parameter reference
-
-## AI-assisted development
-
-This project is developed with AI assistance; core paths and tests are human-reviewed.
 
 ## License
 

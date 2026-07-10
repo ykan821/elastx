@@ -2,17 +2,11 @@
 
 > 中文 | [English](README.md)
 
-[![Latest Version](https://img.shields.io/packagist/v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
-[![Total Downloads](https://img.shields.io/packagist/dt/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![Tests](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml/badge.svg)](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml)
 [![PHP](https://img.shields.io/packagist/php-v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![License](https://img.shields.io/packagist/l/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 
 PHP Elasticsearch DSL 查询构建库，覆盖查询、聚合、CRUD、批量写入、零停机重建。
-
-## 集成
-
-- **[ElasticKit Laravel](https://github.com/ykan821/ElasticKitLaravel)** — Laravel 集成(原生分页、artisan 重建)。`composer require ykan/elastickit-laravel`。
 
 ## 安装
 
@@ -311,10 +305,6 @@ EventDispatcher::listen('search.*', function (Event $e) {
 - [Index 文档](docs/index.zh.md)——搜索、CRUD、批量操作、零停机重建、事件
 - [更新日志](CHANGELOG.md)
 - [Elasticsearch 官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html)——查询类型和参数参考
-
-## AI 辅助开发
-
-本项目使用 AI 辅助开发，核心路径和测试经人工审查。
 
 ## License
 

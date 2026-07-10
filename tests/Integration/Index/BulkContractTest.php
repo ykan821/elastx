@@ -55,6 +55,33 @@ class BulkContractTest extends IntegrationTestCase
         $this->assertTrue($index->newDoc('22')->exists());
     }
 
+    public function testOptionsApplyToAutoFlush(): void
+    {
+        // batchSize triggers auto-flush mid-chain; options() must ride along so the
+        // bulk request carries refresh=true — without it the doc is not yet searchable.
+        $index = $this->makeIndex();
+        (new Bulk($index))
+            ->batchSize(1)
+            ->options(['refresh' => true])
+            ->index('40', ['title' => 'refreshed via options']);
+
+        // No manual refreshIndex() — proves refresh reached the auto-flushed bulk.
+        $docs = $index->newQuery()->match('title', 'refreshed')->size(10)->get()->docs();
+        $this->assertCount(1, $docs);
+    }
+
+    public function testFlushArgumentOptionsApply(): void
+    {
+        // Per-call flush($options) must reach the bulk request too.
+        $index = $this->makeIndex();
+        (new Bulk($index))
+            ->index('41', ['title' => 'flusharg refreshed'])
+            ->flush(['refresh' => true]);
+
+        $docs = $index->newQuery()->match('title', 'flusharg')->size(10)->get()->docs();
+        $this->assertCount(1, $docs);
+    }
+
     public function testOnErrorReceivesFailures(): void
     {
         // create on the already-seeded id '1' triggers a bulk error -> onError

@@ -25,6 +25,13 @@ class Bulk
     private int $retryOnConflict = 0;
 
     /**
+     * Top-level bulk API params (refresh, timeout, ...) applied to every flush.
+     *
+     * @var array<string, mixed>
+     */
+    private array $defaultOptions = [];
+
+    /**
      * @var string|null
      */
     private ?string $targetIndex = null;
@@ -94,7 +101,7 @@ class Bulk
      * On error the callback receives three tools and decides what to do:
      * - $response: the raw ES response (items[] carry per-item status/error);
      * - $body: the full original batch in native ES format (successes included);
-     * - $newbulk: a fresh Bulk bound to the same index and target, for re-send.
+     * - $newbulk: a fresh Bulk for re-send, inheriting target, options, and retry_on_conflict.
      *
      * Extract the failures from $body using $response (items[k] matches the k-th
      * action), re-enqueue them on $newbulk, and call $newbulk->flush() to retry.
@@ -119,6 +126,21 @@ class Bulk
     public function retryOnConflict(int $count): static
     {
         $this->retryOnConflict = $count;
+
+        return $this;
+    }
+
+    /**
+     * Top-level bulk API params applied to every flush, including the auto-flush
+     * triggered by batchSize(). Persists across flush() calls; flush($options)
+     * overrides these per-call.
+     *
+     * @param array<string, mixed> $options
+     * @return $this
+     */
+    public function options(array $options): static
+    {
+        $this->defaultOptions = $options;
 
         return $this;
     }
@@ -223,7 +245,8 @@ class Bulk
      * preserved for the caller to retry. Call this at the end of a batch to flush
      * the remainder — batchSize() auto-flushes full batches during enqueue.
      *
-     * @param array<string, mixed> $options top-level bulk API params (refresh, timeout, etc)
+     * @param array<string, mixed> $options top-level bulk API params (refresh, timeout, etc),
+     *        overriding the instance-level options() for this flush only
      * @return array<string, mixed>
      * @throws \RuntimeException when the response has errors and no handler swallowed them
      */
@@ -242,7 +265,7 @@ class Bulk
 
         $start = microtime(true);
         $response = $this->index->getClient()->bulk(
-            array_merge(['body' => $actions], $options)
+            array_merge(['body' => $actions], $this->defaultOptions, $options)
         )->asArray();
         $duration = microtime(true) - $start;
 
@@ -257,8 +280,13 @@ class Bulk
                 // Hand the caller the raw materials: the response, the full body,
                 // and a fresh Bulk on the same index/target. The caller extracts
                 // the failures and re-sends them however it likes.
+                // Inherits passive request settings (target, options, retry_on_conflict)
+                // so retries reproduce the original request. batchSize/errorHandler stay
+                // off: auto-flush would disrupt re-enqueueing, a handler could recurse.
                 $newbulk = new Bulk($this->index);
                 $newbulk->targetIndex = $this->targetIndex;
+                $newbulk->defaultOptions = $this->defaultOptions;
+                $newbulk->retryOnConflict = $this->retryOnConflict;
                 ($this->errorHandler)($response, $actions, $newbulk);
             } else {
                 $json = json_encode($response, JSON_UNESCAPED_UNICODE);

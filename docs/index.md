@@ -198,6 +198,12 @@ foreach ($docs as $id => $doc) {
 $bulk->flush();                 // the tail (< 500)
 ```
 
+`options()` sets top-level bulk API params (`refresh`, `timeout`, `pipeline`, ...) applied to **every** flush — including the `batchSize()` auto-flush. It persists across flushes; arguments passed to `flush($options)` override them for a single call.
+
+```php
+$bulk->options(['refresh' => true, 'timeout' => '30s']);
+```
+
 ### Error handling
 
 `flush()` throws a `RuntimeException` by default when the response contains errors. Use `onError()` to customize — the callback receives three raw materials and decides what to do:

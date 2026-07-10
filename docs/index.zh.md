@@ -198,6 +198,12 @@ foreach ($docs as $id => $doc) {
 $bulk->flush();                 // 尾部(< 500 那批)
 ```
 
+`options()` 设置顶层 bulk API 参数(`refresh`、`timeout`、`pipeline` 等),对**每次** flush 生效——包括 `batchSize()` 的自动 flush。跨 flush 持久;传给 `flush($options)` 的参数仅在单次调用时覆盖。
+
+```php
+$bulk->options(['refresh' => true, 'timeout' => '30s']);
+```
+
 ### 错误处理
 
 `flush()` 默认在响应包含错误时抛出 `RuntimeException`。用 `onError()` 自定义处理——回调收到三样原材料,自行决定:
