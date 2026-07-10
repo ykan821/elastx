@@ -312,10 +312,6 @@ EventDispatcher::listen('search.*', function (Event $e) {
 - [更新日志](CHANGELOG.md)
 - [Elasticsearch 官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html)——查询类型和参数参考
 
-## AI 辅助开发
-
-本项目使用 AI 辅助开发，核心路径和测试经人工审查。
-
 ## License
 
 MIT

@@ -313,10 +313,6 @@ EventDispatcher::listen('search.*', function (Event $e) {
 - [Changelog](CHANGELOG.md)
 - [Elasticsearch official docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) — query types and parameter reference
 
-## AI-assisted development
-
-This project is developed with AI assistance; core paths and tests are human-reviewed.
-
 ## License
 
 MIT
