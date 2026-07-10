@@ -2,17 +2,11 @@
 
 > 中文 | [English](README.md)
 
-[![Latest Version](https://img.shields.io/packagist/v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
-[![Total Downloads](https://img.shields.io/packagist/dt/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![Tests](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml/badge.svg)](https://github.com/ykan821/ElasticKit/actions/workflows/ci.yml)
 [![PHP](https://img.shields.io/packagist/php-v/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 [![License](https://img.shields.io/packagist/l/ykan/elastickit)](https://packagist.org/packages/ykan/elastickit)
 
 PHP Elasticsearch DSL 查询构建库，覆盖查询、聚合、CRUD、批量写入、零停机重建。
-
-## 集成
-
-- **[ElasticKit Laravel](https://github.com/ykan821/ElasticKitLaravel)** — Laravel 集成(原生分页、artisan 重建)。`composer require ykan/elastickit-laravel`。
 
 ## 安装
 
