@@ -70,6 +70,20 @@ abstract class Index
     }
 
     /**
+     * Register a resolver that builds the Elasticsearch client lazily on first
+     * use; the result is memoized per connection. Use when the client depends
+     * on runtime context (e.g. per-request auth) or should defer construction.
+     *
+     * @param callable(): ClientInterface $resolver
+     * @param string $connection connection name, defaults to 'default'
+     * @return void
+     */
+    public static function setClientResolver(callable $resolver, string $connection = 'default'): void
+    {
+        ClientManager::setResolver($resolver, $connection);
+    }
+
+    /**
      * Return the Elasticsearch client for this index's connection.
      *
      * @return ClientInterface

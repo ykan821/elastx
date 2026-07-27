@@ -7,13 +7,12 @@ Index is an abstract base class. Extend it to define an index, register an ES cl
 ```php
 use ElasticKit\Index\Index;
 
-// create the official client
-$client = \Elastic\Elasticsearch\ClientBuilder::create()
-    ->setHosts(['http://localhost:9200'])
-    ->build();
-
 // register as the default connection
-Index::setClient($client);
+Index::setClientResolver(
+    fn () => \Elastic\Elasticsearch\ClientBuilder::create()
+        ->setHosts(['http://localhost:9200'])
+        ->build()
+);
 
 // multiple connections
 Index::setClient($mainClient, 'main');
@@ -358,12 +357,12 @@ All events carry `$name` and `$index`.
 Use the `ClientBuilder` to configure the client (hosts, SSL, logging, etc.):
 
 ```php
-$client = \Elastic\Elasticsearch\ClientBuilder::create()
-    ->setHosts(['https://localhost:9200'])
-    ->setLogger($logger)
-    ->build();
-
-Index::setClient($client);
+Index::setClientResolver(
+    fn () => \Elastic\Elasticsearch\ClientBuilder::create()
+        ->setHosts(['https://localhost:9200'])
+        ->setLogger($logger)
+        ->build()
+);
 ```
 
 ## Security

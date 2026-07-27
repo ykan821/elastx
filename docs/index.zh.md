@@ -7,13 +7,12 @@ Index 是抽象基类。继承它定义索引，注册 ES Client，然后查询�
 ```php
 use ElasticKit\Index\Index;
 
-// 创建官方 Client
-$client = \Elastic\Elasticsearch\ClientBuilder::create()
-    ->setHosts(['http://localhost:9200'])
-    ->build();
-
 // 注册为默认连接
-Index::setClient($client);
+Index::setClientResolver(
+    fn () => \Elastic\Elasticsearch\ClientBuilder::create()
+        ->setHosts(['http://localhost:9200'])
+        ->build()
+);
 
 // 多连接
 Index::setClient($mainClient, 'main');
@@ -358,12 +357,12 @@ EventDispatcher::listen('*', function (Event $e) { ... });
 使用 `ClientBuilder` 配置客户端（主机、SSL、日志等）：
 
 ```php
-$client = \Elastic\Elasticsearch\ClientBuilder::create()
-    ->setHosts(['https://localhost:9200'])
-    ->setLogger($logger)
-    ->build();
-
-Index::setClient($client);
+Index::setClientResolver(
+    fn () => \Elastic\Elasticsearch\ClientBuilder::create()
+        ->setHosts(['https://localhost:9200'])
+        ->setLogger($logger)
+        ->build()
+);
 ```
 
 ## 安全

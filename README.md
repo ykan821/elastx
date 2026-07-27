@@ -22,9 +22,10 @@ composer require ykan/elastickit:^8
 use ElasticKit\Index\Index;
 
 // 1. Register the client
-$client = \Elastic\Elasticsearch\ClientBuilder::create()
-    ->setHosts(['http://localhost:9200'])->build();
-Index::setClient($client);
+Index::setClientResolver(
+    fn () => \Elastic\Elasticsearch\ClientBuilder::create()
+        ->setHosts(['http://localhost:9200'])->build()
+);
 
 // 2. Define an index
 class ProductIndex extends Index
