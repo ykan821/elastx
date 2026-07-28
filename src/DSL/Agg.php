@@ -9,6 +9,7 @@ use ElasticKit\DSL\Aggs\Metric;
 use ElasticKit\DSL\Aggs\Pipeline;
 use ElasticKit\DSL\Support\DeepClone;
 use ElasticKit\DSL\Support\RegistersAgg;
+use ElasticKit\DSL\Support\ResolvesProperties;
 use stdClass;
 
 /**
@@ -23,6 +24,7 @@ class Agg
     use Pipeline;
     use DeepClone;
     use RegistersAgg;
+    use ResolvesProperties;
 
     /**
      * The aggregation type node.
@@ -132,30 +134,6 @@ class Agg
     public function aggs($alias, $aggs = null): static
     {
         return $this->registerAgg($alias, $aggs, $this->_subAggs);
-    }
-
-    /**
-     * Resolve nested Query, Node, and Agg instances in a properties array.
-     *
-     * @param array<string, mixed> $properties
-     * @return array<string, mixed>
-     */
-    protected function resolveProperties(array $properties): array
-    {
-        foreach ($properties as $key => $property) {
-            if ($property instanceof Query) {
-                $properties[$key] = $property->toArray()['query'] ?? null;
-            } elseif ($property instanceof Agg) {
-                $properties[$key] = $property->toArray();
-            } elseif ($property instanceof Node) {
-                $properties[$key] = $property->toArray();
-            } elseif ($property instanceof \Closure) {
-                $properties[$key] = Query::create($property)->toArray()['query'] ?? null;
-            } elseif (is_array($property)) {
-                $properties[$key] = $this->resolveProperties($property);
-            }
-        }
-        return array_filter($properties, fn ($v) => $v !== null);
     }
 
     /**

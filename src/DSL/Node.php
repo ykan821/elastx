@@ -8,6 +8,7 @@ use ArgumentCountError;
 use BadMethodCallException;
 use Closure;
 use ElasticKit\DSL\Support\DeepClone;
+use ElasticKit\DSL\Support\ResolvesProperties;
 use InvalidArgumentException;
 use LogicException;
 use stdClass;
@@ -20,6 +21,7 @@ use stdClass;
 abstract class Node
 {
     use DeepClone;
+    use ResolvesProperties;
 
     /**
      * Properties owned by a node. Either an array of attributes, or null when
@@ -271,30 +273,6 @@ abstract class Node
             return $field;
         }
         return new static($field, $value);
-    }
-
-    /**
-     * Resolve nested Query and Node instances in a properties array.
-     *
-     * @param array<string, mixed> $properties
-     * @return array<string, mixed>
-     */
-    protected function resolveProperties(array $properties): array
-    {
-        foreach ($properties as $key => $property) {
-            if ($property instanceof Query) {
-                $properties[$key] = $property->toArray()['query'] ?? null;
-            } elseif ($property instanceof Agg) {
-                $properties[$key] = $property->toArray();
-            } elseif ($property instanceof Node) {
-                $properties[$key] = $property->toArray();
-            } elseif ($property instanceof Closure) {
-                $properties[$key] = Query::create($property)->toArray()['query'] ?? null;
-            } elseif (is_array($property)) {
-                $properties[$key] = $this->resolveProperties($property);
-            }
-        }
-        return array_filter($properties, fn ($v) => $v !== null);
     }
 
     /**
